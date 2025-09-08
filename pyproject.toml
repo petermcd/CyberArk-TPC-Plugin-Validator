@@ -1,6 +1,20 @@
 [project]
 name = "cyberark-tpc-plugin-validator"
 version = "0.1.0"
-description = "Add your description here"
-requires-python = ">=3.13"
+description = "A tool to validate CyberArk TPC plugins."
+authors = [{ name = "Peter McDonald", email = "git@petermcdonald.co.uk"}]
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.10"
 dependencies = []
+
+[dependency-groups]
+dev = [
+    "pytest>=8.4.2",
+    "pytest-cov>=6.3.0",
+    "ruff>=0.12.12",
+    "ty>=0.0.1a20",
+]
+
+[tool.pytest.ini_options]
+addopts = "--cov=tpc_plugin_validator"
