@@ -25,7 +25,7 @@ class Lexer(object):
         self._parsed_data: list[
             tuple[
                 TokenName,
-                Assignment | Comment | EOF | FailState | SectionHeader | StateTransition,
+                Assignment | Comment | FailState | object | SectionHeader | StateTransition,
             ]
         ] = []
         self._source = source
@@ -56,7 +56,7 @@ class Lexer(object):
         self._parsed_data.append(
             (
                 TokenName.EOF,
-                EOF(),
+                object(),
             )
         )
 
