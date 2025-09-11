@@ -16,18 +16,26 @@ class Lexer(object):
     __slots__ = (
         '_parsed_data',
         '_source',
+        '_token_specs',
     )
 
     def __init__(self, source: str) -> None:
         """Standard init for the Lexer object."""
 
-        self._source = source
         self._parsed_data: list[
             tuple[
                 TokenName,
                 Assignment | Comment | EOF | FailState | SectionHeader | StateTransition,
             ]
         ] = []
+        self._source = source
+        self._token_specs = [
+            (re.compile(ASSIGNMENT), TokenName.ASSIGNMENT, '_process_assignment'),
+            (re.compile(COMMENT), TokenName.COMMENT, '_process_comment'),
+            (re.compile(FAIL_STATE), TokenName.FAIL_STATE, '_process_fail_state'),
+            (re.compile(SECTION_HEADER), TokenName.SECTION_HEADER, '_process_section_header'),
+            (re.compile(TRANSITION), TokenName.STATE_TRANSITION, '_process_state_transition'),
+        ]
 
     def process(self):
         """Process the content of the file line by line."""
@@ -37,24 +45,14 @@ class Lexer(object):
             return
 
         for line in self._source.splitlines():
-            if re.match(COMMENT, line):
-                self._process_comment(line=line)
-                continue
-            if re.match(SECTION_HEADER, line):
-                self._process_header(line=line)
-                continue
-            if re.match(TRANSITION, line):
-                self._process_state_transition(line=line)
-                continue
-            if re.match(ASSIGNMENT, line):
-                self._process_assignment(line=line)
-                continue
-            if re.match(FAIL_STATE, line):
-                self._process_fail_states(line=line)
-                continue
-            if not line.strip():
-                continue
-            raise LexerException(f'Unable to parse: {line}')
+            for pattern, _, handler_name in self._token_specs:
+                if match := pattern.match(line):
+                    getattr(self, handler_name)(match)
+                    break
+            else:
+                if not line.strip():
+                    continue
+                raise LexerException(f'Unable to parse: {line}')
         self._parsed_data.append(
             (
                 TokenName.EOF,
@@ -62,33 +60,31 @@ class Lexer(object):
             )
         )
 
-    def _process_assignment(self, line: str) -> None:
+    def _process_assignment(self, match: re.Match) -> None:
         """
         Process a variable assignment line
 
-        :param line: Line containing the assignment.
+        :param match: Regex match of the assignment.
         """
-        match = re.match(ASSIGNMENT, line)
         name: str = str(match[1]).strip()
-        equals: str | None = str(match[2]).strip() or None
-        assigned: str | None = str(match[3]).strip() or None
+        equals = str(match[2]).strip() if match[2] else None
+        assigned = str(match[3]).strip() if match[3] else None
         self._parsed_data.append((TokenName.ASSIGNMENT, Assignment(name=name, equals=equals, assigned=assigned)))
 
-    def _process_comment(self, line: str) -> None:
+    def _process_comment(self, match: re.Match) -> None:
         """
         Process the provided comment.
 
-        :param line: Line containing the comment.
+        :param match: Regex match of the comment.
         """
-        self._parsed_data.append((TokenName.COMMENT, Comment(content=line.strip())))
+        self._parsed_data.append((TokenName.COMMENT, Comment(content=str(match[1]).strip())))
 
-    def _process_fail_states(self, line: str) -> None:
+    def _process_fail_state(self, match: re.Match) -> None:
         """
         Process the provided fail state .
 
-        :param line: Line containing the fail state.
+        :param match: Regex match of the fail state.
         """
-        match = re.match(FAIL_STATE, line)
         self._parsed_data.append(
             (
                 TokenName.FAIL_STATE,
@@ -99,22 +95,20 @@ class Lexer(object):
             )
         )
 
-    def _process_header(self, line: str) -> None:
+    def _process_section_header(self, match: re.Match) -> None:
         """
         Process the provided section header.
 
-        :param line: Line containing the section header.
+        :param match: Regex match of the section header.
         """
-        match = re.match(SECTION_HEADER, line)
         self._parsed_data.append((TokenName.SECTION_HEADER, SectionHeader(name=str(match[1]))))
 
-    def _process_state_transition(self, line: str) -> None:
+    def _process_state_transition(self, match: re.Match) -> None:
         """
         Process the provided state transition.
 
-        :param line: Line containing the state transition.
+        :param match: Regex match of the state transition.
         """
-        match = re.match(TRANSITION, line)
         self._parsed_data.append(
             (
                 TokenName.STATE_TRANSITION,
