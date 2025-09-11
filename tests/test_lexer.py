@@ -15,133 +15,176 @@ class TestLexer(object):
     """Test the lexer."""
 
     @pytest.mark.parametrize(
-        'line,expected_token',
+        'line,expected_token_list',
         [
             (
                 'TestVar',
-                (
-                    TokenName.ASSIGNMENT,
-                    Assignment(
-                        line_number=1,
-                        name='TestVar',
-                        equals=None,
-                        assigned=None,
+                [
+                    (
+                        TokenName.ASSIGNMENT,
+                        Assignment(
+                            line_number=1,
+                            name='TestVar',
+                            equals=None,
+                            assigned=None,
+                        ),
                     ),
-                ),
+                ],
             ),
             (
                 'testvar    =   ',
-                (
-                    TokenName.ASSIGNMENT,
-                    Assignment(
-                        line_number=1,
-                        name='testvar',
-                        equals='=',
-                        assigned=None,
+                [
+                    (
+                        TokenName.ASSIGNMENT,
+                        Assignment(
+                            line_number=1,
+                            name='testvar',
+                            equals='=',
+                            assigned=None,
+                        ),
                     ),
-                ),
+                ],
             ),
             (
                 'test_var = 123',
-                (
-                    TokenName.ASSIGNMENT,
-                    Assignment(
-                        line_number=1,
-                        name='test_var',
-                        equals='=',
-                        assigned='123',
+                [
+                    (
+                        TokenName.ASSIGNMENT,
+                        Assignment(
+                            line_number=1,
+                            name='test_var',
+                            equals='=',
+                            assigned='123',
+                        ),
                     ),
-                ),
+                ],
             ),
             (
                 '# this is a standard comment     ',
-                (
-                    TokenName.COMMENT,
-                    Comment(
-                        line_number=1,
-                        content='# this is a standard comment',
+                [
+                    (
+                        TokenName.COMMENT,
+                        Comment(
+                            line_number=1,
+                            content='# this is a standard comment',
+                        ),
                     ),
-                ),
+                ],
             ),
             (
                 ';this is a standard comment',
-                (
-                    TokenName.COMMENT,
-                    Comment(
-                        line_number=1,
-                        content=';this is a standard comment',
+                [
+                    (
+                        TokenName.COMMENT,
+                        Comment(
+                            line_number=1,
+                            content=';this is a standard comment',
+                        ),
                     ),
-                ),
+                ],
             ),
             (
                 "FAIL('This is a standard fail state', 1234)",
-                (
-                    TokenName.FAIL_STATE,
-                    FailState(
-                        line_number=1,
-                        message='This is a standard fail state',
-                        code=1234,
+                [
+                    (
+                        TokenName.FAIL_STATE,
+                        FailState(
+                            line_number=1,
+                            message='This is a standard fail state',
+                            code=1234,
+                        ),
                     ),
-                ),
+                ],
             ),
             (
                 "FAIL  ('This is a standard fail state, isn\'t it?',     2468)",
-                (
-                    TokenName.FAIL_STATE,
-                    FailState(
-                        line_number=1,
-                        message='This is a standard fail state, isn\'t it?',
-                        code=2468,
+                [
+                    (
+                        TokenName.FAIL_STATE,
+                        FailState(
+                            line_number=1,
+                            message='This is a standard fail state, isn\'t it?',
+                            code=2468,
+                        ),
                     ),
-                ),
+                ],
             ),
             (
                 '[Some Section Header]',
-                (
-                    TokenName.SECTION_HEADER,
-                    SectionHeader(
-                        line_number=1,
-                        name='Some Section Header',
+                [
+                    (
+                        TokenName.SECTION_HEADER,
+                        SectionHeader(
+                            line_number=1,
+                            name='Some Section Header',
+                        ),
                     ),
-                ),
+                ],
             ),
             (
                 '   [Some Section Header]    ',
-                (
-                    TokenName.SECTION_HEADER,
-                    SectionHeader(
-                        line_number=1,
-                        name='Some Section Header',
+                [
+                    (
+                        TokenName.SECTION_HEADER,
+                        SectionHeader(
+                            line_number=1,
+                            name='Some Section Header',
+                        ),
                     ),
-                ),
+                ],
             ),
             (
                 'state1,condition,state2',
-                (
-                    TokenName.STATE_TRANSITION,
-                    StateTransition(
-                        line_number=1,
-                        from_state='state1',
-                        condition='condition',
-                        to_state='state2',
+                [
+                    (
+                        TokenName.STATE_TRANSITION,
+                        StateTransition(
+                            line_number=1,
+                            from_state='state1',
+                            condition='condition',
+                            to_state='state2',
+                        ),
                     ),
-                ),
+                ],
             ),
             (
                 ' state_1    ,   condition2    , STATE2   ',
-                (
-                    TokenName.STATE_TRANSITION,
-                    StateTransition(
-                        line_number=1,
-                        from_state='state_1',
-                        condition='condition2',
-                        to_state='STATE2',
+                [
+                    (
+                        TokenName.STATE_TRANSITION,
+                        StateTransition(
+                            line_number=1,
+                            from_state='state_1',
+                            condition='condition2',
+                            to_state='STATE2',
+                        ),
                     ),
-                ),
+                ],
+            ),
+            (
+                '[Some Section Header]\r\rTestVar\r',
+                [
+                    (
+                        TokenName.SECTION_HEADER,
+                        SectionHeader(
+                            line_number=1,
+                            name='Some Section Header',
+                        ),
+                    ),
+                    (
+                        TokenName.ASSIGNMENT,
+                        Assignment(
+                            line_number=3,
+                            name='TestVar',
+                            equals=None,
+                            assigned=None,
+                        ),
+                    ),
+                ],
             ),
         ],
     )
-    def test_token(self, line: str, expected_token):
+    def test_token(self, line: str, expected_token_list):
         """
         Test to ensure that a token parses ok.
 
@@ -151,7 +194,7 @@ class TestLexer(object):
         lexer = Lexer(source=line)
         lexer.process()
         tokens = lexer.tokens
-        assert tokens[0] == expected_token
+        assert tokens == expected_token_list
 
     @pytest.mark.parametrize(
         'line, expected_exception, expected_error',
