@@ -10,6 +10,7 @@ dependencies = []
 
 [dependency-groups]
 dev = [
+    "isort>=6.0.1",
     "pytest>=8.4.2",
     "pytest-cov>=6.3.0",
     "ruff>=0.12.12",
@@ -18,3 +19,6 @@ dev = [
 
 [tool.pytest.ini_options]
 addopts = "--cov=tpc_plugin_validator"
+
+[tool.isort]
+py_version=310

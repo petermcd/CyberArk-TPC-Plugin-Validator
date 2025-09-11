@@ -1,9 +1,10 @@
 """Test logging rule sets."""
 import pytest
 
-from tpc_plugin_validator.parser import Parser
-from tpc_plugin_validator.severity import Severity
-from tpc_plugin_validator.validation_result import ValidationResult
+from tpc_plugin_validator.parser.parser import Parser
+from tpc_plugin_validator.rules.logging_validation import LoggingValidation
+from tpc_plugin_validator.utilities.severity import Severity
+from tpc_plugin_validator.utilities.validation_result import ValidationResult
 
 
 class TestLoggingRuleSets():
@@ -11,8 +12,8 @@ class TestLoggingRuleSets():
         "process_file, prompts_file, enabled, expected_results",
         [
             (
-                "tests/data/WARNING-LoggingValueCaseViolation/process.ini",
-                "tests/data/WARNING-LoggingValueCaseViolation/prompts.ini",
+                'tests/data/WARNING-LoggingValueCaseViolation/process.ini',
+                'tests/data/empty_prompts.ini',
                 True,
                 [
                     ValidationResult(
@@ -23,8 +24,8 @@ class TestLoggingRuleSets():
                 ],
             ),
             (
-                "tests/data/OK-LoggingNoSection/process.ini",
-                "tests/data/OK-LoggingNoSection/prompts.ini",
+                'tests/data/OK-LoggingNoSection/process.ini',
+                'tests/data/empty_prompts.ini',
                 True,
                 [
                     ValidationResult(
@@ -35,8 +36,8 @@ class TestLoggingRuleSets():
                 ],
             ),
             (
-                "tests/data/WARNING-LoggingSettingNameViolation/process.ini",
-                "tests/data/WARNING-LoggingSettingNameViolation/prompts.ini",
+                'tests/data/WARNING-LoggingSettingNameViolation/process.ini',
+                'tests/data/empty_prompts.ini',
                 True,
                 [
                     ValidationResult(
@@ -47,14 +48,14 @@ class TestLoggingRuleSets():
                 ],
             ),
             (
-                "tests/data/OK-logging/process.ini",
-                "tests/data/OK-logging/prompts.ini",
+                'tests/data/OK-logging/process.ini',
+                'tests/data/empty_prompts.ini',
                 True,
                 [],
             ),
             (
-                "tests/data/WARNING-LoggingValueViolation/process.ini",
-                "tests/data/WARNING-LoggingValueViolation/prompts.ini",
+                'tests/data/WARNING-LoggingValueViolation/process.ini',
+                'tests/data/empty_prompts.ini',
                 True,
                 [
                     ValidationResult(
@@ -65,8 +66,8 @@ class TestLoggingRuleSets():
                 ],
             ),
             (
-                "tests/data/CRITICAL-LoggingEnabledViolation/process.ini",
-                "tests/data/CRITICAL-LoggingEnabledViolation/prompts.ini",
+                'tests/data/CRITICAL-LoggingEnabledViolation/process.ini',
+                'tests/data/empty_prompts.ini',
                 True,
                 [
                     ValidationResult(
@@ -77,8 +78,8 @@ class TestLoggingRuleSets():
                 ],
             ),
             (
-                "tests/data/CRITICAL-LoggingEnabledViolation/process.ini",
-                "tests/data/CRITICAL-LoggingEnabledViolation/prompts.ini",
+                'tests/data/CRITICAL-LoggingEnabledViolation/process.ini',
+                'tests/data/empty_prompts.ini',
                 False,
                 [
                     ValidationResult(
@@ -98,8 +99,6 @@ class TestLoggingRuleSets():
         :param prompts_file: The path to the prompt file.
         :param expected_results: The expected validation results.
         """
-        from tpc_plugin_validator.rules.logging_validation import LoggingValidation
-
         parser = Parser(process_file=process_file, prompts_file=prompts_file)
         process_content = parser.process_file
         prompts_content = parser.prompts_file

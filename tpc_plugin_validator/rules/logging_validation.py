@@ -1,8 +1,7 @@
 # Handle validation of the logging settings in the process file.
-from configparser import ConfigParser
-
-from tpc_plugin_validator.severity import Severity
-from tpc_plugin_validator.validation_result import ValidationResult
+from tpc_plugin_validator.parser.parser import Parser
+from tpc_plugin_validator.utilities.severity import Severity
+from tpc_plugin_validator.utilities.validation_result import ValidationResult
 
 
 class LoggingValidation:
@@ -13,7 +12,7 @@ class LoggingValidation:
         '_validation_results',
     )
 
-    def __init__(self, process: ConfigParser, prompts: ConfigParser, enabled: bool=True) -> None:
+    def __init__(self, process, prompts, enabled: bool=True) -> None:
         """
         Initialize the LoggingValidation with prompts and process configurations.
 
@@ -34,7 +33,7 @@ class LoggingValidation:
 
         :return: List of ValidationResult objects indicating any issues found.
         """
-        if 'Debug Information' not in self._process_content.sections():
+        if 'Debug Information' not in self._process_content.keys():
             self._validation_results.append(
                 ValidationResult(
                     rule='LoggingNoSection',
@@ -44,12 +43,11 @@ class LoggingValidation:
             )
             return self._validation_results
         logging_settings = self._process_content['Debug Information']
-        for setting, value in logging_settings.items():
-            if not self._check_setting_name(setting=setting):
+        for logging_setting in logging_settings:
+            if not self._check_setting_name(setting=logging_setting.name):
                 continue
-            self._check_setting_value(setting=setting, value=value)
+            self._check_setting_value(setting=logging_setting.name, value=logging_setting.assigned)
 
-        print(logging_settings)
         return self._validation_results
 
     def _check_setting_name(self, setting: str) -> bool:

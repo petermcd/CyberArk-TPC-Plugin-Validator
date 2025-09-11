@@ -1,12 +1,16 @@
 import re
-from tpc_plugin_validator.utilities.exceptions import LexerException
+
 from tpc_plugin_validator.lexer.tokens.assignment import Assignment
 from tpc_plugin_validator.lexer.tokens.comment import Comment
 from tpc_plugin_validator.lexer.tokens.fail_state import FailState
 from tpc_plugin_validator.lexer.tokens.section_header import SectionHeader
 from tpc_plugin_validator.lexer.tokens.state_transition import StateTransition
-from tpc_plugin_validator.lexer.utilities.regex import ASSIGNMENT, COMMENT, FAIL_STATE, SECTION_HEADER, TRANSITION
+from tpc_plugin_validator.lexer.utilities.regex import (ASSIGNMENT, COMMENT,
+                                                        FAIL_STATE,
+                                                        SECTION_HEADER,
+                                                        TRANSITION)
 from tpc_plugin_validator.lexer.utilities.token_name import TokenName
+from tpc_plugin_validator.utilities.exceptions import LexerException
 
 
 class Lexer(object):
@@ -43,24 +47,14 @@ class Lexer(object):
             # Returning as we have parsed the a
             return
 
-        line_number: int = 0
-
-        for line in self._source.splitlines():
-            line_number += 1
+        for line_number, line in enumerate(self._source.splitlines(), start=1):
             for pattern, _, handler_name in self._token_specs:
                 if match := pattern.match(line):
                     getattr(self, handler_name)(match=match, line_number=line_number)
                     break
             else:
-                if not line.strip():
-                    continue
-                raise LexerException(f'Unable to parse "{line}" on line {line_number}')
-        self._parsed_data.append(
-            (
-                TokenName.EOF,
-                object(),
-            )
-        )
+                if line.strip():
+                    raise LexerException(f'Unable to parse "{line}" on line {line_number}')
 
     def _process_assignment(self, match: re.Match, line_number: int) -> None:
         """

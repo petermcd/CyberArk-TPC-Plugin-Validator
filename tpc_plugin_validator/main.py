@@ -1,6 +1,7 @@
 # Entry point for the TPC Plugin Validator module.
-from tpc_plugin_validator.parser import Parser
+from tpc_plugin_validator.parser.parser import Parser
 from tpc_plugin_validator.rules.logging_validation import LoggingValidation
+
 
 def temp_entry(process_file: str, prompts_file: str):
     parser = Parser(process_file=process_file, prompts_file=prompts_file)

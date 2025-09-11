@@ -7,8 +7,9 @@ from tpc_plugin_validator.lexer.tokens.comment import Comment
 from tpc_plugin_validator.lexer.tokens.fail_state import FailState
 from tpc_plugin_validator.lexer.tokens.section_header import SectionHeader
 from tpc_plugin_validator.lexer.tokens.state_transition import StateTransition
-from tpc_plugin_validator.utilities.exceptions import LexerException
 from tpc_plugin_validator.lexer.utilities.token_name import TokenName
+from tpc_plugin_validator.utilities.exceptions import LexerException
+
 
 class TestLexer(object):
     """Test the lexer."""
