@@ -45,15 +45,22 @@ class Logging(RuleSet):
             'ExpectLog',
             'ConsoleOutput',
         ]
-        # TODO check if the name of the setting is in the wrong case.
-        if setting not in valid_settings:
-            self._add_violation(
-                name='LoggingSettingNameViolation',
-                description=f'The logging setting "{setting}" is not a valid logging setting. Valid settings are: {", ".join(valid_settings)}.',
-                severity=Severity.WARNING,
-            )
-            return False
-        return True
+        if setting in valid_settings:
+            return True
+        for valid_setting in valid_settings:
+            if setting.lower() == valid_setting.lower():
+                self._add_violation(
+                    name='LoggingSettingNameCaseViolation',
+                    description=f'The logging setting "{setting}" should be set as "{valid_setting}".',
+                    severity=Severity.WARNING,
+                )
+                return False
+        self._add_violation(
+            name='LoggingSettingNameViolation',
+            description=f'The logging setting "{setting}" is not a valid logging setting. Valid settings are: {", ".join(valid_settings)}.',
+            severity=Severity.WARNING,
+        )
+        return False
 
     def _check_setting_value(self, setting: str, value: str) -> None:
         """
