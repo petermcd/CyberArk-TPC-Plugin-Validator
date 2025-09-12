@@ -96,10 +96,11 @@ class TestPromptsRuleSets(object):
         parser = Parser(process_file=process_file, prompts_file=prompts_file)
         process_content = parser.process_file
         prompts_content = parser.prompts_file
-        config: dict[str, bool | int | str] = {}
+        config: dict[str, dict[str, bool | int | str]] = {}
 
         rule = Prompts(prompts=prompts_content, process=process_content, config=config)
-        results = rule.validate()
+        rule.validate()
+        results = rule.get_violations()
 
         assert len(results) == len(expected_results)
         for result, expected in zip(results, expected_results):

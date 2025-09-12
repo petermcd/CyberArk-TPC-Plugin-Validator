@@ -115,10 +115,11 @@ class TestLoggingRuleSets(object):
         process_content = parser.process_file
         prompts_content = parser.prompts_file
 
-        config: dict[str, bool | int | str] = {'enabled': enabled}
+        config: dict[str, dict[str, bool | int | str]] = {'logging': {'enabled': enabled}}
 
         rule = Logging(prompts=prompts_content, process=process_content, config=config)
-        results = rule.validate()
+        rule.validate()
+        results = rule.get_violations()
 
         assert len(results) == len(expected_results)
         for result, expected in zip(results, expected_results):

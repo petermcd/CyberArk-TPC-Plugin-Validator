@@ -33,6 +33,6 @@ class Validator(object):
     def validate(self) -> None:
         """Execute validations."""
         for rule_set in self._rule_sets:
-            config = self._config.get(rule_set.get_config_key(), {})
-            validator = rule_set(process=self._parser.process_file, prompts=self._parser.prompts_file, config=config)
-            self._validations = self._validations + validator.validate()
+            validator = rule_set(process=self._parser.process_file, prompts=self._parser.prompts_file, config=self._config)
+            validator.validate()
+            self._validations = self._validations + validator.get_violations()
