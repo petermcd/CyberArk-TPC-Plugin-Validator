@@ -48,6 +48,18 @@ class TestLoggingRuleSets(object):
                 ],
             ),
             (
+                'tests/data/WARNING-LoggingSettingNameCaseViolation/process.ini',
+                'tests/data/empty_prompts.ini',
+                True,
+                [
+                    ValidationResult(
+                        rule='LoggingSettingNameCaseViolation',
+                        severity=Severity.WARNING,
+                        message='The logging setting "COnsoleOutput" should be set as "ConsoleOutput".',
+                    ),
+                ],
+            ),
+            (
                 'tests/data/OK-logging/process.ini',
                 'tests/data/empty_prompts.ini',
                 True,
