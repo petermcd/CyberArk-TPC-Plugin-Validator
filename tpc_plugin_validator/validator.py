@@ -16,13 +16,13 @@ class Validator(object):
         '_validations',
     )
 
-    def __init__(self, parser: Parser, config: dict[str, dict[str, str]]) -> None:
+    def __init__(self, parser: Parser, config: dict[str, dict[str, bool | int | str]]) -> None:
         """
         Standard init for the Validator class.
 
         :param parser: Parser object
         """
-        self._config: dict[str, dict[str, str]] = config
+        self._config: dict[str, dict[str, bool | int | str]] = config
         self._parser: Parser = parser
         self._validations: list[ValidationResult] = []
         self._rule_sets = (
@@ -33,6 +33,6 @@ class Validator(object):
     def validate(self) -> None:
         """Execute validations."""
         for rule_set in self._rule_sets:
-            config = self._config.get('logging', {})
+            config = self._config.get(rule_set.get_config_key(), {})
             validator = rule_set(process=self._parser.process_file, prompts=self._parser.prompts_file, config=config)
             self._validations = self._validations + validator.validate()

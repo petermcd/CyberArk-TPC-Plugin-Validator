@@ -58,19 +58,6 @@ class Logging:
 
         return self._validation_results
 
-    @staticmethod
-    def _token_is_valid(token) -> bool:
-        """
-        Check to ensure that the given token is valid for this section.
-
-        :param token: The token to check.
-
-        :return: True if valid, Otherwise False.
-        """
-        valid_tokens = ['Assignment', 'Comment']
-        return token.token_name in valid_tokens
-
-
     def _check_setting_name(self, setting: str) -> bool:
         """
         Check the setting name is valid.
@@ -133,3 +120,24 @@ class Logging:
                     severity=Severity.CRITICAL if self._enabled else Severity.INFO,
                 )
             )
+
+    @staticmethod
+    def _token_is_valid(token) -> bool:
+        """
+        Check to ensure that the given token is valid for this section.
+
+        :param token: The token to check.
+
+        :return: True if valid, Otherwise False.
+        """
+        valid_tokens = ['Assignment', 'Comment']
+        return token.token_name in valid_tokens
+
+    @staticmethod
+    def get_config_key() -> str:
+        """
+        Property to identify the config key to use for the rule set.
+
+        :return: The config key as a string.
+        """
+        return 'logging'

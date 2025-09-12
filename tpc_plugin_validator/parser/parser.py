@@ -2,6 +2,11 @@
 import os
 
 from tpc_plugin_validator.lexer.lexer import Lexer
+from tpc_plugin_validator.lexer.tokens.assignment import Assignment
+from tpc_plugin_validator.lexer.tokens.comment import Comment
+from tpc_plugin_validator.lexer.tokens.fail_state import FailState
+from tpc_plugin_validator.lexer.tokens.section_header import SectionHeader
+from tpc_plugin_validator.lexer.tokens.state_transition import StateTransition
 from tpc_plugin_validator.lexer.utilities.token_name import TokenName
 
 
@@ -38,14 +43,6 @@ class Parser(object):
             prompts_lexer = Lexer(source=prompts_handler.read())
             self._prepare_prompts(lexed_prompts=prompts_lexer)
 
-    def _prepare_prompts(self, lexed_prompts: Lexer):
-        """
-        Prepare the prompts file from the lexed result.
-
-        :param lexed_prompts: Result of lexing the prompts file.
-        """
-        self._prompts_file = self._process_lex(lexed_file=lexed_prompts)
-
     def _prepare_process(self, lexed_process: Lexer):
         """
         Prepare the process file from the lexed result.
@@ -53,6 +50,14 @@ class Parser(object):
         :param lexed_process: Result of lexing the process file.
         """
         self._process_file = self._process_lex(lexed_file=lexed_process)
+
+    def _prepare_prompts(self, lexed_prompts: Lexer):
+        """
+        Prepare the prompts file from the lexed result.
+
+        :param lexed_prompts: Result of lexing the prompts file.
+        """
+        self._prompts_file = self._process_lex(lexed_file=lexed_prompts)
 
     @staticmethod
     def _process_lex(lexed_file: Lexer):
@@ -64,12 +69,16 @@ class Parser(object):
         :return: Result of processing the lexed file.
         """
         current_section_name: str = 'default'
-        section_entries = []
+        section_entries: list[Assignment | Comment | FailState | SectionHeader | StateTransition] = []
         sorted_lex = {}
         for lexed_line in lexed_file.tokens:
             if lexed_line[0] == TokenName.SECTION_HEADER:
                 sorted_lex[current_section_name] = section_entries
-                current_section_name = lexed_line[1].name
+                if type(lexed_line[1]) is SectionHeader:
+                    current_section_name = lexed_line[1].name
+                else:
+                    # This should never be reached, this is here to satisfy typing.
+                    current_section_name = 'UNKNOWN'
                 section_entries = []
                 continue
             section_entries.append(lexed_line[1])

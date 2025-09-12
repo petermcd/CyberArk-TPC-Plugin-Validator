@@ -28,7 +28,7 @@ class Lexer(object):
         self._parsed_data: list[
             tuple[
                 TokenName,
-                Assignment | Comment | FailState | object | SectionHeader | StateTransition,
+                Assignment | Comment | FailState | SectionHeader | StateTransition,
             ]
         ] = []
         self._source = source
@@ -146,7 +146,7 @@ class Lexer(object):
         )
 
     @property
-    def tokens(self) -> list[tuple[TokenName,Assignment|Comment|FailState|object|SectionHeader|StateTransition]]:
+    def tokens(self) -> list[tuple[TokenName, Assignment | Comment | FailState | SectionHeader | StateTransition]]:
         """A list of tokens found by the lexer."""
         if not self._parsed_data:
             self.process()

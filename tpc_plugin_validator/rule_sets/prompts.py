@@ -69,18 +69,6 @@ class Prompts:
         self._check_duplicates()
         return self._validation_results
 
-    @staticmethod
-    def _token_is_valid(token) -> bool:
-        """
-        Check to ensure that the given token is valid for this section.
-
-        :param token: The token to check.
-
-        :return: True if valid, Otherwise False.
-        """
-        valid_tokens = ['Assignment', 'Comment']
-        return token.token_name in valid_tokens
-
     def _check_condition_used(self, token) -> bool:
         """
         Check to ensure all conditions are used
@@ -95,6 +83,18 @@ class Prompts:
                 'transitions', {}
             )
         )
+
+    def _check_default(self):
+        """Check to ensure the default section of the prompt file is blank or only contains comments."""
+        for default_item in self._prompts_content.get('default', []):
+            if default_item.token_name != 'Comment':
+                self._validation_results.append(
+                    ValidationResult(
+                        rule='PromptsDefaultContentViolation',
+                        message=f'A token of type "{default_item.token_name}" has been found in the prompt file outwith a valid section on line {default_item.line_number}.',
+                        severity=Severity.WARNING,
+                    )
+                )
 
     def _check_duplicates(self):
         """
@@ -116,19 +116,6 @@ class Prompts:
                     )
                 )
 
-
-    def _check_default(self):
-        """Check to ensure the default section of the prompt file is blank or only contains comments."""
-        for default_item in self._prompts_content.get('default', []):
-            if default_item.token_name != 'Comment':
-                self._validation_results.append(
-                    ValidationResult(
-                        rule='PromptsDefaultContentViolation',
-                        message=f'A token of type "{default_item.token_name}" has been found in the prompt file outwith a valid section on line {default_item.line_number}.',
-                        severity=Severity.WARNING,
-                    )
-                )
-
     def _check_valid_sections(self):
         """Check to ensure only valid sections are found the prompt file."""
         allowed_sections = ('default', 'conditions')
@@ -141,3 +128,24 @@ class Prompts:
                         severity=Severity.WARNING,
                     )
                 )
+
+    @staticmethod
+    def _token_is_valid(token) -> bool:
+        """
+        Check to ensure that the given token is valid for this section.
+
+        :param token: The token to check.
+
+        :return: True if valid, Otherwise False.
+        """
+        valid_tokens = ['Assignment', 'Comment']
+        return token.token_name in valid_tokens
+
+    @staticmethod
+    def get_config_key() -> str:
+        """
+        Property to identify the config key to use for the rule set.
+
+        :return: The config key as a string.
+        """
+        return 'prompts'
