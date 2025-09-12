@@ -9,3 +9,4 @@ class StateTransition(object):
     from_state: str
     condition: str
     to_state: str
+    token_name: str = 'State Transition'

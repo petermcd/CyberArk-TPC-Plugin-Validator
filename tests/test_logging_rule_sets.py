@@ -2,12 +2,12 @@
 import pytest
 
 from tpc_plugin_validator.parser.parser import Parser
-from tpc_plugin_validator.rules.logging_validation import LoggingValidation
+from tpc_plugin_validator.rule_sets.logging import Logging
 from tpc_plugin_validator.utilities.severity import Severity
 from tpc_plugin_validator.utilities.validation_result import ValidationResult
 
 
-class TestLoggingRuleSets():
+class TestLoggingRuleSets(object):
     @pytest.mark.parametrize(
         "process_file, prompts_file, enabled, expected_results",
         [
@@ -89,6 +89,18 @@ class TestLoggingRuleSets():
                     ),
                 ],
             ),
+            (
+                'tests/data/WARNING-LoggingTokenViolation/process.ini',
+                'tests/data/empty_prompts.ini',
+                True,
+                [
+                    ValidationResult(
+                        rule='LoggingTokenViolation',
+                        severity=Severity.WARNING,
+                        message='The token type "State Transition" is not valid in the "Debug Information" section, found on line 24.',
+                    ),
+                ],
+            ),
         ],
     )
     def test_logging_rules(self, process_file: str, prompts_file: str, enabled: bool, expected_results: list[ValidationResult]) -> None:
@@ -103,7 +115,9 @@ class TestLoggingRuleSets():
         process_content = parser.process_file
         prompts_content = parser.prompts_file
 
-        rule = LoggingValidation(prompts=prompts_content, process=process_content, enabled=enabled)
+        config: dict[str, bool | int | str] = {'enabled': enabled}
+
+        rule = Logging(prompts=prompts_content, process=process_content, config=config)
         results = rule.validate()
 
         assert len(results) == len(expected_results)

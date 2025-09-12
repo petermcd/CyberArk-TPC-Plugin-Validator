@@ -18,7 +18,7 @@ dev = [
 ]
 
 [tool.pytest.ini_options]
-addopts = "--cov=tpc_plugin_validator"
+addopts = "--cov=tpc_plugin_validator --cov-report term-missing"
 
 [tool.isort]
 py_version=310

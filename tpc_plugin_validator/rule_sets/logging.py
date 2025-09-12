@@ -1,10 +1,9 @@
 # Handle validation of the logging settings in the process file.
-from tpc_plugin_validator.parser.parser import Parser
 from tpc_plugin_validator.utilities.severity import Severity
 from tpc_plugin_validator.utilities.validation_result import ValidationResult
 
 
-class LoggingValidation:
+class Logging:
     """ Validate the logging settings in the process file. """
     __slots__ = (
         '_enabled',
@@ -12,18 +11,16 @@ class LoggingValidation:
         '_validation_results',
     )
 
-    def __init__(self, process, prompts, enabled: bool=True) -> None:
+    def __init__(self, process, prompts, config: dict[str, bool | int | str]) -> None:
         """
         Initialize the LoggingValidation with prompts and process configurations.
 
         :param process: Parsed process file.
         :param prompts: Not used, but included for interface consistency.
-        :param enabled: True for enabled or False for disabled.
+        :param config: Dictionary containing setting for enabled with either True for enabled or False for disabled.
         """
         _ = prompts
-        # TODO - Change the rule names
-        # TODO - add option to disable this validation
-        self._enabled = enabled
+        self._enabled = config.get('enabled', True)
         self._process_content = process
         self._validation_results: list[ValidationResult] = []
 
@@ -42,13 +39,37 @@ class LoggingValidation:
                 )
             )
             return self._validation_results
-        logging_settings = self._process_content['Debug Information']
-        for logging_setting in logging_settings:
-            if not self._check_setting_name(setting=logging_setting.name):
+        logging_tokens = self._process_content['Debug Information']
+        for logging_token in logging_tokens:
+            if not self._token_is_valid(token=logging_token):
+                self._validation_results.append(
+                    ValidationResult(
+                        rule='LoggingTokenViolation',
+                        message=f'The token type "{logging_token.token_name}" is not valid in the "Debug Information" section, found on line {logging_token.line_number}.',
+                        severity=Severity.WARNING,
+                    )
+                )
                 continue
-            self._check_setting_value(setting=logging_setting.name, value=logging_setting.assigned)
+            if logging_token.token_name == 'Comment':
+                continue
+            if not self._check_setting_name(setting=logging_token.name):
+                continue
+            self._check_setting_value(setting=logging_token.name, value=logging_token.assigned)
 
         return self._validation_results
+
+    @staticmethod
+    def _token_is_valid(token) -> bool:
+        """
+        Check to ensure that the given token is valid for this section.
+
+        :param token: The token to check.
+
+        :return: True if valid, Otherwise False.
+        """
+        valid_tokens = ['Assignment', 'Comment']
+        return token.token_name in valid_tokens
+
 
     def _check_setting_name(self, setting: str) -> bool:
         """

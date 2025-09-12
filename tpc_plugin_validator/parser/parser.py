@@ -1,4 +1,6 @@
 """Parser module for reading and processing configuration files."""
+import os
+
 from tpc_plugin_validator.lexer.lexer import Lexer
 from tpc_plugin_validator.lexer.utilities.token_name import TokenName
 
@@ -7,7 +9,9 @@ class Parser(object):
     """Object to handle parsing ini files."""
     __slots__ = (
         '_process_file',
+        '_process_file_path',
         '_prompts_file',
+        '_prompts_file_path',
     )
 
     def __init__(self, process_file: str, prompts_file: str) -> None:
@@ -17,12 +21,20 @@ class Parser(object):
         :param process_file (str): Path to the process configuration file.
         :param prompts_file (str): Path to the prompt configuration file.
         """
+        self._process_file_path = process_file
+        self._prompts_file_path = prompts_file
 
-        with open(process_file, 'r', encoding='utf-8') as process_handler:
+        if not os.path.isfile(self._process_file_path):
+            raise FileNotFoundError(f'The process file "{self._process_file_path}" does not exist or is not accessible.')
+
+        if not os.path.isfile(self._prompts_file_path):
+            raise FileNotFoundError(f'The prompts file "{self._prompts_file_path}" does not exist or is not accessible.')
+
+        with open(self._process_file_path, 'r', encoding='utf-8') as process_handler:
             process_lexer = Lexer(source=process_handler.read())
             self._prepare_process(lexed_process=process_lexer)
 
-        with open(prompts_file, 'r', encoding='utf-8') as prompts_handler:
+        with open(self._prompts_file_path, 'r', encoding='utf-8') as prompts_handler:
             prompts_lexer = Lexer(source=prompts_handler.read())
             self._prepare_prompts(lexed_prompts=prompts_lexer)
 

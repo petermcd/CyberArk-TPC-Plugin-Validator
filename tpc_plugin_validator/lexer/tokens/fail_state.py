@@ -8,3 +8,4 @@ class FailState(object):
     line_number: int
     message: str
     code: int
+    token_name: str = 'Fail State'

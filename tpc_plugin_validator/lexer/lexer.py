@@ -44,7 +44,7 @@ class Lexer(object):
         """Process the content of the file line by line."""
 
         if self._parsed_data:
-            # Returning as we have parsed the a
+            # Returning as we have parsed the data already.
             return
 
         for line_number, line in enumerate(self._source.splitlines(), start=1):

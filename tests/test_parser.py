@@ -1,38 +1,11 @@
 """Tests for the Parser class in tpc_plugin_validator.parser module."""
 import pytest
 
-from tpc_plugin_validator.parser import Parser
-from tpc_plugin_validator.validation_result import ValidationResult
+from tpc_plugin_validator.parser.parser import Parser
 
 
 class TestParser(object):
-
-    @pytest.mark.parametrize(
-        'process_file, prompts_file, expected_results',
-        [
-            (
-                'tests/data/OK-Process-Parses/process.ini',
-                'tests/data/OK-Process-Parses/prompts.ini',
-                [],
-            ),
-            (
-                'tests/data/OK-Prompts-Parses/process.ini',
-                'tests/data/OK-Prompts-Parses/prompts.ini',
-                [],
-            ),
-        ]
-    )
-    def test_parser(self, process_file: str, prompts_file: str, expected_results: list[ValidationResult]) -> None:
-        """
-        Test the Parser class with various input files.
-
-        :param process_file: Path to the process file.
-        :param prompts_file: Path to the prompt file.
-        :param expected_results: Expected validation results.
-        """
-        parser = Parser(prompts_file_path=prompts_file, process_file_path=process_file)
-        parser.parse()
-        assert parser._validations == expected_results
+    """Test for the Parser class."""
 
     @pytest.mark.parametrize(
         'process_file, prompts_file, expected_exception, expected_error',
@@ -41,13 +14,13 @@ class TestParser(object):
                 'tests/data/CRITICAL-Process-File-Doesnt-Exist/process.ini',
                 'tests/data/CRITICAL-Process-File-Doesnt-Exist/prompts.ini',
                 FileNotFoundError,
-                'The file at "tests/data/CRITICAL-Process-File-Doesnt-Exist/process.ini" does not exist or is not accessible.',
+                'The process file "tests/data/CRITICAL-Process-File-Doesnt-Exist/process.ini" does not exist or is not accessible.',
             ),
             (
                 'tests/data/CRITICAL-Prompts-File-Doesnt-Exist/process.ini',
                 'tests/data/CRITICAL-Prompts-File-Doesnt-Exist/prompts.ini',
                 FileNotFoundError,
-                'The file at "tests/data/CRITICAL-Prompts-File-Doesnt-Exist/prompts.ini" does not exist or is not accessible.',
+                'The prompts file "tests/data/CRITICAL-Prompts-File-Doesnt-Exist/prompts.ini" does not exist or is not accessible.',
             ),
         ]
     )
@@ -60,7 +33,6 @@ class TestParser(object):
         :param expected_exception: Expected exception type.
         :param expected_error: Expected error message.
         """
-        parser = Parser(prompts_file_path=prompts_file, process_file_path=process_file)
         with pytest.raises(expected_exception) as excinfo:
-            parser.parse()
+            Parser(prompts_file=prompts_file, process_file=process_file)
         assert str(excinfo.value) == expected_error

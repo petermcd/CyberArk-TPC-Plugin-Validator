@@ -9,3 +9,4 @@ class Assignment(object):
     name: str
     equals: str | None = None
     assigned: str | None = None
+    token_name: str = 'Assignment'

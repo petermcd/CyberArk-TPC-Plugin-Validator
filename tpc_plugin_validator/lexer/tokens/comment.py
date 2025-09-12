@@ -7,3 +7,4 @@ class Comment(object):
     """Dataclass to hold a comment."""
     line_number: int
     content: str
+    token_name: str = 'Comment'
