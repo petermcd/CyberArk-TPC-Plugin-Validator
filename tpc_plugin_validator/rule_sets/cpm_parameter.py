@@ -9,8 +9,8 @@ from tpc_plugin_validator.utilities.severity import Severity
 class CPMParameter(RuleSet):
     """Handle validation of the parameter validations."""
 
-    CONFIG_KEY='cpm_parameter_validation'
-    VALID_TOKEN_TYPES={TokenName.COMMENT.value, TokenName.CPM_PARAMETER_VALIDATION.value,}
+    CONFIG_KEY: str = 'cpm_parameter_validation'
+    VALID_TOKEN_TYPES: set[str] = {TokenName.COMMENT.value, TokenName.CPM_PARAMETER_VALIDATION.value,}
 
     def validate(self) -> None:
         """Validate the parameter validations in the process file."""

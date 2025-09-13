@@ -4,9 +4,9 @@ from tpc_plugin_validator.utilities.severity import Severity
 
 
 class Prompts(RuleSet):
-    """Validate the logging settings in the process file."""
+    """Handle validation of the prompts file."""
 
-    CONFIG_KEY='prompts'
+    CONFIG_KEY: str = 'prompts'
 
     def validate(self) -> None:
         """Validate the prompts in the prompts file."""
