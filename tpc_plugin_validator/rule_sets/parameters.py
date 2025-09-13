@@ -18,12 +18,12 @@ class Parameters(RuleSet):
             )
             return
 
-        parameters = self._prompts_content.get('parameters', [])
+        parameters = self._process_content.get('parameters', [])
         for parameter in parameters:
             if not self._token_is_valid(token=parameter):
                 self._add_violation(
                     name='ParametersTokenViolation',
-                    description=f'The token type "{parameter.token_name}" is not valid in the "condition" section, found on line {parameter.line_number}.',
+                    description=f'The token type "{parameter.token_name}" is not valid in the "parameters" section, found on line {parameter.line_number}.',
                     severity=Severity.WARNING,
                 )
 
@@ -44,21 +44,35 @@ class Parameters(RuleSet):
             if token.token_name != 'Assignment':
                 continue
             if token.name == 'SendHumanMin':
-                human_min = float(token.assigned)
+                try:
+                    human_min = float(token.assigned)
+                except ValueError:
+                    self._add_violation(
+                        name='ParametersMinInvalidValueViolation',
+                        severity=Severity.CRITICAL,
+                        description=f'SendHumanMin is set to "{token.assigned}", the value must be numerical, found on line {token.line_number}.'
+                    )
                 continue
             if token.name == 'SendHumanMax':
-                human_max = float(token.assigned)
+                try:
+                    human_max = float(token.assigned)
+                except ValueError:
+                    self._add_violation(
+                        name='ParametersMaxInvalidValueViolation',
+                        severity=Severity.CRITICAL,
+                        description=f'SendHumanMax is set to "{token.assigned}", the value must be numerical, found on line {token.line_number}.'
+                    )
 
         if human_min is not None and human_max is not None and human_min > human_max:
             self._add_violation(
-                name='ParameterMinGreaterThanMaxViolation',
+                name='ParametersMinGreaterThanMaxViolation',
                 severity=Severity.CRITICAL,
                 description=f'SendHumanMin is set to {human_min} and SendHumanMax is set to {human_max}, SendHumanMin cannot be greater than SendHumanMax.'
             )
 
         if human_min is not None and human_min < 0:
             self._add_violation(
-                name='ParameterMinLessThanZeroViolation',
+                name='ParametersMinLessThanZeroViolation',
                 severity=Severity.CRITICAL,
                 description=f'SendHumanMin is set to {human_min} this cannot be less than 0.'
             )

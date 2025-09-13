@@ -42,22 +42,22 @@ class TestParameterRuleSets(object):
                 ],
             ),
             (
-                'tests/data/CRITICAL-ParameterMinGreaterThanMaxViolation/process.ini',
+                'tests/data/CRITICAL-ParametersMinGreaterThanMaxViolation/process.ini',
                 'tests/data/empty_prompts.ini',
                 [
                     ValidationResult(
-                        rule='ParameterMinGreaterThanMaxViolation',
+                        rule='ParametersMinGreaterThanMaxViolation',
                         severity=Severity.CRITICAL,
                         message='SendHumanMin is set to 1.0 and SendHumanMax is set to 0.0, SendHumanMin cannot be greater than SendHumanMax.',
                     )
                 ],
             ),
             (
-                'tests/data/CRITICAL-ParameterMinLessThanZeroViolation/process.ini',
+                'tests/data/CRITICAL-ParametersMinLessThanZeroViolation/process.ini',
                 'tests/data/empty_prompts.ini',
                 [
                     ValidationResult(
-                        rule='ParameterMinLessThanZeroViolation',
+                        rule='ParametersMinLessThanZeroViolation',
                         severity=Severity.CRITICAL,
                         message='SendHumanMin is set to -1.0 this cannot be less than 0.',
                     )
@@ -71,6 +71,39 @@ class TestParameterRuleSets(object):
                         rule='ParameterMaxLessThanZeroViolation',
                         severity=Severity.CRITICAL,
                         message='SendHumanMax is set to -1.0 this cannot be less than 0.',
+                    )
+                ],
+            ),
+            (
+                'tests/data/WARNING-ParametersTokenViolation/process.ini',
+                'tests/data/empty_prompts.ini',
+                [
+                    ValidationResult(
+                        rule='ParametersTokenViolation',
+                        severity=Severity.WARNING,
+                        message='The token type "State Transition" is not valid in the "parameters" section, found on line 16.',
+                    )
+                ],
+            ),
+            (
+                'tests/data/CRITICAL-ParametersMinInvalidValueViolation/process.ini',
+                'tests/data/empty_prompts.ini',
+                [
+                    ValidationResult(
+                        rule='ParametersMinInvalidValueViolation',
+                        severity=Severity.CRITICAL,
+                        message='SendHumanMin is set to "twenty-two", the value must be numerical, found on line 11.',
+                    )
+                ],
+            ),
+            (
+                'tests/data/CRITICAL-ParametersMaxInvalidValueViolation/process.ini',
+                'tests/data/empty_prompts.ini',
+                [
+                    ValidationResult(
+                        rule='ParametersMaxInvalidValueViolation',
+                        severity=Severity.CRITICAL,
+                        message='SendHumanMax is set to "twenty-two", the value must be numerical, found on line 11.',
                     )
                 ],
             ),
