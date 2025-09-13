@@ -36,11 +36,9 @@ class Prompts(RuleSet):
 
     def _check_condition_used(self, token):
         """
-        Check to ensure all conditions are used
+        Check to ensure all conditions are used and case matches.
 
         :param token: The token to check.
-
-        :return: True if used, Otherwise False.
         """
         found = False
         for transition in self._process_content.get('transitions', {}):
