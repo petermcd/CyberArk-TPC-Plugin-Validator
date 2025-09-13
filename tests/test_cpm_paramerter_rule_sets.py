@@ -1,43 +1,43 @@
-"""Tests for the parameter validations rule set."""
+"""Tests for the cpm parameter validations rule set."""
 
 import pytest
 
 from tpc_plugin_validator.parser.parser import Parser
-from tpc_plugin_validator.rule_sets.parameter import Parameter
+from tpc_plugin_validator.rule_sets.cpm_parameter import CPMParameter
 from tpc_plugin_validator.utilities.severity import Severity
 from tpc_plugin_validator.utilities.validation_result import ValidationResult
 
 
-class TestParameterRuleSets(object):
-    """Tests for the parameter validations rule set."""
+class TestCPMParameterRuleSets(object):
+    """Tests for the cpm parameter validations rule set."""
 
     @pytest.mark.parametrize(
         "process_file,prompts_file,expected_results",
         [
             (
-                'tests/data/WARNING-ParameterNoSectionViolation/process.ini',
+                'tests/data/WARNING-CPMParameterNoSectionViolation/process.ini',
                 'tests/data/empty_prompts.ini',
                 [
                     ValidationResult(
-                        rule='ParameterNoSectionViolation',
+                        rule='CPMParameterNoSectionViolation',
                         severity=Severity.WARNING,
                         message='The process file does not contain a "CPM Parameters Validation" section.',
                     ),
                 ],
             ),
             (
-                'tests/data/WARNING-ParameterTokenViolation/process.ini',
+                'tests/data/WARNING-CPMParameterTokenViolation/process.ini',
                 'tests/data/empty_prompts.ini',
                 [
                     ValidationResult(
-                        rule='ParameterTokenViolation',
+                        rule='CPMParameterTokenViolation',
                         severity=Severity.WARNING,
                         message='The token type "State Transition" is not valid in the "CPM Parameters Validation" section, found on line 10.',
                     ),
                 ],
             ),
             (
-                'tests/data/OK-Parameter/process.ini',
+                'tests/data/OK-CPMParameter/process.ini',
                 'tests/data/empty_prompts.ini',
                 [],
             ),
@@ -55,7 +55,7 @@ class TestParameterRuleSets(object):
         process_content = parser.process_file
         prompts_content = parser.prompts_file
 
-        rule = Parameter(prompts=prompts_content, process=process_content, config={})
+        rule = CPMParameter(prompts=prompts_content, process=process_content, config={})
         rule.validate()
         results = rule.get_violations()
 

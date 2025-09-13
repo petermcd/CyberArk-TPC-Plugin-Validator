@@ -1,18 +1,18 @@
 """Handle validation of the parameter validations."""
-from tpc_plugin_validator.lexer.tokens.parameter_validation import \
-    ParameterValidation
+from tpc_plugin_validator.lexer.tokens.cpm_parameter_validation import \
+    CPMParameterValidation
 from tpc_plugin_validator.rule_sets.rule_set import RuleSet
 from tpc_plugin_validator.utilities.severity import Severity
 
 
-class Parameter(RuleSet):
+class CPMParameter(RuleSet):
     """Handle validation of the parameter validations."""
 
     def validate(self) -> None:
         """Validate the parameter validations in the process file."""
         if 'CPM Parameters Validation' not in self._process_content.keys():
             self._add_violation(
-                name='ParameterNoSectionViolation',
+                name='CPMParameterNoSectionViolation',
                 description='The process file does not contain a "CPM Parameters Validation" section.',
                 severity=Severity.WARNING,
             )
@@ -21,7 +21,7 @@ class Parameter(RuleSet):
         for validation_token in validation_tokens:
             if not self._token_is_valid(token=validation_token):
                 self._add_violation(
-                    name='ParameterTokenViolation',
+                    name='CPMParameterTokenViolation',
                     description=f'The token type "{validation_token.token_name}" is not valid in the "CPM Parameters Validation" section, found on line {validation_token.line_number}.',
                     severity=Severity.WARNING,
                 )
@@ -31,7 +31,7 @@ class Parameter(RuleSet):
             if not self._check_parameter_name(token=validation_token):
                 continue
 
-    def _check_parameter_name(self, token: ParameterValidation):
+    def _check_parameter_name(self, token: CPMParameterValidation):
         """
         Check to make sure the parameter is used.
 
@@ -54,4 +54,4 @@ class Parameter(RuleSet):
 
         :return: Set of token types.
         """
-        return {'Comment', 'Parameter Validation',}
+        return {'Comment', 'CPM Parameter Validation',}

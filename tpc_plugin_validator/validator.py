@@ -1,6 +1,7 @@
 """Class to manage validations."""
 
 from tpc_plugin_validator.parser.parser import Parser
+from tpc_plugin_validator.rule_sets.cpm_parameter import CPMParameter
 from tpc_plugin_validator.rule_sets.logging import Logging
 from tpc_plugin_validator.rule_sets.prompts import Prompts
 from tpc_plugin_validator.utilities.validation_result import ValidationResult
@@ -26,6 +27,7 @@ class Validator(object):
         self._parser: Parser = parser
         self._validations: list[ValidationResult] = []
         self._rule_sets = (
+            CPMParameter,
             Prompts,
             Logging,
         )
