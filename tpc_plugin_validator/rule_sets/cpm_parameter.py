@@ -52,13 +52,13 @@ class CPMParameter(RuleSet):
         if token.name in allowed_missing:
             return
 
-        for condition in self._prompts_content.get('conditions', {}):
+        for condition in self._prompts_content.get('conditions', []):
             if condition.token_name != 'Assignment':
                 continue
             if condition.assigned and f'<{token.name}>' in condition.assigned:
                 return
 
-        for state in self._process_content.get('states', {}):
+        for state in self._process_content.get('states', []):
             if state.token_name != 'Assignment':
                 continue
             if state.assigned and f'<{token.name}>' in state.assigned:
