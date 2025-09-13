@@ -1,6 +1,7 @@
 """Handle validation of states."""
 from collections import Counter
 
+from tpc_plugin_validator.lexer.tokens.assignment import Assignment
 from tpc_plugin_validator.lexer.tokens.fail_state import FailState
 from tpc_plugin_validator.lexer.utilities.token_name import TokenName
 from tpc_plugin_validator.rule_sets.rule_set import RuleSet
@@ -45,7 +46,7 @@ class States(RuleSet):
         codes: list[int] = []
         for fail_state in fail_states:
             codes.append(fail_state.code)
-            if fail_state.code < 999 or fail_state.code > 10000:
+            if fail_state.code < 1000 or fail_state.code > 9999:
                 self._add_violation(
                     name='StatesFailStateViolation',
                     description=f'A fail state has a failure code of "{fail_state.code}", the failure code should be a 4 digit code, found on line {fail_state.line_number}.',
@@ -73,25 +74,22 @@ class States(RuleSet):
 
     def _check_valid_end_state(self) -> None:
         """Check to ensure that the states contain a valid END state."""
-        end_state_value: str | None = None
-        found: bool = False
+        end_state: Assignment | None = None
         for state in self._process_content.get('states', []):
             if state.token_name == 'Assignment' and state.name == 'END':
-                end_state_value = state.assigned
-                found = True
+                end_state = state
                 break
             elif state.token_name == 'Assignment' and state.name.lower() == 'end':
-                end_state_value = state.assigned
-                found = True
+                end_state = state
                 self._add_violation(
                     name='StatesEndStateCaseViolation',
-                    description=f'The END state has been declared as "{state.name}", the END state should be in upper case, found on line {state.line_number}.',
+                    description=f'The END state has been declared as "{end_state.name}", the END state should be in upper case, found on line {end_state.line_number}.',
                     severity=Severity.CRITICAL,
                 )
                 break
-        if found and end_state_value is not None:
+        if end_state and end_state.assigned is not None:
             self._add_violation(
                 name='StatesEndStateValueViolation',
-                description=f'The END state has been assigned the value "{end_state_value}", the END state should not have a value, found on line {state.line_number}.',
+                description=f'The END state has been assigned the value "{end_state.assigned}", the END state should not have a value, found on line {end_state.line_number}.',
                 severity=Severity.CRITICAL,
             )

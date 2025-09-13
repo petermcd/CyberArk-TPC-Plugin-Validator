@@ -53,12 +53,15 @@ class Parameters(RuleSet):
         if not human_min and not human_max:
             return
 
-        if human_min and human_min.assigned and human_max and human_max.assigned and float(human_min.assigned) > float(human_max.assigned):
-            self._add_violation(
-                name='ParametersMinGreaterThanMaxViolation',
-                severity=Severity.CRITICAL,
-                description=f'SendHumanMin is set to {float(human_min.assigned)} and SendHumanMax is set to {float(human_max.assigned)}, SendHumanMin cannot be greater than SendHumanMax.'
-            )
+        try:
+            if human_min and human_min.assigned and human_max and human_max.assigned and float(human_min.assigned) > float(human_max.assigned):
+                self._add_violation(
+                    name='ParametersMinGreaterThanMaxViolation',
+                    severity=Severity.CRITICAL,
+                    description=f'SendHumanMin is set to {float(human_min.assigned)} and SendHumanMax is set to {float(human_max.assigned)}, SendHumanMin cannot be greater than SendHumanMax.'
+                )
+        except ValueError:
+            pass
 
         try:
             if human_min and human_min.assigned and float(human_min.assigned) < 0:
@@ -89,4 +92,3 @@ class Parameters(RuleSet):
                     severity=Severity.CRITICAL,
                     description=f'SendHumanMax is set to "{human_max.assigned}", the value must be numerical, found on line {human_max.line_number}.'
                 )
-
