@@ -7,7 +7,7 @@ from tpc_plugin_validator.utilities.severity import Severity
 class Logging(RuleSet):
     """ Validate the logging settings in the process file. """
 
-    CONFIG_KEY='logging'
+    CONFIG_KEY: str = 'logging'
 
     def validate(self) -> None:
         """Validate the logging settings in the process file."""

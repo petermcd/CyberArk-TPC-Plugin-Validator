@@ -17,8 +17,8 @@ class RuleSet(ABC):
         '_violations',
     )
 
-    CONFIG_KEY=''
-    VALID_TOKEN_TYPES={TokenName.ASSIGNMENT.value, TokenName.COMMENT.value,}
+    CONFIG_KEY: str = ''
+    VALID_TOKEN_TYPES: set[str] = {TokenName.ASSIGNMENT.value, TokenName.COMMENT.value,}
 
     def __init__(self, process, prompts, config: dict[str, dict[str, bool | int | str]]) -> None:
         """
@@ -57,16 +57,6 @@ class RuleSet(ABC):
             )
         )
 
-    def _token_is_valid(self, token) -> bool:
-        """
-        Check to ensure that the given token is valid for this section.
-
-        :param token: The token to check.
-
-        :return: True if valid, Otherwise False.
-        """
-        return token.token_name in self.VALID_TOKEN_TYPES
-
     def _check_duplicates(self, tokens, rule_name: str, file_type: str):
         """
         Check to ensure there are no duplicate assignment tokens.
@@ -84,3 +74,13 @@ class RuleSet(ABC):
                     description=f'The assignment "{token_name}" has been declared {counted_keys[token_name]} times in the {file_type} file.',
                     severity=Severity.WARNING,
                 )
+
+    def _token_is_valid(self, token) -> bool:
+        """
+        Check to ensure that the given token is valid for this section.
+
+        :param token: The token to check.
+
+        :return: True if valid, Otherwise False.
+        """
+        return token.token_name in self.VALID_TOKEN_TYPES
