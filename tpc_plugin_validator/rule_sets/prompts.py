@@ -1,4 +1,4 @@
-# Handle validation of the prompts file.
+"""Handle validation of the prompts file."""
 from collections import Counter
 
 from tpc_plugin_validator.rule_sets.rule_set import RuleSet
@@ -89,23 +89,18 @@ class Prompts(RuleSet):
                     severity=Severity.WARNING,
                 )
 
-    @staticmethod
-    def _token_is_valid(token) -> bool:
-        """
-        Check to ensure that the given token is valid for this section.
-
-        :param token: The token to check.
-
-        :return: True if valid, Otherwise False.
-        """
-        valid_tokens = ['Assignment', 'Comment']
-        return token.token_name in valid_tokens
-
-    @staticmethod
-    def get_config_key() -> str:
+    def _get_config_key(self) -> str:
         """
         Property to identify the config key to use for the rule set.
 
         :return: The config key as a string.
         """
         return 'prompts'
+
+    def _get_valid_token_types(self) -> set[str]:
+        """
+        Provide a set of token types allowed in the section being analysed.
+
+        :return: Set of token types.
+        """
+        return {'Assignment', 'Comment',}

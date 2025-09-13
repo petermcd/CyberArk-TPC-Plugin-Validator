@@ -1,5 +1,5 @@
 """Parent class for rule sets."""
-from abc import ABC
+from abc import ABC, abstractmethod
 
 from tpc_plugin_validator.utilities.severity import Severity
 from tpc_plugin_validator.utilities.validation_result import ValidationResult
@@ -23,7 +23,7 @@ class RuleSet(ABC):
         :param prompts: Parsed prompts file.
         :param config: Not used, but included for interface consistency.
         """
-        self._config = config.get(self.get_config_key(), {})
+        self._config = config.get(self._get_config_key(), {})
         self._process_content = process
         self._prompts_content = prompts
         self._violations: list[ValidationResult] = []
@@ -52,11 +52,29 @@ class RuleSet(ABC):
             )
         )
 
-    @staticmethod
-    def get_config_key() -> str:
+    def _token_is_valid(self, token) -> bool:
+        """
+        Check to ensure that the given token is valid for this section.
+
+        :param token: The token to check.
+
+        :return: True if valid, Otherwise False.
+        """
+        return token.token_name in self._get_valid_token_types()
+
+    @abstractmethod
+    def _get_config_key(self) -> str:
         """
         Property to identify the config key to use for the rule set.
 
         :return: The config key as a string.
         """
-        return 'prompts'
+
+    @abstractmethod
+    def _get_valid_token_types(self) -> set[str]:
+        """
+        Provide a set of token types allowed in the section being analysed.
+
+        :return: Set of token types.
+        """
+

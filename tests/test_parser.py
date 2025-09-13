@@ -8,7 +8,7 @@ class TestParser(object):
     """Test for the Parser class."""
 
     @pytest.mark.parametrize(
-        'process_file, prompts_file, expected_error',
+        'process_file,prompts_file,expected_error',
         [
             (
                 'tests/data/CRITICAL-Process-File-Doesnt-Exist/process.ini',

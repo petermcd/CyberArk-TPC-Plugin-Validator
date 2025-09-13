@@ -3,10 +3,13 @@ import re
 from tpc_plugin_validator.lexer.tokens.assignment import Assignment
 from tpc_plugin_validator.lexer.tokens.comment import Comment
 from tpc_plugin_validator.lexer.tokens.fail_state import FailState
+from tpc_plugin_validator.lexer.tokens.parameter_validation import \
+    ParameterValidation
 from tpc_plugin_validator.lexer.tokens.section_header import SectionHeader
 from tpc_plugin_validator.lexer.tokens.state_transition import StateTransition
 from tpc_plugin_validator.lexer.utilities.regex import (ASSIGNMENT, COMMENT,
                                                         FAIL_STATE,
+                                                        PARAMETER_VALIDATION,
                                                         SECTION_HEADER,
                                                         TRANSITION)
 from tpc_plugin_validator.lexer.utilities.token_name import TokenName
@@ -28,16 +31,17 @@ class Lexer(object):
         self._parsed_data: list[
             tuple[
                 TokenName,
-                Assignment | Comment | FailState | SectionHeader | StateTransition,
+                Assignment | Comment | FailState | ParameterValidation | SectionHeader | StateTransition,
             ]
         ] = []
         self._source = source
         self._token_specs = [
-            (re.compile(ASSIGNMENT), TokenName.ASSIGNMENT, '_process_assignment'),
-            (re.compile(COMMENT), TokenName.COMMENT, '_process_comment'),
-            (re.compile(FAIL_STATE), TokenName.FAIL_STATE, '_process_fail_state'),
-            (re.compile(SECTION_HEADER), TokenName.SECTION_HEADER, '_process_section_header'),
-            (re.compile(TRANSITION), TokenName.STATE_TRANSITION, '_process_state_transition'),
+            (re.compile(ASSIGNMENT, re.IGNORECASE), TokenName.ASSIGNMENT, '_process_assignment'),
+            (re.compile(COMMENT, re.IGNORECASE), TokenName.COMMENT, '_process_comment'),
+            (re.compile(FAIL_STATE, re.IGNORECASE), TokenName.FAIL_STATE, '_process_fail_state'),
+            (re.compile(PARAMETER_VALIDATION, re.IGNORECASE), TokenName.PARAMETER_VALIDATION, '_process_parameter_validation'),
+            (re.compile(SECTION_HEADER, re.IGNORECASE), TokenName.SECTION_HEADER, '_process_section_header'),
+            (re.compile(TRANSITION, re.IGNORECASE), TokenName.STATE_TRANSITION, '_process_state_transition'),
         ]
 
     def process(self):
@@ -145,8 +149,31 @@ class Lexer(object):
             )
         )
 
+    def _process_parameter_validation(self, match: re.Match, line_number: int) -> None:
+        """
+        Process the provided parameter validation.
+
+        :param match: Regex match of the parameter validation.
+        """
+        allow_characters: str | None = None
+        if match['allowcharacters']:
+            allow_characters = str(match['allowcharacters']).strip()
+
+        self._parsed_data.append(
+            (
+                TokenName.PARAMETER_VALIDATION,
+                ParameterValidation(
+                    name=str(match['name']),
+                    source=str(match['source']),
+                    mandatory=str(match['mandatory']),
+                    allow_characters=allow_characters,
+                    line_number=line_number,
+                )
+            )
+        )
+
     @property
-    def tokens(self) -> list[tuple[TokenName, Assignment | Comment | FailState | SectionHeader | StateTransition]]:
+    def tokens(self) -> list[tuple[TokenName, Assignment | Comment | FailState | ParameterValidation | SectionHeader | StateTransition]]:
         """A list of tokens found by the lexer."""
         if not self._parsed_data:
             self.process()

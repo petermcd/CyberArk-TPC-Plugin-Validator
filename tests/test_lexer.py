@@ -197,7 +197,7 @@ class TestLexer(object):
         assert tokens == expected_token_list
 
     @pytest.mark.parametrize(
-        'line, expected_exception, expected_error',
+        'line,expected_exception,expected_error',
         [
             (
                 'This line will not match',

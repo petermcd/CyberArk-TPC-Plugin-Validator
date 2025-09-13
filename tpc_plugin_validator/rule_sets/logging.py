@@ -1,4 +1,5 @@
-# Handle validation of the logging settings in the process file.
+"""Handle validation of the logging settings in the process file."""
+from tpc_plugin_validator.lexer.tokens.assignment import Assignment
 from tpc_plugin_validator.rule_sets.rule_set import RuleSet
 from tpc_plugin_validator.utilities.severity import Severity
 
@@ -26,15 +27,15 @@ class Logging(RuleSet):
                 continue
             if logging_token.token_name == 'Comment':
                 continue
-            if not self._check_setting_name(setting=logging_token.name):
+            if not self._check_setting_name(token=logging_token):
                 continue
-            self._check_setting_value(setting=logging_token.name, value=logging_token.assigned)
+            self._check_setting_value(token=logging_token)
 
-    def _check_setting_name(self, setting: str) -> bool:
+    def _check_setting_name(self, token: Assignment) -> bool:
         """
         Check the setting name is valid.
 
-        :param setting: The name of the logging setting.
+        :param token: The token containing the logging setting.
 
         :return: True if the setting name is valid, False otherwise.
         """
@@ -45,70 +46,72 @@ class Logging(RuleSet):
             'ExpectLog',
             'ConsoleOutput',
         ]
-        if setting in valid_settings:
+        if token.name in valid_settings:
             return True
         for valid_setting in valid_settings:
-            if setting.lower() == valid_setting.lower():
+            if token.name.lower() == valid_setting.lower():
                 self._add_violation(
                     name='LoggingSettingNameCaseViolation',
-                    description=f'The logging setting "{setting}" should be set as "{valid_setting}".',
+                    description=f'The logging setting "{token.name}" should be set as "{valid_setting}".',
                     severity=Severity.WARNING,
                 )
                 return False
         self._add_violation(
             name='LoggingSettingNameViolation',
-            description=f'The logging setting "{setting}" is not a valid logging setting. Valid settings are: {", ".join(valid_settings)}.',
+            description=f'The logging setting "{token.name}" is not a valid logging setting. Valid settings are: {", ".join(valid_settings)}.',
             severity=Severity.WARNING,
         )
         return False
 
-    def _check_setting_value(self, setting: str, value: str) -> None:
+    def _check_setting_value(self, token: Assignment) -> None:
         """
         Check the value is in the correct case, is a valid value and is set to no if enabled.
 
-        :param setting: The name of the logging setting.
-        :param value: The value of the logging setting.
+        :param token: The setting token.
         """
 
-        if value.lower() not in ['yes', 'no']:
+        if not token.assigned:
             self._add_violation(
                 name='LoggingValueViolation',
-                description=f'The logging value for "{setting}" is set to "{value}" and is invalid. Valid values are "no" and "yes".',
+                description=f'The logging value for "{token.name}" is blank. Setting should explicitly be set to "no".',
+                severity=Severity.WARNING,
+            )
+            return
+
+        if token.assigned.lower() not in ['yes', 'no']:
+            self._add_violation(
+                name='LoggingValueViolation',
+                description=f'The logging value for "{token.name}" is set to "{token.assigned}" and is invalid. Valid values are "no" and "yes".',
                 severity=Severity.CRITICAL,
             )
             return
 
-        if value.lower() != value:
+        if token.assigned.lower() != token.assigned:
             self._add_violation(
                 name='LoggingValueCaseViolation',
-                description=f'The logging value for "{setting}" is set to "{value}" and is not in lower case. Ensure all logging settings are in lower case.',
+                description=f'The logging value for "{token.name}" is set to "{token.assigned}" and is not in lower case. Ensure all logging settings are in lower case.',
                 severity=Severity.WARNING,
             )
 
-        if value.lower() != 'no':
+        if token.assigned.lower() != 'no':
             self._add_violation(
                 name='LoggingEnabledViolation',
-                description=f'The logging value for "{setting}" is set to "{value}". It is recommended to set all logging settings to "no" for production environments.',
+                description=f'The logging value for "{token.name}" is set to "{token.assigned}". It is recommended to set all logging settings to "no" for production environments.',
                 severity=Severity.CRITICAL if self._config.get('enabled', True) else Severity.INFO,
             )
 
-    @staticmethod
-    def _token_is_valid(token) -> bool:
-        """
-        Check to ensure that the given token is valid for this section.
-
-        :param token: The token to check.
-
-        :return: True if valid, Otherwise False.
-        """
-        valid_tokens = ['Assignment', 'Comment']
-        return token.token_name in valid_tokens
-
-    @staticmethod
-    def get_config_key() -> str:
+    def _get_config_key(self) -> str:
         """
         Property to identify the config key to use for the rule set.
 
         :return: The config key as a string.
         """
         return 'logging'
+
+    def _get_valid_token_types(self) -> set[str]:
+        """
+        Provide a set of token types allowed in the section being analysed.
+
+        :return: Set of token types.
+        """
+        return {'Assignment', 'Comment',}

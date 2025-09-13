@@ -5,6 +5,7 @@ from tpc_plugin_validator.lexer.lexer import Lexer
 from tpc_plugin_validator.lexer.tokens.assignment import Assignment
 from tpc_plugin_validator.lexer.tokens.comment import Comment
 from tpc_plugin_validator.lexer.tokens.fail_state import FailState
+from tpc_plugin_validator.lexer.tokens.parameter_validation import ParameterValidation
 from tpc_plugin_validator.lexer.tokens.section_header import SectionHeader
 from tpc_plugin_validator.lexer.tokens.state_transition import StateTransition
 from tpc_plugin_validator.lexer.utilities.token_name import TokenName
@@ -69,7 +70,7 @@ class Parser(object):
         :return: Result of processing the lexed file.
         """
         current_section_name: str = 'default'
-        section_entries: list[Assignment | Comment | FailState | SectionHeader | StateTransition] = []
+        section_entries: list[Assignment | Comment | FailState | ParameterValidation | SectionHeader | StateTransition] = []
         sorted_lex = {}
         for lexed_line in lexed_file.tokens:
             if lexed_line[0] == TokenName.SECTION_HEADER:

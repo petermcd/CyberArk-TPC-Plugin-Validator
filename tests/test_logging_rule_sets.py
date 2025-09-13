@@ -8,8 +8,10 @@ from tpc_plugin_validator.utilities.validation_result import ValidationResult
 
 
 class TestLoggingRuleSets(object):
+    """Test logging rule sets."""
+
     @pytest.mark.parametrize(
-        "process_file, prompts_file, enabled, expected_results",
+        "process_file,prompts_file,enabled,expected_results",
         [
             (
                 'tests/data/WARNING-LoggingValueCaseViolation/process.ini',
@@ -66,7 +68,7 @@ class TestLoggingRuleSets(object):
                 [],
             ),
             (
-                'tests/data/WARNING-LoggingValueViolation/process.ini',
+                'tests/data/CRITICAL-LoggingValueViolation-InvalidValue/process.ini',
                 'tests/data/empty_prompts.ini',
                 True,
                 [
@@ -74,6 +76,18 @@ class TestLoggingRuleSets(object):
                         rule='LoggingValueViolation',
                         severity=Severity.CRITICAL,
                         message='The logging value for "DebugLogDetailBuiltInActions" is set to "maybe" and is invalid. Valid values are "no" and "yes".',
+                    ),
+                ],
+            ),
+            (
+                'tests/data/WARNING-LoggingValueViolation-EmptyValue/process.ini',
+                'tests/data/empty_prompts.ini',
+                True,
+                [
+                    ValidationResult(
+                        rule='LoggingValueViolation',
+                        severity=Severity.WARNING,
+                        message='The logging value for "DebugLogDetailBuiltInActions" is blank. Setting should explicitly be set to "no".',
                     ),
                 ],
             ),
