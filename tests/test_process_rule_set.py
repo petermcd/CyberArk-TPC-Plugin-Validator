@@ -1,4 +1,4 @@
-"""Tests for the prompts rule set."""
+"""Tests for the process rule set."""
 
 import pytest
 
@@ -8,8 +8,8 @@ from tpc_plugin_validator.utilities.severity import Severity
 from tpc_plugin_validator.utilities.validation_result import ValidationResult
 
 
-class TestPromptsRuleSets(object):
-    """Tests for the prompts rule set."""
+class TestProcessRuleSets(object):
+    """Tests for the process rule set."""
 
     @pytest.mark.parametrize(
         'process_file,prompts_file,expected_results',
