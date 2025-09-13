@@ -47,12 +47,12 @@ class Prompts(RuleSet):
 
         :return: True if used, Otherwise False.
         """
-        return any(
-            token.name == transition.condition
-            for transition in self._process_content.get(
-                'transitions', {}
-            )
-        )
+        for transition in self._process_content.get('transitions', {}):
+            if transition.token_name != 'State Transition':
+                continue
+            if token.name == transition.condition:
+                return True
+        return False
 
     def _check_default(self):
         """Check to ensure the default section of the prompt file is blank or only contains comments."""

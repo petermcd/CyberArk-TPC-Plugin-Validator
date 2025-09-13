@@ -115,6 +115,29 @@ class Lexer(object):
             )
         )
 
+    def _process_parameter_validation(self, match: re.Match, line_number: int) -> None:
+        """
+        Process the provided parameter validation.
+
+        :param match: Regex match of the parameter validation.
+        """
+        allow_characters: str | None = None
+        if match['allowcharacters']:
+            allow_characters = str(match['allowcharacters']).strip()
+
+        self._parsed_data.append(
+            (
+                TokenName.PARAMETER_VALIDATION,
+                ParameterValidation(
+                    name=str(match['name']),
+                    source=str(match['source']),
+                    mandatory=str(match['mandatory']),
+                    allow_characters=allow_characters,
+                    line_number=line_number,
+                )
+            )
+        )
+
     def _process_section_header(self, match: re.Match, line_number: int) -> None:
         """
         Process the provided section header.
@@ -144,29 +167,6 @@ class Lexer(object):
                     from_state=str(match[1]),
                     condition=str(match[2]),
                     to_state=str(match[3]),
-                    line_number=line_number,
-                )
-            )
-        )
-
-    def _process_parameter_validation(self, match: re.Match, line_number: int) -> None:
-        """
-        Process the provided parameter validation.
-
-        :param match: Regex match of the parameter validation.
-        """
-        allow_characters: str | None = None
-        if match['allowcharacters']:
-            allow_characters = str(match['allowcharacters']).strip()
-
-        self._parsed_data.append(
-            (
-                TokenName.PARAMETER_VALIDATION,
-                ParameterValidation(
-                    name=str(match['name']),
-                    source=str(match['source']),
-                    mandatory=str(match['mandatory']),
-                    allow_characters=allow_characters,
                     line_number=line_number,
                 )
             )
