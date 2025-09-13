@@ -62,7 +62,7 @@ class TestLoggingRuleSets(object):
                 ],
             ),
             (
-                'tests/data/OK-logging/process.ini',
+                'tests/data/OK-Logging/process.ini',
                 'tests/data/empty_prompts.ini',
                 True,
                 [],
