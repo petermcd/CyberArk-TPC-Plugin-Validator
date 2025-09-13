@@ -86,7 +86,7 @@ class TestPromptsRuleSets(object):
                     ValidationResult(
                         rule='PromptsDuplicateConditionViolation',
                         severity=Severity.WARNING,
-                        message='The condition "test" has been declared 2 times in the process file.',
+                        message='The assignment "test" has been declared 2 times in the prompts file.',
                     ),
                 ],
             ),

@@ -1,5 +1,6 @@
 """Parent class for rule sets."""
-from abc import ABC, abstractmethod
+from abc import ABC
+from collections import Counter
 
 from tpc_plugin_validator.lexer.utilities.token_name import TokenName
 from tpc_plugin_validator.utilities.severity import Severity
@@ -65,3 +66,21 @@ class RuleSet(ABC):
         :return: True if valid, Otherwise False.
         """
         return token.token_name in self.VALID_TOKEN_TYPES
+
+    def _check_duplicates(self, tokens, rule_name: str, file_type: str):
+        """
+        Check to ensure there are no duplicate assignment tokens.
+
+        :param tokens: A list of tokens.
+        :param file_type: The type of file being processed (process, prompts).
+        """
+        token_keys: list[str] = []
+        token_keys.extend(token.name for token in tokens if token.token_name == 'Assignment')
+        counted_keys = Counter(token_keys)
+        for token_name in counted_keys:
+            if counted_keys[token_name] > 1:
+                self._add_violation(
+                    name=rule_name,
+                    description=f'The assignment "{token_name}" has been declared {counted_keys[token_name]} times in the {file_type} file.',
+                    severity=Severity.WARNING,
+                )
