@@ -37,6 +37,8 @@ class CPMParameter(RuleSet):
 
         :param token: The token containing the parameter validation.
         """
+        if token.token_name != 'CPM Parameter Validation':
+            return
         for condition in self._prompts_content.get('conditions', {}):
             if f'<{token.name}>' in condition.assigned:
                 return
