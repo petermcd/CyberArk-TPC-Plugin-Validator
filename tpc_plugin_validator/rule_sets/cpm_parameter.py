@@ -1,9 +1,9 @@
 """Handle validation of the parameter validations."""
 from tpc_plugin_validator.lexer.tokens.cpm_parameter_validation import \
     CPMParameterValidation
+from tpc_plugin_validator.lexer.utilities.token_name import TokenName
 from tpc_plugin_validator.rule_sets.rule_set import RuleSet
 from tpc_plugin_validator.utilities.severity import Severity
-from tpc_plugin_validator.lexer.utilities.token_name import TokenName
 
 
 class CPMParameter(RuleSet):

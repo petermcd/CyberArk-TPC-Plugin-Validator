@@ -1,12 +1,10 @@
 """Handle validation of the prompts file."""
-from collections import Counter
-
 from tpc_plugin_validator.rule_sets.rule_set import RuleSet
 from tpc_plugin_validator.utilities.severity import Severity
 
 
 class Prompts(RuleSet):
-    """ Validate the logging settings in the process file. """
+    """Validate the logging settings in the process file."""
 
     CONFIG_KEY='prompts'
 
@@ -21,7 +19,7 @@ class Prompts(RuleSet):
                     severity=Severity.CRITICAL,
             )
             return
-        conditions = self._prompts_content.get('conditions', {})
+        conditions = self._prompts_content.get('conditions', [])
         for condition in conditions:
             if not self._token_is_valid(token=condition):
                 self._add_violation(
@@ -34,7 +32,11 @@ class Prompts(RuleSet):
                 continue
             self._check_condition_used(token=condition)
 
-        self._check_duplicates()
+        self._check_duplicates(
+            tokens=self._prompts_content.get('conditions',[]),
+            rule_name='PromptsDuplicateConditionViolation',
+            file_type='prompts'
+        )
 
     def _check_condition_used(self, token):
         """
@@ -71,20 +73,6 @@ class Prompts(RuleSet):
                 self._add_violation(
                     name='PromptsDefaultContentViolation',
                     description=f'A token of type "{default_item.token_name}" has been found in the prompt file outwith a valid section on line {default_item.line_number}.',
-                    severity=Severity.WARNING,
-                )
-
-    def _check_duplicates(self):
-        """Check to ensure all conditions are used"""
-        conditions = self._prompts_content.get('conditions', {})
-        condition_keys = []
-        condition_keys.extend(condition.name for condition in conditions if condition.token_name == 'Assignment')
-        counted_keys = Counter(condition_keys)
-        for condition_name in counted_keys:
-            if counted_keys[condition_name] > 1:
-                self._add_violation(
-                    name='PromptsDuplicateConditionViolation',
-                    description=f'The condition "{condition_name}" has been declared {counted_keys[condition_name]} times in the process file.',
                     severity=Severity.WARNING,
                 )
 
