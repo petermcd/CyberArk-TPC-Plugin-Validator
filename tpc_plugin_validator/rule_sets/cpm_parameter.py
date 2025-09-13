@@ -28,17 +28,26 @@ class CPMParameter(RuleSet):
                 continue
             if validation_token.token_name == 'Comment':
                 continue
-            if not self._check_parameter_name(token=validation_token):
+            if not self._check_parameter_usage(token=validation_token):
                 continue
 
-    def _check_parameter_name(self, token: CPMParameterValidation):
+    def _check_parameter_usage(self, token: CPMParameterValidation):
         """
         Check to make sure the parameter is used.
 
         :param token: The token containing the parameter validation.
         """
-        # TODO implement
-        pass
+        for condition in self._prompts_content.get('conditions', {}):
+            if f'<{token.name}>' in condition.assigned:
+                return
+        for state in self._process_content.get('states', {}):
+            if f'<{token.name}>' in state.assigned:
+                return
+        self._add_violation(
+            name='CPMParameterUnusedParameterViolation',
+            description=f'The parameter "{token.name}" is validated but is not used, found on line {token.line_number}.',
+            severity=Severity.WARNING,
+        )
 
     def _get_config_key(self) -> str:
         """
@@ -46,7 +55,7 @@ class CPMParameter(RuleSet):
 
         :return: The config key as a string.
         """
-        return 'parameter_validation'
+        return 'cpm_parameter_validation'
 
     def _get_valid_token_types(self) -> set[str]:
         """

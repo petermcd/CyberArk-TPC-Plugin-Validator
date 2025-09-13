@@ -41,6 +41,17 @@ class TestCPMParameterRuleSets(object):
                 'tests/data/empty_prompts.ini',
                 [],
             ),
+            (
+                'tests/data/WARNING-CPMParameterUnusedParameterViolation/process.ini',
+                'tests/data/empty_prompts.ini',
+                [
+                    ValidationResult(
+                        rule='CPMParameterUnusedParameterViolation',
+                        severity=Severity.WARNING,
+                        message='The parameter "extrapass2\\Username" is validated but is not used, found on line 10.',
+                    ),
+                ],
+            ),
         ],
     )
     def test_parameter_rules(self, process_file: str, prompts_file: str, expected_results: list[ValidationResult]) -> None:
