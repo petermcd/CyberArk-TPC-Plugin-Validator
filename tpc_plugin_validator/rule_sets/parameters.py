@@ -1,6 +1,7 @@
 """Handle validation of parameters."""
 
 import contextlib
+
 from tpc_plugin_validator.lexer.tokens.assignment import Assignment
 from tpc_plugin_validator.rule_sets.rule_set import RuleSet
 from tpc_plugin_validator.utilities.severity import Severity
