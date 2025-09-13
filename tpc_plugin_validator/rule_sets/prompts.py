@@ -30,16 +30,11 @@ class Prompts(RuleSet):
                 continue
             if condition.token_name == 'Comment':
                 continue
-            if not self._check_condition_used(token=condition):
-                self._add_violation(
-                    name='PromptsUnusedConditionViolation',
-                    description=f'The condition "{condition.name}" is declared in the prompts file on line {condition.line_number} but is not used in the process file.',
-                    severity=Severity.WARNING,
-                )
+            self._check_condition_used(token=condition)
 
         self._check_duplicates()
 
-    def _check_condition_used(self, token) -> bool:
+    def _check_condition_used(self, token):
         """
         Check to ensure all conditions are used
 
@@ -47,11 +42,26 @@ class Prompts(RuleSet):
 
         :return: True if used, Otherwise False.
         """
-        return any(
-            token.name == transition.condition
-            for transition in self._process_content.get(
-                'transitions', {}
-            )
+        found = False
+        for transition in self._process_content.get('transitions', {}):
+            if transition.token_name != 'State Transition':
+                continue
+            if token.name == transition.condition:
+                found = True
+                continue
+            if token.name.lower() == transition.condition.lower():
+                self._add_violation(
+                    name='PromptsConditionCaseMismatchViolation',
+                    description=f'A condition of "{token.name}" is declared but is used in the prompts file as "{transition.condition}" on line {token.line_number}.',
+                    severity=Severity.WARNING,
+                )
+                found = True
+        if found:
+            return
+        self._add_violation(
+            name='PromptsUnusedConditionViolation',
+            description=f'The condition "{token.name}" is declared in the prompts file on line {token.line_number} but is not used in the process file.',
+            severity=Severity.WARNING,
         )
 
     def _check_default(self):
