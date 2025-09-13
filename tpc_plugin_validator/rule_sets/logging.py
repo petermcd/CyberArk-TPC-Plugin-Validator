@@ -7,6 +7,8 @@ from tpc_plugin_validator.utilities.severity import Severity
 class Logging(RuleSet):
     """ Validate the logging settings in the process file. """
 
+    CONFIG_KEY='logging'
+
     def validate(self) -> None:
         """Validate the logging settings in the process file."""
         if 'Debug Information' not in self._process_content.keys():
@@ -99,19 +101,3 @@ class Logging(RuleSet):
                 description=f'The logging value for "{token.name}" is set to "{token.assigned}". It is recommended to set all logging settings to "no" for production environments.',
                 severity=Severity.CRITICAL if self._config.get('enabled', True) else Severity.INFO,
             )
-
-    def _get_config_key(self) -> str:
-        """
-        Property to identify the config key to use for the rule set.
-
-        :return: The config key as a string.
-        """
-        return 'logging'
-
-    def _get_valid_token_types(self) -> set[str]:
-        """
-        Provide a set of token types allowed in the section being analysed.
-
-        :return: Set of token types.
-        """
-        return {'Assignment', 'Comment',}

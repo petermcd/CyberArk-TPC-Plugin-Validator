@@ -8,6 +8,8 @@ from tpc_plugin_validator.utilities.severity import Severity
 class Prompts(RuleSet):
     """ Validate the logging settings in the process file. """
 
+    CONFIG_KEY='prompts'
+
     def validate(self) -> None:
         """Validate the prompts in the prompts file."""
         self._check_valid_sections()
@@ -96,19 +98,3 @@ class Prompts(RuleSet):
                     description=f'An invalid section "{section_name}" has been found in the prompt file.',
                     severity=Severity.WARNING,
                 )
-
-    def _get_config_key(self) -> str:
-        """
-        Property to identify the config key to use for the rule set.
-
-        :return: The config key as a string.
-        """
-        return 'prompts'
-
-    def _get_valid_token_types(self) -> set[str]:
-        """
-        Provide a set of token types allowed in the section being analysed.
-
-        :return: Set of token types.
-        """
-        return {'Assignment', 'Comment',}

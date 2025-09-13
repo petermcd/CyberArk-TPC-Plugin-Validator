@@ -1,12 +1,14 @@
 """Parent class for rule sets."""
 from abc import ABC, abstractmethod
 
+from tpc_plugin_validator.lexer.utilities.token_name import TokenName
 from tpc_plugin_validator.utilities.severity import Severity
 from tpc_plugin_validator.utilities.validation_result import ValidationResult
 
 
 class RuleSet(ABC):
     """Parent class for rule sets."""
+
     __slots__ = (
         '_config',
         '_process_content',
@@ -14,6 +16,8 @@ class RuleSet(ABC):
         '_violations',
     )
 
+    CONFIG_KEY=''
+    VALID_TOKEN_TYPES={TokenName.ASSIGNMENT.value, TokenName.COMMENT.value,}
 
     def __init__(self, process, prompts, config: dict[str, dict[str, bool | int | str]]) -> None:
         """
@@ -23,7 +27,7 @@ class RuleSet(ABC):
         :param prompts: Parsed prompts file.
         :param config: Not used, but included for interface consistency.
         """
-        self._config = config.get(self._get_config_key(), {})
+        self._config = config.get(self.CONFIG_KEY, {})
         self._process_content = process
         self._prompts_content = prompts
         self._violations: list[ValidationResult] = []
@@ -60,21 +64,4 @@ class RuleSet(ABC):
 
         :return: True if valid, Otherwise False.
         """
-        return token.token_name in self._get_valid_token_types()
-
-    @abstractmethod
-    def _get_config_key(self) -> str:
-        """
-        Property to identify the config key to use for the rule set.
-
-        :return: The config key as a string.
-        """
-
-    @abstractmethod
-    def _get_valid_token_types(self) -> set[str]:
-        """
-        Provide a set of token types allowed in the section being analysed.
-
-        :return: Set of token types.
-        """
-
+        return token.token_name in self.VALID_TOKEN_TYPES
