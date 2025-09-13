@@ -40,6 +40,8 @@ class CPMParameter(RuleSet):
         if token.token_name != 'CPM Parameter Validation':
             return
         for condition in self._prompts_content.get('conditions', {}):
+            if condition.token_name != 'Assignment':
+                return
             if f'<{token.name}>' in condition.assigned:
                 return
         for state in self._process_content.get('states', {}):
