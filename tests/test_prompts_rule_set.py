@@ -90,6 +90,22 @@ class TestPromptsRuleSets(object):
                     ),
                 ],
             ),
+            (
+                'tests/data/WARNING-PromptsConditionCaseMismatchViolation/process.ini',
+                'tests/data/WARNING-PromptsConditionCaseMismatchViolation/prompts.ini',
+                [
+                    ValidationResult(
+                        rule='PromptsConditionCaseMismatchViolation',
+                        severity=Severity.WARNING,
+                        message='A condition of "test" is declared but is used in the prompts file as "Test" on line 5.',
+                    ),
+                    ValidationResult(
+                        rule='PromptsConditionCaseMismatchViolation',
+                        severity=Severity.WARNING,
+                        message='A condition of "test" is declared but is used in the prompts file as "tEst" on line 5.',
+                    ),
+                ],
+            ),
         ],
     )
     def test_condition_used(self, process_file: str, prompts_file: str, expected_results: list[ValidationResult]):
