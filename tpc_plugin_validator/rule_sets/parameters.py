@@ -1,4 +1,6 @@
 """Handle validation of parameters."""
+
+import contextlib
 from tpc_plugin_validator.lexer.tokens.assignment import Assignment
 from tpc_plugin_validator.rule_sets.rule_set import RuleSet
 from tpc_plugin_validator.utilities.severity import Severity
@@ -53,15 +55,13 @@ class Parameters(RuleSet):
         if not human_min and not human_max:
             return
 
-        try:
+        with contextlib.suppress(ValueError):
             if human_min and human_min.assigned and human_max and human_max.assigned and float(human_min.assigned) > float(human_max.assigned):
                 self._add_violation(
                     name='ParametersMinGreaterThanMaxViolation',
                     severity=Severity.CRITICAL,
                     description=f'SendHumanMin is set to {float(human_min.assigned)} and SendHumanMax is set to {float(human_max.assigned)}, SendHumanMin cannot be greater than SendHumanMax.'
                 )
-        except ValueError:
-            pass
 
         try:
             if human_min and human_min.assigned and float(human_min.assigned) < 0:
