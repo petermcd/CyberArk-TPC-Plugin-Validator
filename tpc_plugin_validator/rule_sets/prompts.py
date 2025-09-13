@@ -41,7 +41,7 @@ class Prompts(RuleSet):
         :param token: The token to check.
         """
         found = False
-        for transition in self._process_content.get('transitions', {}):
+        for transition in self._process_content.get('transitions', []):
             if transition.token_name != 'State Transition':
                 continue
             if token.name == transition.condition:
