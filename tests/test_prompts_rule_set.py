@@ -32,7 +32,7 @@ class TestPromptsRuleSets(object):
                     ValidationResult(
                         rule='PromptsConditionTokenViolation',
                         severity=Severity.WARNING,
-                        message='The token type "State Transition" is not valid in the "condition" section, found on line 3.',
+                        message='The token type "State Transition" is not valid in the "conditions" section, found on line 3.',
                     ),
                 ],
             ),
@@ -103,6 +103,17 @@ class TestPromptsRuleSets(object):
                         rule='PromptsConditionCaseMismatchViolation',
                         severity=Severity.WARNING,
                         message='A condition of "test" is declared but is used in the prompts file as "tEst" on line 5.',
+                    ),
+                ],
+            ),
+            (
+                'tests/data/empty_process.ini',
+                'tests/data/WARNING-SectionCaseMismatchViolation-Conditions/prompts.ini',
+                [
+                    ValidationResult(
+                        rule='SectionCaseMismatchViolation',
+                        severity=Severity.WARNING,
+                        message='The "conditions" section has been declared as "Conditions".',
                     ),
                 ],
             ),

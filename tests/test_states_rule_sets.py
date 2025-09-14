@@ -96,7 +96,18 @@ class TestStatesRuleSets(object):
                     ValidationResult(
                         rule='StatesFailStateCodeReuseViolation',
                         severity=Severity.WARNING,
-                        message='The code "1234" has been assigned 2 times in the states section, codes should not be reused.'
+                        message='The code "1234" has been assigned 2 times in the "states" section, codes should not be reused.'
+                    ),
+                ],
+            ),
+            (
+                'tests/data/WARNING-SectionCaseMismatchViolation-States/process.ini',
+                'tests/data/empty_prompts.ini',
+                [
+                    ValidationResult(
+                        rule='SectionCaseMismatchViolation',
+                        severity=Severity.WARNING,
+                        message='The "states" section has been declared as "States".',
                     ),
                 ],
             ),

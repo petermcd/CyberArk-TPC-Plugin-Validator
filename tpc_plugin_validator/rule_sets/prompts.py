@@ -1,4 +1,5 @@
 """Handle validation of the prompts file."""
+from tpc_plugin_validator.lexer.utilities.token_name import TokenName
 from tpc_plugin_validator.rule_sets.rule_set import RuleSet
 from tpc_plugin_validator.utilities.severity import Severity
 
@@ -7,33 +8,35 @@ class Prompts(RuleSet):
     """Handle validation of the prompts file."""
 
     CONFIG_KEY: str = 'prompts'
+    SECTION_NAME = 'conditions'
 
     def validate(self) -> None:
         """Validate the prompts in the prompts file."""
         self._check_valid_sections()
         self._check_default()
-        if 'conditions' not in self._prompts_content.keys():
+        if not self._check_section_exists(file_content=self._prompts_content):
             self._add_violation(
-                    name='PromptsNoConditionSectionViolation',
-                    description='The prompts file does not contain a "conditions" section, therefore, the plugin cannot transitions between states.',
-                    severity=Severity.CRITICAL,
+                name='PromptsNoConditionSectionViolation',
+                description=f'The prompts file does not contain a "{self.SECTION_NAME}" section, therefore, the plugin cannot transitions between states.',
+                severity=Severity.CRITICAL,
             )
             return
-        conditions = self._prompts_content.get('conditions', [])
+
+        conditions = self._prompts_content.get(self._found_section_name, [])
         for condition in conditions:
             if not self._token_is_valid(token=condition):
                 self._add_violation(
                     name='PromptsConditionTokenViolation',
-                    description=f'The token type "{condition.token_name}" is not valid in the "condition" section, found on line {condition.line_number}.',
+                    description=f'The token type "{condition.token_name}" is not valid in the "{self.SECTION_NAME}" section, found on line {condition.line_number}.',
                     severity=Severity.WARNING,
                 )
                 continue
-            if condition.token_name == 'Comment':
+            if condition.token_name == TokenName.COMMENT.value:
                 continue
             self._check_condition_used(token=condition)
 
         self._check_duplicates(
-            tokens=self._prompts_content.get('conditions',[]),
+            tokens=self._prompts_content.get(self._found_section_name,[]),
             rule_name='PromptsDuplicateConditionViolation',
             file_type='prompts'
         )
@@ -46,7 +49,7 @@ class Prompts(RuleSet):
         """
         found = False
         for transition in self._process_content.get('transitions', []):
-            if transition.token_name != 'State Transition':
+            if transition.token_name != TokenName.STATE_TRANSITION.value:
                 continue
             if token.name == transition.condition:
                 found = True
@@ -69,7 +72,7 @@ class Prompts(RuleSet):
     def _check_default(self):
         """Check to ensure the default section of the prompt file is blank or only contains comments."""
         for default_item in self._prompts_content.get('default', []):
-            if default_item.token_name != 'Comment':
+            if default_item.token_name != TokenName.COMMENT.value:
                 self._add_violation(
                     name='PromptsDefaultContentViolation',
                     description=f'A token of type "{default_item.token_name}" has been found in the prompt file outwith a valid section on line {default_item.line_number}.',
@@ -80,7 +83,8 @@ class Prompts(RuleSet):
         """Check to ensure only valid sections are found the prompt file."""
         allowed_sections = ('default', 'conditions')
         for section_name in self._prompts_content.keys():
-            if section_name not in allowed_sections:
+            # We do not check for case as this is done elsewhere.
+            if section_name.lower() not in allowed_sections:
                 self._add_violation(
                     name='PromptsInvalidSectionViolation',
                     description=f'An invalid section "{section_name}" has been found in the prompt file.',

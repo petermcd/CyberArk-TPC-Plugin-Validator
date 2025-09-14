@@ -12,12 +12,14 @@ class RuleSet(ABC):
 
     __slots__ = (
         '_config',
+        '_found_section_name',
         '_process_content',
         '_prompts_content',
         '_violations',
     )
 
     CONFIG_KEY: str = ''
+    SECTION_NAME: str = ''
     VALID_TOKEN_TYPES: set[str] = {TokenName.ASSIGNMENT.value, TokenName.COMMENT.value,}
 
     def __init__(self, process, prompts, config: dict[str, dict[str, bool | int | str]]) -> None:
@@ -29,6 +31,7 @@ class RuleSet(ABC):
         :param config: Not used, but included for interface consistency.
         """
         self._config = config.get(self.CONFIG_KEY, {})
+        self._found_section_name = ''
         self._process_content = process
         self._prompts_content = prompts
         self._violations: list[ValidationResult] = []
@@ -65,7 +68,7 @@ class RuleSet(ABC):
         :param file_type: The type of file being processed (process, prompts).
         """
         token_keys: list[str] = []
-        token_keys.extend(token.name for token in tokens if token.token_name == 'Assignment')
+        token_keys.extend(token.name for token in tokens if token.token_name == TokenName.ASSIGNMENT.value)
         counted_keys = Counter(token_keys)
         for token_name in counted_keys:
             if counted_keys[token_name] > 1:
@@ -74,6 +77,24 @@ class RuleSet(ABC):
                     description=f'The assignment "{token_name}" has been declared {counted_keys[token_name]} times in the {file_type} file.',
                     severity=Severity.WARNING,
                 )
+
+    def _check_section_exists(self, file_content) -> bool:
+        """Check to make sure that a section is named appropriately."""
+
+        section_keys = file_content.keys()
+        for section_key in section_keys:
+            if self.SECTION_NAME == section_key:
+                self._found_section_name = section_key
+                return True
+            elif self.SECTION_NAME.lower() == section_key.lower():
+                self._add_violation(
+                    name='SectionCaseMismatchViolation',
+                    description=f'The "{self.SECTION_NAME}" section has been declared as "{section_key}".',
+                    severity=Severity.WARNING,
+                )
+                self._found_section_name = section_key
+                return True
+        return False
 
     def _token_is_valid(self, token) -> bool:
         """

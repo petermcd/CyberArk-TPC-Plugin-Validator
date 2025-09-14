@@ -3,6 +3,7 @@
 import contextlib
 
 from tpc_plugin_validator.lexer.tokens.assignment import Assignment
+from tpc_plugin_validator.lexer.utilities.token_name import TokenName
 from tpc_plugin_validator.rule_sets.rule_set import RuleSet
 from tpc_plugin_validator.utilities.severity import Severity
 
@@ -11,18 +12,19 @@ class Parameters(RuleSet):
     """Handle validation of parameters."""
 
     CONFIG_KEY: str = 'parameters'
+    SECTION_NAME = 'parameters'
 
     def validate(self) -> None:
         """Validate the settings in the process file."""
-        if 'parameters' not in self._process_content.keys():
+        if not self._check_section_exists(file_content=self._process_content):
             self._add_violation(
-                    name='ParametersNoParametersSectionViolation',
-                    description='The process file does not contain a "parameters" section.',
-                    severity=Severity.CRITICAL,
+                name='ParametersNoParametersSectionViolation',
+                description=f'The process file does not contain a "{self.SECTION_NAME}" section.',
+                severity=Severity.CRITICAL,
             )
             return
 
-        parameters = self._process_content.get('parameters', [])
+        parameters = self._process_content.get(self._found_section_name, [])
 
         human_max: Assignment | None = None
         human_min: Assignment | None = None
@@ -31,11 +33,11 @@ class Parameters(RuleSet):
             if not self._token_is_valid(token=parameter):
                 self._add_violation(
                     name='ParametersTokenViolation',
-                    description=f'The token type "{parameter.token_name}" is not valid in the "parameters" section, found on line {parameter.line_number}.',
+                    description=f'The token type "{parameter.token_name}" is not valid in the "{self.SECTION_NAME}" section, found on line {parameter.line_number}.',
                     severity=Severity.WARNING,
                 )
 
-            if parameter.token_name != 'Assignment':
+            if parameter.token_name != TokenName.ASSIGNMENT.value:
                 continue
             elif parameter.name == 'SendHumanMin':
                 human_min = parameter
@@ -43,7 +45,7 @@ class Parameters(RuleSet):
                 human_max = parameter
 
         self._check_duplicates(
-            tokens=self._process_content.get('parameters', []),
+            tokens=parameters,
             rule_name='ParametersDuplicateParametersViolation',
             file_type='process'
         )
@@ -82,7 +84,7 @@ class Parameters(RuleSet):
         try:
             if human_max and human_max.assigned and float(human_max.assigned) < 0:
                 self._add_violation(
-                    name='ParameterMaxLessThanZeroViolation',
+                    name='ParametersMaxLessThanZeroViolation',
                     severity=Severity.CRITICAL,
                     description=f'SendHumanMax is set to {float(human_max.assigned)} this cannot be less than 0.'
                 )

@@ -129,8 +129,9 @@ class Lexer(object):
             (
                 TokenName.FAIL_STATE,
                 FailState(
-                    message=str(match[1]).strip(),
-                    code=int(match[2]),
+                    name=str(match[1]),
+                    message=str(match[2]).strip(),
+                    code=int(match[3]),
                     line_number=line_number,
                 )
             )

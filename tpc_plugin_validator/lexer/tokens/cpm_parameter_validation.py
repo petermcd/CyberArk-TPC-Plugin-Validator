@@ -1,6 +1,8 @@
 """Class to hold the parameter validation token."""
 from dataclasses import dataclass
 
+from tpc_plugin_validator.lexer.utilities.token_name import TokenName
+
 
 @dataclass(frozen=True)
 class CPMParameterValidation(object):
@@ -10,4 +12,4 @@ class CPMParameterValidation(object):
     source: str
     mandatory: str
     allow_characters: str | None = None
-    token_name: str = 'CPM Parameter Validation'
+    token_name: str = TokenName.CPM_PARAMETER_VALIDATION.value

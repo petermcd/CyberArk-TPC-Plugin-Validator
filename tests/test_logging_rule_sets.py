@@ -29,13 +29,7 @@ class TestLoggingRuleSets(object):
                 'tests/data/OK-LoggingNoSection/process.ini',
                 'tests/data/empty_prompts.ini',
                 True,
-                [
-                    ValidationResult(
-                        rule='LoggingNoSection',
-                        severity=Severity.INFO,
-                        message='The process file does not contain a "Debug Information" section, therefore, logging is disabled.',
-                    ),
-                ],
+                [],
             ),
             (
                 'tests/data/WARNING-LoggingSettingNameViolation/process.ini',
@@ -46,6 +40,18 @@ class TestLoggingRuleSets(object):
                         rule='LoggingSettingNameViolation',
                         severity=Severity.WARNING,
                         message='The logging setting "InvalidName" is not a valid logging setting. Valid settings are: DebugLogFullParsingInfo, DebugLogFullExecutionInfo, DebugLogDetailBuiltInActions, ExpectLog, ConsoleOutput.',
+                    ),
+                ],
+            ),
+            (
+                'tests/data/WARNING-SectionCaseMismatchViolation-Logging/process.ini',
+                'tests/data/empty_prompts.ini',
+                True,
+                [
+                    ValidationResult(
+                        rule='SectionCaseMismatchViolation',
+                        severity=Severity.WARNING,
+                        message='The "Debug Information" section has been declared as "debug information".',
                     ),
                 ],
             ),
