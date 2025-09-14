@@ -64,11 +64,11 @@ class TestParameterRuleSets(object):
                 ],
             ),
             (
-                'tests/data/CRITICAL-ParameterMaxLessThanZeroViolation/process.ini',
+                'tests/data/CRITICAL-ParametersMaxLessThanZeroViolation/process.ini',
                 'tests/data/empty_prompts.ini',
                 [
                     ValidationResult(
-                        rule='ParameterMaxLessThanZeroViolation',
+                        rule='ParametersMaxLessThanZeroViolation',
                         severity=Severity.CRITICAL,
                         message='SendHumanMax is set to -1.0 this cannot be less than 0.',
                     )
@@ -105,6 +105,17 @@ class TestParameterRuleSets(object):
                         severity=Severity.CRITICAL,
                         message='SendHumanMax is set to "twenty-two", the value must be numerical, found on line 11.',
                     )
+                ],
+            ),
+            (
+                'tests/data/WARNING-SectionCaseMismatchViolation-Parameters/process.ini',
+                'tests/data/empty_prompts.ini',
+                [
+                    ValidationResult(
+                        rule='SectionCaseMismatchViolation',
+                        severity=Severity.WARNING,
+                        message='The "parameters" section has been declared as "Parameters".',
+                    ),
                 ],
             ),
         ],

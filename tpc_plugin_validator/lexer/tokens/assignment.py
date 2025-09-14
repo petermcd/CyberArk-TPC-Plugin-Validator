@@ -1,6 +1,8 @@
 """Class to hold the assignment token."""
 from dataclasses import dataclass
 
+from tpc_plugin_validator.lexer.utilities.token_name import TokenName
+
 
 @dataclass(frozen=True)
 class Assignment(object):
@@ -9,4 +11,4 @@ class Assignment(object):
     name: str
     equals: str | None = None
     assigned: str | None = None
-    token_name: str = 'Assignment'
+    token_name: str = TokenName.ASSIGNMENT.value

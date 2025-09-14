@@ -12,29 +12,30 @@ class States(RuleSet):
     """Handle validation of states."""
 
     CONFIG_KEY: str = 'states'
+    SECTION_NAME = 'states'
     VALID_TOKEN_TYPES: set[str] = {TokenName.ASSIGNMENT.value, TokenName.COMMENT.value, TokenName.FAIL_STATE.value, }
 
     def validate(self) -> None:
         """Validate the states in the process file."""
-        if 'states' not in self._process_content.keys():
+        if not self._check_section_exists(file_content=self._process_content):
             self._add_violation(
-                    name='StatesNoStatesSectionViolation',
-                    description='The process file does not contain a "states" section.',
-                    severity=Severity.CRITICAL,
+                name='StatesNoStatesSectionViolation',
+                description=f'The process file does not contain a "{self.SECTION_NAME}" section.',
+                severity=Severity.CRITICAL,
             )
             return
 
-        states = self._process_content.get('states', [])
+        states = self._process_content.get(self._found_section_name, [])
         for state in states:
             if not self._token_is_valid(token=state):
                 self._add_violation(
                     name='StatesTokenViolation',
-                    description=f'The token type "{state.token_name}" is not valid in the "states" section, found on line {state.line_number}.',
+                    description=f'The token type "{state.token_name}" is not valid in the "{self.SECTION_NAME}" section, found on line {state.line_number}.',
                     severity=Severity.WARNING,
                 )
 
         self._check_duplicates(
-            tokens=self._process_content.get('states', []),
+            tokens=states,
             rule_name='StatesDuplicateParametersViolation',
             file_type='process'
         )
@@ -58,7 +59,7 @@ class States(RuleSet):
             if counted_codes[code] > 1:
                 self._add_violation(
                     name='StatesFailStateCodeReuseViolation',
-                    description=f'The code "{code}" has been assigned {counted_codes[code]} times in the states section, codes should not be reused.',
+                    description=f'The code "{code}" has been assigned {counted_codes[code]} times in the "{self.SECTION_NAME}" section, codes should not be reused.',
                     severity=Severity.WARNING,
                 )
 
@@ -67,16 +68,16 @@ class States(RuleSet):
         fail_states: list[FailState] = []
         fail_states.extend(
             state
-            for state in self._process_content.get('states', [])
-            if state.token_name == 'Fail State'
+            for state in self._process_content.get(self._found_section_name, [])
+            if state.token_name == TokenName.FAIL_STATE.value
         )
         self._check_fail_state_codes(fail_states=fail_states)
 
     def _check_valid_end_state(self) -> None:
         """Check to ensure that the states contain a valid END state."""
         end_state: Assignment | None = None
-        for state in self._process_content.get('states', []):
-            if state.token_name == 'Assignment' and state.name == 'END':
+        for state in self._process_content.get(self._found_section_name, []):
+            if state.token_name == TokenName.ASSIGNMENT.value and state.name == 'END':
                 end_state = state
                 break
             elif state.token_name == 'Assignment' and state.name.lower() == 'end':

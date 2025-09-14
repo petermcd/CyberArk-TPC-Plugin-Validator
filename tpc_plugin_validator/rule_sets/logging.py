@@ -1,5 +1,6 @@
 """Handle validation of the logging settings in the process file."""
 from tpc_plugin_validator.lexer.tokens.assignment import Assignment
+from tpc_plugin_validator.lexer.utilities.token_name import TokenName
 from tpc_plugin_validator.rule_sets.rule_set import RuleSet
 from tpc_plugin_validator.utilities.severity import Severity
 
@@ -8,26 +9,22 @@ class Logging(RuleSet):
     """ Validate the logging settings in the process file. """
 
     CONFIG_KEY: str = 'logging'
+    SECTION_NAME = 'Debug Information'
 
     def validate(self) -> None:
         """Validate the logging settings in the process file."""
-        if 'Debug Information' not in self._process_content.keys():
-            self._add_violation(
-                name='LoggingNoSection',
-                description='The process file does not contain a "Debug Information" section, therefore, logging is disabled.',
-                severity=Severity.INFO,
-            )
+        if not self._check_section_exists(file_content=self._process_content):
             return
-        logging_tokens = self._process_content['Debug Information']
-        for logging_token in logging_tokens:
+
+        for logging_token in self._process_content[self._found_section_name]:
             if not self._token_is_valid(token=logging_token):
                 self._add_violation(
                     name='LoggingTokenViolation',
-                    description=f'The token type "{logging_token.token_name}" is not valid in the "Debug Information" section, found on line {logging_token.line_number}.',
+                    description=f'The token type "{logging_token.token_name}" is not valid in the "{self.SECTION_NAME}" section, found on line {logging_token.line_number}.',
                     severity=Severity.WARNING,
                 )
                 continue
-            if logging_token.token_name == 'Comment':
+            if logging_token.token_name == TokenName.COMMENT.value:
                 continue
             if not self._check_setting_name(token=logging_token):
                 continue

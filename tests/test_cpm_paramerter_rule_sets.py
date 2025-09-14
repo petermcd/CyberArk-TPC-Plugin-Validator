@@ -52,6 +52,17 @@ class TestCPMParameterRuleSets(object):
                     ),
                 ],
             ),
+            (
+                'tests/data/WARNING-SectionCaseMismatchViolation-CPMParameters/process.ini',
+                'tests/data/empty_prompts.ini',
+                [
+                    ValidationResult(
+                        rule='SectionCaseMismatchViolation',
+                        severity=Severity.WARNING,
+                        message='The "CPM Parameters Validation" section has been declared as "cpm Parameters Validation".',
+                    ),
+                ],
+            ),
         ],
     )
     def test_parameter_rules(self, process_file: str, prompts_file: str, expected_results: list[ValidationResult]) -> None:
