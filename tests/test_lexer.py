@@ -156,9 +156,9 @@ class TestLexer(object):
                         TokenName.STATE_TRANSITION,
                         StateTransition(
                             line_number=1,
-                            from_state='state1',
+                            current_state='state1',
                             condition='condition',
-                            to_state='state2',
+                            next_state='state2',
                         ),
                     ),
                 ],
@@ -170,9 +170,9 @@ class TestLexer(object):
                         TokenName.STATE_TRANSITION,
                         StateTransition(
                             line_number=1,
-                            from_state='state_1',
+                            current_state='state_1',
                             condition='condition2',
-                            to_state='STATE2',
+                            next_state='STATE2',
                         ),
                     ),
                 ],

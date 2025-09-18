@@ -47,7 +47,7 @@ class Transitions(RuleSet):
         )
         state_transitions_joined: list[str] = []
         state_transitions_joined.extend(
-            f'{state_transition.from_state},{state_transition.condition},{state_transition.to_state}'
+            f'{state_transition.current_state},{state_transition.condition},{state_transition.next_state}'
             for state_transition in state_transitions
         )
 
@@ -77,22 +77,22 @@ class Transitions(RuleSet):
         """
         if transition.token_name != TokenName.STATE_TRANSITION.value:
             return
-        if transition.to_state.lower() == 'end':
+        if transition.next_state.lower() == 'end':
             return
         from_states: list[str] = []
         from_states.extend(
-            value.from_state
+            value.current_state
             for value in transitions
             if value.token_name == TokenName.STATE_TRANSITION.value
         )
-        if transition.to_state not in from_states:
-            fail_state_token: Assignment | None = self._get_fail_state(transition.to_state)
+        if transition.next_state not in from_states:
+            fail_state_token: Assignment | None = self._get_fail_state(transition.next_state)
             if fail_state_token and fail_state_token.token_name == TokenName.FAIL_STATE.value:
                 # failure condition, nothing follows this.
                 return
             self._add_violation(
                 name='TransitionsStateTransitionViolation',
-                description=f'The state "{transition.to_state}" does not have a valid state to transition too.',
+                description=f'The state "{transition.next_state}" does not have a valid state to transition too.',
                 severity=Severity.WARNING,
             )
 
@@ -105,19 +105,19 @@ class Transitions(RuleSet):
         """
         if transition.token_name != TokenName.STATE_TRANSITION.value:
             return
-        if transition.from_state.lower() == 'init':
+        if transition.current_state.lower() == 'init':
             return
         to_states: list[str] = []
         to_states.extend(
-            value.to_state
+            value.next_state
             for value in transitions
             if value.token_name == TokenName.STATE_TRANSITION.value
         )
         to_states_set = set(to_states)
-        if transition.from_state not in to_states_set:
+        if transition.current_state not in to_states_set:
             self._add_violation(
                 name='TransitionsStateTransitionViolation',
-                description=f'The state "{transition.from_state}" does not have a valid state to transition from.',
+                description=f'The state "{transition.current_state}" does not have a valid state to transition from.',
                 severity=Severity.WARNING,
             )
 

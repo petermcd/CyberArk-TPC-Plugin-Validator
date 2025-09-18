@@ -8,7 +8,7 @@ from tpc_plugin_validator.lexer.utilities.token_name import TokenName
 class StateTransition(object):
     """Dataclass to hold state transitions."""
     line_number: int
-    from_state: str
+    current_state: str
     condition: str
-    to_state: str
+    next_state: str
     token_name: str = TokenName.STATE_TRANSITION.value
