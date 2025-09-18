@@ -4,6 +4,7 @@ version = "0.1.0"
 description = "A tool to help validate a custom TPC plugin."
 authors = [{ name = "Peter McDonald", email = "git@petermcdonald.co.uk"}]
 readme = "README.md"
+license = { file = "LICENSE" }
 requires-python = ">=3.11"
 dependencies = []
 classifiers = [
