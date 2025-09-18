@@ -64,9 +64,9 @@ class Lexer(object):
 
         :param match: Regex match of the assignment.
         """
-        name: str = str(match[1]).strip()
-        equals = str(match[2]).strip() if match[2] else None
-        assigned_stripped = str(match[3]).strip() if match[3] else None
+        name: str = str(match['name']).strip()
+        equals = str(match['equals']).strip() if match.groupdict().get('equals', None) else None
+        assigned_stripped = str(match['value']).strip() if match.groupdict().get('value', None) else None
         assigned = assigned_stripped or None
         self._parsed_data.append(
             (
@@ -90,7 +90,7 @@ class Lexer(object):
             (
                 TokenName.COMMENT,
                 Comment(
-                    content=str(match[1]).strip(),
+                    content=str(match['comment']).strip(),
                     line_number=line_number,
                 )
             )
@@ -129,9 +129,9 @@ class Lexer(object):
             (
                 TokenName.FAIL_STATE,
                 FailState(
-                    name=str(match[1]),
-                    message=str(match[2]).strip(),
-                    code=int(match[3]),
+                    name=str(match['name']).strip(),
+                    message=str(match['message']).strip(),
+                    code=int(match['code']),
                     line_number=line_number,
                 )
             )
@@ -147,7 +147,7 @@ class Lexer(object):
             (
                 TokenName.SECTION_HEADER,
                 SectionHeader(
-                    name=str(match[1]),
+                    name=str(match['name'].strip()),
                     line_number=line_number,
                 )
             )
@@ -163,9 +163,9 @@ class Lexer(object):
             (
                 TokenName.STATE_TRANSITION,
                 StateTransition(
-                    from_state=str(match[1]),
-                    condition=str(match[2]),
-                    to_state=str(match[3]),
+                    current_state=str(match['current']).strip(),
+                    condition=str(match['condition']).strip(),
+                    next_state=str(match['next']).strip(),
                     line_number=line_number,
                 )
             )
