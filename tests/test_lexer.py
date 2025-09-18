@@ -91,7 +91,7 @@ class TestLexer(object):
                         FailState(
                             name='standard',
                             line_number=1,
-                            message='This is a standard fail state',
+                            message="'This is a standard fail state'",
                             code=1234,
                         ),
                     ),
@@ -105,7 +105,21 @@ class TestLexer(object):
                         FailState(
                             name='standard',
                             line_number=1,
-                            message='This is a standard fail state, isn\'t it?',
+                            message="'This is a standard fail state, isn\'t it?'",
+                            code=2468,
+                        ),
+                    ),
+                ],
+            ),
+            (
+                "standard   =  FAIL  (This is a standard fail state, isn't it?,     2468)",
+                [
+                    (
+                        TokenName.FAIL_STATE,
+                        FailState(
+                            name='standard',
+                            line_number=1,
+                            message="This is a standard fail state, isn't it?",
                             code=2468,
                         ),
                     ),
