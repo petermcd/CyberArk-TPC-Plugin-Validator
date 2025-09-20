@@ -10,4 +10,4 @@ class TokenName(Enum):
     FAIL_STATE = 'Fail State'
     CPM_PARAMETER_VALIDATION = 'CPM Parameter Validation'
     SECTION_HEADER = 'Section Header'
-    STATE_TRANSITION = 'State Transition'
+    TRANSITION = 'Transition'

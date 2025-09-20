@@ -6,7 +6,7 @@ from tpc_plugin_validator.lexer.tokens.assignment import Assignment
 from tpc_plugin_validator.lexer.tokens.comment import Comment
 from tpc_plugin_validator.lexer.tokens.fail_state import FailState
 from tpc_plugin_validator.lexer.tokens.section_header import SectionHeader
-from tpc_plugin_validator.lexer.tokens.state_transition import StateTransition
+from tpc_plugin_validator.lexer.tokens.transition import Transition
 from tpc_plugin_validator.lexer.utilities.token_name import TokenName
 from tpc_plugin_validator.utilities.exceptions import LexerException
 
@@ -153,8 +153,8 @@ class TestLexer(object):
                 'state1,condition,state2',
                 [
                     (
-                        TokenName.STATE_TRANSITION,
-                        StateTransition(
+                        TokenName.TRANSITION,
+                        Transition(
                             line_number=1,
                             current_state='state1',
                             condition='condition',
@@ -167,8 +167,8 @@ class TestLexer(object):
                 ' state_1    ,   condition2    , STATE2   ',
                 [
                     (
-                        TokenName.STATE_TRANSITION,
-                        StateTransition(
+                        TokenName.TRANSITION,
+                        Transition(
                             line_number=1,
                             current_state='state_1',
                             condition='condition2',
@@ -200,12 +200,12 @@ class TestLexer(object):
             ),
         ],
     )
-    def test_token(self, line: str, expected_token_list):
+    def test_token(self, line: str, expected_token_list) -> None:
         """
         Test to ensure that a token parses ok.
 
         :param line: The line to be parsed.
-        :param expected_token: A copy of the object we expect to receive back.
+        :param expected_token_list: A copy of the object we expect to receive back.
         """
         lexer = Lexer(source=line)
         lexer.process()
@@ -222,7 +222,7 @@ class TestLexer(object):
             ),
         ],
     )
-    def test_unmatched_lines(self, line: str, expected_exception: Exception, expected_error: str):
+    def test_unmatched_lines(self, line: str, expected_exception: Exception, expected_error: str) -> None:
         """
         Test to ensure that the lexer fails in an expected way when it identifies a line it cannot deal with.
 
@@ -230,7 +230,7 @@ class TestLexer(object):
         :param expected_exception: The exception that should be thrown.
         :param expected_error: The message the exception should provide.
         """
-        lex = Lexer(source=line)
+        lex: Lexer = Lexer(source=line)
         with pytest.raises(expected_exception) as excinfo:
             lex.process()
         assert str(excinfo.value) == expected_error

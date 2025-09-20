@@ -8,7 +8,7 @@ from tpc_plugin_validator.lexer.tokens.cpm_parameter_validation import \
     CPMParameterValidation
 from tpc_plugin_validator.lexer.tokens.fail_state import FailState
 from tpc_plugin_validator.lexer.tokens.section_header import SectionHeader
-from tpc_plugin_validator.lexer.tokens.state_transition import StateTransition
+from tpc_plugin_validator.lexer.tokens.transition import Transition
 from tpc_plugin_validator.lexer.utilities.token_name import TokenName
 
 
@@ -45,7 +45,7 @@ class Parser(object):
             prompts_lexer = Lexer(source=prompts_handler.read())
             self._prepare_prompts(lexed_prompts=prompts_lexer)
 
-    def _prepare_process(self, lexed_process: Lexer):
+    def _prepare_process(self, lexed_process: Lexer) -> None:
         """
         Prepare the process file from the lexed result.
 
@@ -53,7 +53,7 @@ class Parser(object):
         """
         self._process_file = self._process_lex(lexed_file=lexed_process)
 
-    def _prepare_prompts(self, lexed_prompts: Lexer):
+    def _prepare_prompts(self, lexed_prompts: Lexer) -> None:
         """
         Prepare the prompts file from the lexed result.
 
@@ -71,7 +71,7 @@ class Parser(object):
         :return: Result of processing the lexed file.
         """
         current_section_name: str = 'default'
-        section_entries: list[Assignment | Comment | FailState | CPMParameterValidation | SectionHeader | StateTransition] = []
+        section_entries: list[Assignment | Comment | FailState | CPMParameterValidation | SectionHeader | Transition] = []
         sorted_lex = {}
         for lexed_line in lexed_file.tokens:
             if lexed_line[0] == TokenName.SECTION_HEADER:

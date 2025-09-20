@@ -6,7 +6,7 @@ from tpc_plugin_validator.lexer.tokens.cpm_parameter_validation import \
     CPMParameterValidation
 from tpc_plugin_validator.lexer.tokens.fail_state import FailState
 from tpc_plugin_validator.lexer.tokens.section_header import SectionHeader
-from tpc_plugin_validator.lexer.tokens.state_transition import StateTransition
+from tpc_plugin_validator.lexer.tokens.transition import Transition
 from tpc_plugin_validator.lexer.utilities.regex import (
     ASSIGNMENT, COMMENT, CPM_PARAMETER_VALIDATION, FAIL_STATE, SECTION_HEADER,
     TRANSITION)
@@ -29,21 +29,26 @@ class Lexer(object):
         self._parsed_data: list[
             tuple[
                 TokenName,
-                Assignment | Comment | FailState | CPMParameterValidation | SectionHeader | StateTransition,
+                Assignment | Comment | FailState | CPMParameterValidation | SectionHeader | Transition,
             ]
         ] = []
         self._source = source
         self._token_specs = [
             (re.compile(ASSIGNMENT, re.IGNORECASE), TokenName.ASSIGNMENT, '_process_assignment'),
+            (re.compile(ASSIGNMENT, re.IGNORECASE), TokenName.ASSIGNMENT, '_process_assignment'),
             (re.compile(COMMENT, re.IGNORECASE), TokenName.COMMENT, '_process_comment'),
             (re.compile(CPM_PARAMETER_VALIDATION, re.IGNORECASE), TokenName.CPM_PARAMETER_VALIDATION, '_process_cpm_parameter_validation'),
             (re.compile(FAIL_STATE, re.IGNORECASE), TokenName.FAIL_STATE, '_process_fail_state'),
             (re.compile(SECTION_HEADER, re.IGNORECASE), TokenName.SECTION_HEADER, '_process_section_header'),
-            (re.compile(TRANSITION, re.IGNORECASE), TokenName.STATE_TRANSITION, '_process_state_transition'),
+            (re.compile(TRANSITION, re.IGNORECASE), TokenName.TRANSITION, '_process_transitions'),
         ]
 
-    def process(self):
-        """Process the content of the file line by line."""
+    def process(self) -> None:
+        """
+        Process the content of the file line by line.
+
+        :raises LexerException: If the line is not valid.
+        """
 
         if self._parsed_data:
             # Returning as we have parsed the data already.
@@ -153,16 +158,16 @@ class Lexer(object):
             )
         )
 
-    def _process_state_transition(self, match: re.Match, line_number: int) -> None:
+    def _process_transitions(self, match: re.Match, line_number: int) -> None:
         """
-        Process the provided state transition.
+        Process the provided transitions.
 
-        :param match: Regex match of the state transition.
+        :param match: Regex match of the transitions.
         """
         self._parsed_data.append(
             (
-                TokenName.STATE_TRANSITION,
-                StateTransition(
+                TokenName.TRANSITION,
+                Transition(
                     current_state=str(match['current']).strip(),
                     condition=str(match['condition']).strip(),
                     next_state=str(match['next']).strip(),
@@ -172,7 +177,7 @@ class Lexer(object):
         )
 
     @property
-    def tokens(self) -> list[tuple[TokenName, Assignment | Comment | FailState | CPMParameterValidation | SectionHeader | StateTransition]]:
+    def tokens(self) -> list[tuple[TokenName, Assignment | Comment | FailState | CPMParameterValidation | SectionHeader | Transition]]:
         """A list of tokens found by the lexer."""
         if not self._parsed_data:
             self.process()

@@ -1,4 +1,4 @@
-# Structure to hold severity levels for validation results.
+"""Structure to hold severity levels for validation results."""
 
 from enum import Enum
 

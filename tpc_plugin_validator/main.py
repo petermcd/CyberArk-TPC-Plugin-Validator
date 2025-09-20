@@ -1,14 +1,14 @@
-# Entry point for the TPC Plugin Validator module.
+"""Entry point for the TPC Plugin Validator module."""
 from tpc_plugin_validator.parser.parser import Parser
-from tpc_plugin_validator.rule_sets.logging import Logging
+from tpc_plugin_validator.validator import Validator
 
 
-def temp_entry(process_file: str, prompts_file: str):
+def temp_entry(process_file: str, prompts_file: str) -> None:
     config: dict[str, dict[str, bool | int | str]] = {'logging': {'enabled': True}}
     parser = Parser(process_file=process_file, prompts_file=prompts_file)
-    logging = Logging(prompts=parser.prompts_file, process=parser.process_file, config=config)
-    logging.validate()
-    result = logging.get_violations()
+    validator = Validator(parser=parser, config=config)
+    validator.validate()
+    result = validator.get_violations()
     print(result)
 
 if __name__ == "__main__":

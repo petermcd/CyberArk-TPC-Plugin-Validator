@@ -1,4 +1,4 @@
-"""Tests for the Parser class in tpc_plugin_validator.parser module."""
+"""Tests for the parser."""
 import pytest
 
 from tpc_plugin_validator.parser.parser import Parser
@@ -12,11 +12,11 @@ class TestParser(object):
         [
             (
                 'tests/data/CRITICAL-Process-File-Doesnt-Exist/process.ini',
-                'tests/data/CRITICAL-Process-File-Doesnt-Exist/prompts.ini',
+                'tests/data/valid-prompts.ini',
                 'The process file "tests/data/CRITICAL-Process-File-Doesnt-Exist/process.ini" does not exist or is not accessible.',
             ),
             (
-                'tests/data/CRITICAL-Prompts-File-Doesnt-Exist/process.ini',
+                'tests/data/valid-process.ini',
                 'tests/data/CRITICAL-Prompts-File-Doesnt-Exist/prompts.ini',
                 'The prompts file "tests/data/CRITICAL-Prompts-File-Doesnt-Exist/prompts.ini" does not exist or is not accessible.',
             ),
