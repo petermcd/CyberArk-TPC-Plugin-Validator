@@ -5,6 +5,7 @@ from enum import Enum
 
 from tpc_plugin_validator.utilities.exceptions import ProgrammingError
 from tpc_plugin_validator.utilities.severity import Severity
+from tpc_plugin_validator.utilities.types import CONFIG_TYPE
 from tpc_plugin_validator.utilities.validation_result import ValidationResult
 
 
@@ -29,15 +30,13 @@ class RuleSet(ABC):
     _SECTION_NAME: str = ""
     _VALID_TOKENS: list[str] = []
 
-    def __init__(
-        self, process_file, prompts_file, config: dict[str, dict[str, bool | int | str]]
-    ) -> None:
+    def __init__(self, process_file, prompts_file, config: CONFIG_TYPE) -> None:
         """
         Initialize the rule set with prompts and process configurations.
 
         :param process_file: Parsed process file.
         :param prompts_file: Parsed prompts file.
-        :param config: Not used, but included for interface consistency.
+        :param config: Configuration.
         """
         self._config = config.get(self._CONFIG_KEY, {})
         self._file_sections: dict[str, dict[str, str]] = {}
@@ -72,9 +71,7 @@ class RuleSet(ABC):
         )
 
     @staticmethod
-    def _create_message(
-        message: str, file: FileNames | None = None, line_number: int | None = None
-    ) -> str:
+    def _create_message(message: str, file: FileNames | None = None, line_number: int | None = None) -> str:
         """
         Construct a violation message.
 
@@ -118,16 +115,10 @@ class RuleSet(ABC):
         elif file.value == FileNames.prompts.value:
             fetch_from = self._prompts_file
         else:
-            raise ProgrammingError(
-                f"Invalid file name provided to _get_section in {type(self).__name__}."
-            )
+            raise ProgrammingError(f"Invalid file name provided to _get_section in {type(self).__name__}.")
 
-        section_name_fetched = self._file_sections[file.value].get(
-            section_name.lower(), None
-        )
-        return (
-            fetch_from.get(section_name_fetched, None) if section_name_fetched else None
-        )
+        section_name_fetched = self._file_sections[file.value].get(section_name.lower(), None)
+        return fetch_from.get(section_name_fetched, None) if section_name_fetched else None
 
     def _get_section_name(self, file: FileNames, section_name: str) -> str | None:
         """
@@ -140,9 +131,7 @@ class RuleSet(ABC):
         """
         return self._file_sections[file.value].get(section_name.lower(), None)
 
-    def _validate_tokens(
-        self, file: FileNames, section_override: str | None = None
-    ) -> None:
+    def _validate_tokens(self, file: FileNames, section_override: str | None = None) -> None:
         """
         Validate the token types against _VALID_TOKENS in the section.
 
@@ -157,6 +146,9 @@ class RuleSet(ABC):
             )
 
         section = self._get_section(file=file, section_name=required_section)
+
+        if not section:
+            return
 
         for token in section:
             if token.token_name not in self._VALID_TOKENS:

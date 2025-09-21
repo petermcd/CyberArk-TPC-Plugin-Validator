@@ -2,24 +2,21 @@
 
 from tpc_plugin_validator.rule_sets.rule_set import FileNames, RuleSet
 from tpc_plugin_validator.utilities.severity import Severity
+from tpc_plugin_validator.utilities.types import ValidSectionConfig, CONFIG_TYPE
 
 
 class FileRuleSet(RuleSet):
-    _VALID_SECTIONS: dict[str, dict[str, bool | Severity]] = {}
+    _VALID_SECTIONS: dict[str, ValidSectionConfig] = {}
 
-    def __init__(
-        self, process_file, prompts_file, config: dict[str, dict[str, bool | int | str]]
-    ) -> None:
+    def __init__(self, process_file, prompts_file, config: CONFIG_TYPE) -> None:
         """
         Initialize the file rule set with prompts and process configurations.
 
         :param process_file: Parsed process file.
         :param prompts_file: Parsed prompts file.
-        :param config: Not used, but included for interface consistency.
+        :param config: Configuration.
         """
-        super().__init__(
-            prompts_file=prompts_file, process_file=process_file, config=config
-        )
+        super().__init__(prompts_file=prompts_file, process_file=process_file, config=config)
 
     def _validate_required_sections(self, file: FileNames) -> None:
         """
@@ -35,9 +32,7 @@ class FileRuleSet(RuleSet):
         )
 
         for required_section_name in required_sections:
-            if not self._get_section_name(
-                file=file, section_name=required_section_name
-            ):
+            if not self._get_section_name(file=file, section_name=required_section_name):
                 message = self._create_message(
                     message=f'"{required_section_name}" is a required section but this is missing',
                     file=file,
@@ -46,9 +41,7 @@ class FileRuleSet(RuleSet):
                 self._add_violation(
                     name="MissingSectionViolation",
                     description=message,
-                    severity=self._VALID_SECTIONS[required_section_name].get(
-                        "severity_level", Severity.CRITICAL
-                    ),
+                    severity=self._VALID_SECTIONS[required_section_name].get("severity_level", Severity.CRITICAL),
                 )
 
     def _validate_sections(self, file: FileNames) -> None:
@@ -59,8 +52,7 @@ class FileRuleSet(RuleSet):
         """
 
         valid_sections_dict: dict[str, str] = {
-            valid_section_name.lower(): valid_section_name
-            for valid_section_name in self._VALID_SECTIONS.keys()
+            valid_section_name.lower(): valid_section_name for valid_section_name in self._VALID_SECTIONS.keys()
         }
         for section_name in self._file_sections[file.value]:
             section = self._get_section_name(file=file, section_name=section_name)

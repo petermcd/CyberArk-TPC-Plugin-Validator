@@ -5,18 +5,17 @@ from collections import Counter
 from tpc_plugin_validator.lexer.utilities.token_name import TokenName
 from tpc_plugin_validator.rule_sets.rule_set import RuleSet
 from tpc_plugin_validator.utilities.severity import Severity
+from tpc_plugin_validator.utilities.types import CONFIG_TYPE
 
 
 class SectionRuleSet(RuleSet):
-    def __init__(
-        self, process_file, prompts_file, config: dict[str, dict[str, bool | int | str]]
-    ) -> None:
+    def __init__(self, process_file, prompts_file, config: CONFIG_TYPE) -> None:
         """
         Initialize the section rule set with prompts and process configurations.
 
         :param process_file: Parsed process file.
         :param prompts_file: Parsed prompts file.
-        :param config: Not used, but included for interface consistency.
+        :param config: Configuration.
         """
         super().__init__(
             prompts_file=prompts_file,
@@ -26,15 +25,12 @@ class SectionRuleSet(RuleSet):
 
     def _validate_duplicates(self) -> None:
         """Validate that the section does not contain duplicate assignments."""
-        section = self._get_section(
-            file=self._FILE_TYPE, section_name=self._SECTION_NAME
-        )
+        section = self._get_section(file=self._FILE_TYPE, section_name=self._SECTION_NAME)
         token_keys: list[str] = []
         token_keys.extend(
             token.name
             for token in section
-            if token.token_name
-            in (TokenName.ASSIGNMENT.value, TokenName.CPM_PARAMETER_VALIDATION.value)
+            if token.token_name in (TokenName.ASSIGNMENT.value, TokenName.CPM_PARAMETER_VALIDATION.value)
         )
         counted_keys = Counter(token_keys)
         for token_name in counted_keys:

@@ -23,9 +23,7 @@ class TestParser(object):
             ),
         ],
     )
-    def test_parser_file_error(
-        self, process_file: str, prompts_file: str, expected_error: str
-    ) -> None:
+    def test_parser_file_error(self, process_file: str, prompts_file: str, expected_error: str) -> None:
         """
         Test the Parser class with various input files that should raise errors.
 

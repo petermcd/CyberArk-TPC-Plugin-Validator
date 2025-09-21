@@ -3,15 +3,9 @@
 import os
 
 from tpc_plugin_validator.lexer.lexer import Lexer
-from tpc_plugin_validator.lexer.tokens.assignment import Assignment
-from tpc_plugin_validator.lexer.tokens.comment import Comment
-from tpc_plugin_validator.lexer.tokens.cpm_parameter_validation import (
-    CPMParameterValidation,
-)
-from tpc_plugin_validator.lexer.tokens.fail_state import FailState
 from tpc_plugin_validator.lexer.tokens.section_header import SectionHeader
-from tpc_plugin_validator.lexer.tokens.transition import Transition
 from tpc_plugin_validator.lexer.utilities.token_name import TokenName
+from tpc_plugin_validator.lexer.utilities.types import ALL_TOKEN_TYPES
 
 
 class Parser(object):
@@ -31,8 +25,8 @@ class Parser(object):
         :param process_file (str): Path to the process configuration file.
         :param prompts_file (str): Path to the prompt configuration file.
         """
-        self._process_file_path = process_file
-        self._prompts_file_path = prompts_file
+        self._process_file_path: str = process_file
+        self._prompts_file_path: str = prompts_file
 
         if not os.path.isfile(self._process_file_path):
             raise FileNotFoundError(
@@ -78,14 +72,7 @@ class Parser(object):
         :return: Result of processing the lexed file.
         """
         current_section_name: str = "default"
-        section_entries: list[
-            Assignment
-            | Comment
-            | FailState
-            | CPMParameterValidation
-            | SectionHeader
-            | Transition
-        ] = []
+        section_entries: list[ALL_TOKEN_TYPES,] = []
         sorted_lex = {}
         for lexed_line in lexed_file.tokens:
             if lexed_line[0] == TokenName.SECTION_HEADER:

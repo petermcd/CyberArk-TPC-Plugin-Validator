@@ -17,6 +17,7 @@ from tpc_plugin_validator.lexer.utilities.regex import (
     TRANSITION,
 )
 from tpc_plugin_validator.lexer.utilities.token_name import TokenName
+from tpc_plugin_validator.lexer.utilities.types import ALL_TOKEN_TYPES, TokenSpecs
 from tpc_plugin_validator.utilities.exceptions import LexerException
 
 
@@ -35,42 +36,41 @@ class Lexer(object):
         self._parsed_data: list[
             tuple[
                 TokenName,
-                Assignment
-                | Comment
-                | FailState
-                | CPMParameterValidation
-                | SectionHeader
-                | Transition,
+                ALL_TOKEN_TYPES,
             ]
         ] = []
-        self._source = source
-        self._token_specs = [
-            (
-                re.compile(ASSIGNMENT, re.IGNORECASE),
-                TokenName.ASSIGNMENT,
-                "_process_assignment",
-            ),
-            (re.compile(COMMENT, re.IGNORECASE), TokenName.COMMENT, "_process_comment"),
-            (
-                re.compile(CPM_PARAMETER_VALIDATION, re.IGNORECASE),
-                TokenName.CPM_PARAMETER_VALIDATION,
-                "_process_cpm_parameter_validation",
-            ),
-            (
-                re.compile(FAIL_STATE, re.IGNORECASE),
-                TokenName.FAIL_STATE,
-                "_process_fail_state",
-            ),
-            (
-                re.compile(SECTION_HEADER, re.IGNORECASE),
-                TokenName.SECTION_HEADER,
-                "_process_section_header",
-            ),
-            (
-                re.compile(TRANSITION, re.IGNORECASE),
-                TokenName.TRANSITION,
-                "_process_transitions",
-            ),
+        self._source: str = source
+        self._token_specs: list[TokenSpecs] = [
+            {
+                "pattern": re.compile(ASSIGNMENT, re.IGNORECASE),
+                "token_name": TokenName.ASSIGNMENT,
+                "processor_method": "_process_assignment",
+            },
+            {
+                "pattern": re.compile(COMMENT, re.IGNORECASE),
+                "token_name": TokenName.COMMENT,
+                "processor_method": "_process_comment",
+            },
+            {
+                "pattern": re.compile(CPM_PARAMETER_VALIDATION, re.IGNORECASE),
+                "token_name": TokenName.CPM_PARAMETER_VALIDATION,
+                "processor_method": "_process_cpm_parameter_validation",
+            },
+            {
+                "pattern": re.compile(FAIL_STATE, re.IGNORECASE),
+                "token_name": TokenName.FAIL_STATE,
+                "processor_method": "_process_fail_state",
+            },
+            {
+                "pattern": re.compile(SECTION_HEADER, re.IGNORECASE),
+                "token_name": TokenName.SECTION_HEADER,
+                "processor_method": "_process_section_header",
+            },
+            {
+                "pattern": re.compile(TRANSITION, re.IGNORECASE),
+                "token_name": TokenName.TRANSITION,
+                "processor_method": "_process_transitions",
+            },
         ]
 
     def process(self) -> None:
@@ -85,15 +85,13 @@ class Lexer(object):
             return
 
         for line_number, line in enumerate(self._source.splitlines(), start=1):
-            for pattern, _, handler_name in self._token_specs:
-                if match := pattern.match(line):
-                    getattr(self, handler_name)(match=match, line_number=line_number)
+            for token_spec in self._token_specs:
+                if match := token_spec["pattern"].match(line):
+                    getattr(self, token_spec["processor_method"])(match=match, line_number=line_number)
                     break
             else:
                 if line.strip():
-                    raise LexerException(
-                        f'Unable to parse "{line}" on line {line_number}'
-                    )
+                    raise LexerException(f'Unable to parse "{line}" on line {line_number}')
 
     def _process_assignment(self, match: re.Match, line_number: int) -> None:
         """
@@ -102,16 +100,8 @@ class Lexer(object):
         :param match: Regex match of the assignment.
         """
         name: str = str(match["name"]).strip()
-        equals = (
-            str(match["equals"]).strip()
-            if match.groupdict().get("equals", None)
-            else None
-        )
-        assigned_stripped = (
-            str(match["value"]).strip()
-            if match.groupdict().get("value", None)
-            else None
-        )
+        equals = str(match["equals"]).strip() if match.groupdict().get("equals", None) else None
+        assigned_stripped = str(match["value"]).strip() if match.groupdict().get("value", None) else None
         assigned = assigned_stripped or None
         self._parsed_data.append(
             (
@@ -141,9 +131,7 @@ class Lexer(object):
             )
         )
 
-    def _process_cpm_parameter_validation(
-        self, match: re.Match, line_number: int
-    ) -> None:
+    def _process_cpm_parameter_validation(self, match: re.Match, line_number: int) -> None:
         """
         Process the provided parameter validation.
 
@@ -224,12 +212,7 @@ class Lexer(object):
     ) -> list[
         tuple[
             TokenName,
-            Assignment
-            | Comment
-            | FailState
-            | CPMParameterValidation
-            | SectionHeader
-            | Transition,
+            ALL_TOKEN_TYPES,
         ]
     ]:
         """A list of tokens found by the lexer."""

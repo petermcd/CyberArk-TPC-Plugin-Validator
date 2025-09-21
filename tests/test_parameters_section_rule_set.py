@@ -93,9 +93,7 @@ class TestParametersSectionRuleSet(object):
         process_file = parser.process_file
         prompts_file = parser.prompts_file
 
-        rule = ParametersSectionRuleSet(
-            prompts_file=prompts_file, process_file=process_file, config={}
-        )
+        rule = ParametersSectionRuleSet(prompts_file=prompts_file, process_file=process_file, config={})
         rule.validate()
         results = rule.get_violations()
 

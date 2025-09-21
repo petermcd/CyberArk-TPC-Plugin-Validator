@@ -8,6 +8,7 @@ from tpc_plugin_validator.lexer.utilities.token_name import TokenName
 from tpc_plugin_validator.rule_sets.rule_set import FileNames
 from tpc_plugin_validator.rule_sets.section_rule_set import SectionRuleSet
 from tpc_plugin_validator.utilities.severity import Severity
+from tpc_plugin_validator.utilities.types import CONFIG_TYPE
 
 
 class TransitionsSectionRuleSet(SectionRuleSet):
@@ -23,25 +24,19 @@ class TransitionsSectionRuleSet(SectionRuleSet):
         TokenName.COMMENT.value,
     ]
 
-    def __init__(
-        self, process_file, prompts_file, config: dict[str, dict[str, bool | int | str]]
-    ) -> None:
+    def __init__(self, process_file, prompts_file, config: CONFIG_TYPE) -> None:
         """
         Initialize the transitions section rule set with prompts and process configurations.
 
         :param process_file: Parsed process file.
         :param prompts_file: Parsed prompts file.
-        :param config: Not used, but included for interface consistency.
+        :param config: Configuration.
         """
-        super().__init__(
-            prompts_file=prompts_file, process_file=process_file, config=config
-        )
+        super().__init__(prompts_file=prompts_file, process_file=process_file, config=config)
 
     def validate(self) -> None:
         """Validate the transitions section of the process file."""
-        section = self._get_section(
-            file=self._FILE_TYPE, section_name=self._SECTION_NAME
-        )
+        section = self._get_section(file=self._FILE_TYPE, section_name=self._SECTION_NAME)
         if not section:
             # Missing sections are handled at the file level.
             return
@@ -60,11 +55,8 @@ class TransitionsSectionRuleSet(SectionRuleSet):
         return next(
             (
                 state
-                for state in self._get_section(
-                    file=self._FILE_TYPE, section_name="states"
-                )
-                if state.token_name == TokenName.FAIL_STATE.value
-                and state.name.lower() == name.lower()
+                for state in self._get_section(file=self._FILE_TYPE, section_name="states")
+                if state.token_name == TokenName.FAIL_STATE.value and state.name.lower() == name.lower()
             ),
             None,
         )
@@ -74,9 +66,7 @@ class TransitionsSectionRuleSet(SectionRuleSet):
         state_transitions: list[Transition] = []
         state_transitions.extend(
             state_transition
-            for state_transition in self._get_section(
-                file=self._FILE_TYPE, section_name=self._SECTION_NAME
-            )
+            for state_transition in self._get_section(file=self._FILE_TYPE, section_name=self._SECTION_NAME)
             if state_transition.token_name == TokenName.TRANSITION.value
         )
         state_transitions_joined: list[str] = []
@@ -112,19 +102,12 @@ class TransitionsSectionRuleSet(SectionRuleSet):
             return
         from_states: list[str] = []
         from_states.extend(
-            value.current_state
-            for value in transitions
-            if value.token_name == TokenName.TRANSITION.value
+            value.current_state for value in transitions if value.token_name == TokenName.TRANSITION.value
         )
 
         if transition.next_state not in from_states:
-            fail_state_token: Assignment | None = self._get_fail_state(
-                transition.next_state
-            )
-            if (
-                fail_state_token
-                and fail_state_token.token_name == TokenName.FAIL_STATE.value
-            ):
+            fail_state_token: Assignment | None = self._get_fail_state(transition.next_state)
+            if fail_state_token and fail_state_token.token_name == TokenName.FAIL_STATE.value:
                 # failure condition, nothing follows this.
                 return
             message: str = self._create_message(
@@ -138,9 +121,7 @@ class TransitionsSectionRuleSet(SectionRuleSet):
                 severity=Severity.CRITICAL,
             )
 
-    def _validate_previous_transition(
-        self, transition: Transition, transitions
-    ) -> None:
+    def _validate_previous_transition(self, transition: Transition, transitions) -> None:
         """
         Check the previous token is valid for the transition.
 
@@ -152,11 +133,7 @@ class TransitionsSectionRuleSet(SectionRuleSet):
         if transition.current_state.lower() == "init":
             return
         to_states: list[str] = []
-        to_states.extend(
-            value.next_state
-            for value in transitions
-            if value.token_name == TokenName.TRANSITION.value
-        )
+        to_states.extend(value.next_state for value in transitions if value.token_name == TokenName.TRANSITION.value)
         to_states_set = set(to_states)
         if transition.current_state not in to_states_set:
             message: str = self._create_message(
@@ -172,12 +149,8 @@ class TransitionsSectionRuleSet(SectionRuleSet):
 
     def _validate_state_paths(self) -> None:
         """Check to ensure that a state has a valid entry and exit point."""
-        tokens = self._get_section(
-            file=self._FILE_TYPE, section_name=self._SECTION_NAME
-        )
+        tokens = self._get_section(file=self._FILE_TYPE, section_name=self._SECTION_NAME)
 
         for transition in tokens:
-            self._validate_previous_transition(
-                transition=transition, transitions=tokens
-            )
+            self._validate_previous_transition(transition=transition, transitions=tokens)
             self._validate_next_transition(transition=transition, transitions=tokens)

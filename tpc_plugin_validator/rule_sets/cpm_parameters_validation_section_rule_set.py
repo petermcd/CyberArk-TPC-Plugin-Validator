@@ -4,6 +4,7 @@ from tpc_plugin_validator.lexer.utilities.token_name import TokenName
 from tpc_plugin_validator.rule_sets.rule_set import FileNames
 from tpc_plugin_validator.rule_sets.section_rule_set import SectionRuleSet
 from tpc_plugin_validator.utilities.severity import Severity
+from tpc_plugin_validator.utilities.types import CONFIG_TYPE
 
 
 class CPMParametersValidationSectionRuleSet(SectionRuleSet):
@@ -19,25 +20,19 @@ class CPMParametersValidationSectionRuleSet(SectionRuleSet):
         TokenName.COMMENT.value,
     ]
 
-    def __init__(
-        self, process_file, prompts_file, config: dict[str, dict[str, bool | int | str]]
-    ) -> None:
+    def __init__(self, process_file, prompts_file, config: CONFIG_TYPE) -> None:
         """
         Initialize the CPM Parameters Validation section rule set with prompts and process configurations.
 
         :param process_file: Parsed process file.
         :param prompts_file: Parsed prompts file.
-        :param config: Not used, but included for interface consistency.
+        :param config: Configuration.
         """
-        super().__init__(
-            prompts_file=prompts_file, process_file=process_file, config=config
-        )
+        super().__init__(prompts_file=prompts_file, process_file=process_file, config=config)
 
     def validate(self) -> None:
         """Validate the CPM Parameters Validation section of the process file."""
-        section = self._get_section(
-            file=self._FILE_TYPE, section_name=self._SECTION_NAME
-        )
+        section = self._get_section(file=self._FILE_TYPE, section_name=self._SECTION_NAME)
         if not section:
             # Missing sections are handled at the file level.
             return
@@ -53,9 +48,7 @@ class CPMParametersValidationSectionRuleSet(SectionRuleSet):
             "PromptsFileName",
         }
 
-        section = self._get_section(
-            file=self._FILE_TYPE, section_name=self._SECTION_NAME
-        )
+        section = self._get_section(file=self._FILE_TYPE, section_name=self._SECTION_NAME)
         for token in section:
             if token.token_name != TokenName.CPM_PARAMETER_VALIDATION.value:
                 continue
@@ -86,9 +79,7 @@ class CPMParametersValidationSectionRuleSet(SectionRuleSet):
         :return: True if used, otherwise False.
         """
 
-        conditions = self._get_section(
-            file=FileNames.prompts, section_name="conditions"
-        )
+        conditions = self._get_section(file=FileNames.prompts, section_name="conditions")
         for condition in conditions:
             if condition.token_name != TokenName.ASSIGNMENT.value:
                 continue

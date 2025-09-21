@@ -223,9 +223,7 @@ class TestLexer(object):
             ),
         ],
     )
-    def test_unmatched_lines(
-        self, line: str, expected_exception: Exception, expected_error: str
-    ) -> None:
+    def test_unmatched_lines(self, line: str, expected_exception: Exception, expected_error: str) -> None:
         """
         Test to ensure that the lexer fails in an expected way when it identifies a line it cannot deal with.
 

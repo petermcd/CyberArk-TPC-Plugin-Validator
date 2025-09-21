@@ -95,9 +95,7 @@ class TestProcessFileRuleSet(object):
         process_file = parser.process_file
         prompts_file = parser.prompts_file
 
-        rule = ProcessFileRuleSet(
-            prompts_file=prompts_file, process_file=process_file, config={}
-        )
+        rule = ProcessFileRuleSet(prompts_file=prompts_file, process_file=process_file, config={})
         rule.validate()
         results = rule.get_violations()
 

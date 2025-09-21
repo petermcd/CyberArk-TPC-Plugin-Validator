@@ -7,6 +7,7 @@ from tpc_plugin_validator.lexer.utilities.token_name import TokenName
 from tpc_plugin_validator.rule_sets.rule_set import FileNames
 from tpc_plugin_validator.rule_sets.section_rule_set import SectionRuleSet
 from tpc_plugin_validator.utilities.severity import Severity
+from tpc_plugin_validator.utilities.types import CONFIG_TYPE
 
 
 class ParametersSectionRuleSet(SectionRuleSet):
@@ -22,25 +23,19 @@ class ParametersSectionRuleSet(SectionRuleSet):
         TokenName.COMMENT.value,
     ]
 
-    def __init__(
-        self, process_file, prompts_file, config: dict[str, dict[str, bool | int | str]]
-    ) -> None:
+    def __init__(self, process_file, prompts_file, config: CONFIG_TYPE) -> None:
         """
         Initialize the parameters section rule set with prompts and process configurations.
 
         :param process_file: Parsed process file.
         :param prompts_file: Parsed prompts file.
-        :param config: Not used, but included for interface consistency.
+        :param config: Configuration.
         """
-        super().__init__(
-            prompts_file=prompts_file, process_file=process_file, config=config
-        )
+        super().__init__(prompts_file=prompts_file, process_file=process_file, config=config)
 
     def validate(self) -> None:
         """Validate the Parameters section of the process file."""
-        section = self._get_section(
-            file=self._FILE_TYPE, section_name=self._SECTION_NAME
-        )
+        section = self._get_section(file=self._FILE_TYPE, section_name=self._SECTION_NAME)
         if not section:
             # Missing sections are handled at the file level.
             return
@@ -52,23 +47,15 @@ class ParametersSectionRuleSet(SectionRuleSet):
     def _validate_human_min_max(self) -> None:
         """Check that the SendHumanMin and SendHumanMax have valid values if set."""
 
-        section = self._get_section(
-            file=self._FILE_TYPE, section_name=self._SECTION_NAME
-        )
+        section = self._get_section(file=self._FILE_TYPE, section_name=self._SECTION_NAME)
 
         human_min: Assignment | None = None
         human_max: Assignment | None = None
 
         for token in section:
-            if (
-                token.token_name == TokenName.ASSIGNMENT.value
-                and token.name == "SendHumanMin"
-            ):
+            if token.token_name == TokenName.ASSIGNMENT.value and token.name == "SendHumanMin":
                 human_min = token
-            elif (
-                token.token_name == TokenName.ASSIGNMENT.value
-                and token.name == "SendHumanMax"
-            ):
+            elif token.token_name == TokenName.ASSIGNMENT.value and token.name == "SendHumanMax":
                 human_max = token
 
         if not human_min and not human_max:

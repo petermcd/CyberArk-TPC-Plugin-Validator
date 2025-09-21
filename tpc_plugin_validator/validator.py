@@ -1,5 +1,7 @@
 """Class to manage validations."""
 
+from typing import Callable
+
 from tpc_plugin_validator.parser.parser import Parser
 from tpc_plugin_validator.rule_sets.conditions_section_rule_set import (
     ConditionsSectionRuleSet,
@@ -19,6 +21,7 @@ from tpc_plugin_validator.rule_sets.states_section_rule_set import StatesSection
 from tpc_plugin_validator.rule_sets.transitions_section_rule_set import (
     TransitionsSectionRuleSet,
 )
+from tpc_plugin_validator.utilities.types import CONFIG_TYPE
 from tpc_plugin_validator.utilities.validation_result import ValidationResult
 
 
@@ -32,18 +35,16 @@ class Validator(object):
         "_validations",
     )
 
-    def __init__(
-        self, parser: Parser, config: dict[str, dict[str, bool | int | str]]
-    ) -> None:
+    def __init__(self, parser: Parser, config: CONFIG_TYPE) -> None:
         """
         Standard init for the Validator class.
 
         :param parser: Parser object
         """
-        self._config: dict[str, dict[str, bool | int | str]] = config
+        self._config: CONFIG_TYPE = config
         self._parser: Parser = parser
         self._validations: list[ValidationResult] = []
-        self._rule_sets = (
+        self._rule_sets: set[Callable] = {
             ConditionsSectionRuleSet,
             CPMParametersValidationSectionRuleSet,
             DebugInformationSectionRuleSet,
@@ -52,7 +53,7 @@ class Validator(object):
             PromptsFileRuleSet,
             StatesSectionRuleSet,
             TransitionsSectionRuleSet,
-        )
+        }
 
     def get_violations(self) -> list[ValidationResult]:
         """

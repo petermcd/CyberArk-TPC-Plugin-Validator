@@ -4,6 +4,7 @@ from tpc_plugin_validator.lexer.utilities.token_name import TokenName
 from tpc_plugin_validator.rule_sets.file_rule_set import FileRuleSet
 from tpc_plugin_validator.rule_sets.rule_set import FileNames
 from tpc_plugin_validator.utilities.severity import Severity
+from tpc_plugin_validator.utilities.types import ValidSectionConfig, CONFIG_TYPE
 
 
 class PromptsFileRuleSet(FileRuleSet):
@@ -15,7 +16,7 @@ class PromptsFileRuleSet(FileRuleSet):
 
     _CONFIG_KEY: str = "prompts"
     _FILE_TYPE: FileNames = FileNames.prompts
-    _VALID_SECTIONS: dict[str, dict[str, bool | Severity]] = {
+    _VALID_SECTIONS: dict[str, ValidSectionConfig] = {
         "conditions": {"required": True, "severity_level": Severity.CRITICAL},
         "default": {"required": True, "severity_level": Severity.CRITICAL},
     }
@@ -23,19 +24,15 @@ class PromptsFileRuleSet(FileRuleSet):
         TokenName.COMMENT.value,
     ]
 
-    def __init__(
-        self, process_file, prompts_file, config: dict[str, dict[str, bool | int | str]]
-    ) -> None:
+    def __init__(self, process_file, prompts_file, config: CONFIG_TYPE) -> None:
         """
         Initialize the prompts file rule set with prompts and process configurations.
 
         :param process_file: Parsed process file.
         :param prompts_file: Parsed prompts file.
-        :param config: Not used, but included for interface consistency.
+        :param config: Configuration.
         """
-        super().__init__(
-            prompts_file=prompts_file, process_file=process_file, config=config
-        )
+        super().__init__(prompts_file=prompts_file, process_file=process_file, config=config)
 
     def validate(self) -> None:
         """Validate the prompts file."""
