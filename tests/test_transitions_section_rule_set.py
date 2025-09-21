@@ -28,22 +28,22 @@ class TestTransitionsSectionRuleSet(object):
                     ValidationResult(
                         rule="InvalidTokenTypeViolation",
                         severity=Severity.WARNING,
-                        message='The token type "Assignment" is not valid in the "transitions" section, file: process.ini, line: 40.',
+                        message='The token type "Assignment" is not valid in this section, file: process.ini, section: transitions, line: 40.',
                     ),
                     ValidationResult(
                         rule="DuplicateTransitionViolation",
                         severity=Severity.WARNING,
-                        message='The transition "Init,hello,wait" has been declared 2 times, a transition tuple must be unique, file: process.ini.',
+                        message='The transition "Init,hello,wait" has been declared 2 times, a transition tuple must be unique, file: process.ini, section: transitions.',
                     ),
                     ValidationResult(
                         rule="InvalidTransitionViolation",
                         severity=Severity.CRITICAL,
-                        message='The state "wait" attempts to transition to "NoNext" which does not exist, file: process.ini, line: 36.',
+                        message='The state "wait" attempts to transition to "NoNext" which does not exist, file: process.ini, section: transitions, line: 36.',
                     ),
                     ValidationResult(
                         rule="InvalidTransitionViolation",
                         severity=Severity.CRITICAL,
-                        message='The state "NoPrevious" does not have a valid path leading to it, file: process.ini, line: 37.',
+                        message='The state "NoPrevious" does not have a valid path leading to it, file: process.ini, section: transitions, line: 37.',
                     ),
                 ],
             ),

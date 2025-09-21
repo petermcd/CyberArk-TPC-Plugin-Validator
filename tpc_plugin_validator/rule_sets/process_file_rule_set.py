@@ -2,9 +2,8 @@
 
 from tpc_plugin_validator.lexer.utilities.token_name import TokenName
 from tpc_plugin_validator.rule_sets.file_rule_set import FileRuleSet
-from tpc_plugin_validator.rule_sets.rule_set import FileNames
 from tpc_plugin_validator.utilities.severity import Severity
-from tpc_plugin_validator.utilities.types import ValidSectionConfig, CONFIG_TYPE
+from tpc_plugin_validator.utilities.types import ValidSectionConfig, CONFIG_TYPE, FileNames, SectionNames
 
 
 class ProcessFileRuleSet(FileRuleSet):
@@ -17,15 +16,15 @@ class ProcessFileRuleSet(FileRuleSet):
     _CONFIG_KEY: str = "process"
     _FILE_TYPE: FileNames = FileNames.process
     _VALID_SECTIONS: dict[str, ValidSectionConfig] = {
-        "CPM Parameters Validation": {
+        SectionNames.cpm_parameters_validation.value: {
             "required": True,
             "severity_level": Severity.WARNING,
         },
-        "Debug Information": {"required": False, "severity_level": Severity.INFO},
-        "default": {"required": True, "severity_level": Severity.CRITICAL},
-        "parameters": {"required": False, "severity_level": Severity.INFO},
-        "states": {"required": True, "severity_level": Severity.CRITICAL},
-        "transitions": {"required": True, "severity_level": Severity.CRITICAL},
+        SectionNames.debug_information.value: {"required": False, "severity_level": Severity.INFO},
+        SectionNames.default.value: {"required": True, "severity_level": Severity.CRITICAL},
+        SectionNames.parameters.value: {"required": False, "severity_level": Severity.INFO},
+        SectionNames.states.value: {"required": True, "severity_level": Severity.CRITICAL},
+        SectionNames.transitions.value: {"required": True, "severity_level": Severity.CRITICAL},
     }
     _VALID_TOKENS: list[str] = [
         TokenName.COMMENT.value,
@@ -45,4 +44,4 @@ class ProcessFileRuleSet(FileRuleSet):
         """Validate the process file."""
         self._validate_sections(file=self._FILE_TYPE)
         self._validate_required_sections(file=self._FILE_TYPE)
-        self._validate_tokens(file=self._FILE_TYPE, section_override="default")
+        self._validate_tokens(file=self._FILE_TYPE, section_override=SectionNames.default)

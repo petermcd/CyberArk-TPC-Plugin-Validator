@@ -2,10 +2,9 @@
 
 from tpc_plugin_validator.lexer.tokens.assignment import Assignment
 from tpc_plugin_validator.lexer.utilities.token_name import TokenName
-from tpc_plugin_validator.rule_sets.rule_set import FileNames
 from tpc_plugin_validator.rule_sets.section_rule_set import SectionRuleSet
 from tpc_plugin_validator.utilities.severity import Severity
-from tpc_plugin_validator.utilities.types import CONFIG_TYPE
+from tpc_plugin_validator.utilities.types import CONFIG_TYPE, FileNames, SectionNames, Violations
 
 
 class DebugInformationSectionRuleSet(SectionRuleSet):
@@ -15,7 +14,7 @@ class DebugInformationSectionRuleSet(SectionRuleSet):
 
     _CONFIG_KEY: str = "debug_information"
     _FILE_TYPE: FileNames = FileNames.process
-    _SECTION_NAME: str = "Debug Information"
+    _SECTION_NAME: SectionNames = SectionNames.debug_information
     _VALID_TOKENS: list[str] = [
         TokenName.ASSIGNMENT.value,
         TokenName.COMMENT.value,
@@ -68,23 +67,25 @@ class DebugInformationSectionRuleSet(SectionRuleSet):
         for valid_setting in valid_settings:
             if token.name.lower() == valid_setting.lower():
                 message: str = self._create_message(
-                    message=f'The setting "{token.name}" in the "{self._SECTION_NAME}" section should be set as "{valid_setting}"',
+                    message=f'The setting "{token.name}" should be set as "{valid_setting}"',
                     file=self._FILE_TYPE,
+                    section=self._SECTION_NAME,
                     line_number=token.line_number,
                 )
                 self._add_violation(
-                    name="NameCaseViolation",
+                    name=Violations.name_case_violation,
                     description=message,
                     severity=Severity.WARNING,
                 )
                 return True
         message = self._create_message(
-            message=f'The setting "{token.name}" in the "{self._SECTION_NAME}" section is not a valid "{self._SECTION_NAME}" setting. Valid settings are: {", ".join(valid_settings)}',
+            message=f'The setting "{token.name}" is not a valid setting. Valid settings are: {", ".join(valid_settings)}',
             file=self._FILE_TYPE,
+            section=self._SECTION_NAME,
             line_number=token.line_number,
         )
         self._add_violation(
-            name="NameViolation",
+            name=Violations.name_violation,
             description=message,
             severity=Severity.WARNING,
         )
@@ -100,12 +101,13 @@ class DebugInformationSectionRuleSet(SectionRuleSet):
 
         if not token.assigned:
             message: str = self._create_message(
-                message=f'The value for "{token.name}" in the "{self._SECTION_NAME}" section is blank. Setting should be explicitly set to "no"',
+                message=f'The value for "{token.name}" is blank. Setting should be explicitly set to "no"',
                 file=self._FILE_TYPE,
+                section=self._SECTION_NAME,
                 line_number=token.line_number,
             )
             self._add_violation(
-                name="ValueViolation",
+                name=Violations.value_violation,
                 description=message,
                 severity=Severity.WARNING,
             )
@@ -113,12 +115,13 @@ class DebugInformationSectionRuleSet(SectionRuleSet):
 
         if token.assigned.lower() not in valid_values:
             message = self._create_message(
-                message=f'The value for "{token.name}" in the "{self._SECTION_NAME}" section is set to "{token.assigned}" and is invalid. Valid values are "no" and "yes"',
+                message=f'The value for "{token.name}" is set to "{token.assigned}" and is invalid. Valid values are "no" and "yes"',
                 file=self._FILE_TYPE,
+                section=self._SECTION_NAME,
                 line_number=token.line_number,
             )
             self._add_violation(
-                name="ValueViolation",
+                name=Violations.value_violation,
                 description=message,
                 severity=Severity.CRITICAL,
             )
@@ -126,24 +129,26 @@ class DebugInformationSectionRuleSet(SectionRuleSet):
 
         if token.assigned.lower() != token.assigned:
             message = self._create_message(
-                message=f'The value for "{token.name}" in the "{self._SECTION_NAME}" section is set to "{token.assigned}" this should be in lower case',
+                message=f'The value for "{token.name}" is set to "{token.assigned}" this should be in lower case',
                 file=self._FILE_TYPE,
+                section=self._SECTION_NAME,
                 line_number=token.line_number,
             )
             self._add_violation(
-                name="ValueCaseViolation",
+                name=Violations.value_case_violation,
                 description=message,
                 severity=Severity.WARNING,
             )
 
         if token.assigned.lower() != "no":
             message = self._create_message(
-                message=f'The value for "{token.name}" in the "{self._SECTION_NAME}" section is set to "{token.assigned}". It is recommended to set all "{self._SECTION_NAME}" settings to "no" for production environments',
+                message=f'The value for "{token.name}" is set to "{token.assigned}". It is recommended to set all settings in this section to "no" for production environments',
                 file=self._FILE_TYPE,
+                section=self._SECTION_NAME,
                 line_number=token.line_number,
             )
             self._add_violation(
-                name="LoggingEnabledViolation",
+                name=Violations.logging_enabled_violation,
                 description=message,
                 severity=Severity.CRITICAL if self._config.get("enabled", True) else Severity.INFO,
             )

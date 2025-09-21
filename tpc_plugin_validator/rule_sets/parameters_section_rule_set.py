@@ -4,10 +4,9 @@ import contextlib
 
 from tpc_plugin_validator.lexer.tokens.assignment import Assignment
 from tpc_plugin_validator.lexer.utilities.token_name import TokenName
-from tpc_plugin_validator.rule_sets.rule_set import FileNames
 from tpc_plugin_validator.rule_sets.section_rule_set import SectionRuleSet
 from tpc_plugin_validator.utilities.severity import Severity
-from tpc_plugin_validator.utilities.types import CONFIG_TYPE
+from tpc_plugin_validator.utilities.types import CONFIG_TYPE, FileNames, SectionNames, Violations
 
 
 class ParametersSectionRuleSet(SectionRuleSet):
@@ -17,7 +16,7 @@ class ParametersSectionRuleSet(SectionRuleSet):
 
     _CONFIG_KEY: str = "parameters"
     _FILE_TYPE: FileNames = FileNames.process
-    _SECTION_NAME: str = "parameters"
+    _SECTION_NAME: SectionNames = SectionNames.parameters
     _VALID_TOKENS: list[str] = [
         TokenName.ASSIGNMENT.value,
         TokenName.COMMENT.value,
@@ -69,13 +68,14 @@ class ParametersSectionRuleSet(SectionRuleSet):
                 and human_max.assigned
                 and float(human_min.assigned) > float(human_max.assigned)
             ):
-                message = self._create_message(
+                message: str = self._create_message(
                     message=f'"SendHumanMin" is set to {float(human_min.assigned)} and "SendHumanMax" is set to {float(human_max.assigned)}, "SendHumanMin" cannot be greater than "SendHumanMax"',
+                    section=self._SECTION_NAME,
                     file=self._FILE_TYPE,
                     line_number=None,
                 )
                 self._add_violation(
-                    name="ValueViolation",
+                    name=Violations.value_violation,
                     description=message,
                     severity=Severity.CRITICAL,
                 )
@@ -85,10 +85,11 @@ class ParametersSectionRuleSet(SectionRuleSet):
                 message = self._create_message(
                     message=f'"SendHumanMin" is set to {float(human_min.assigned)} this cannot be less than 0',
                     file=self._FILE_TYPE,
+                    section=self._SECTION_NAME,
                     line_number=human_min.line_number,
                 )
                 self._add_violation(
-                    name="ValueViolation",
+                    name=Violations.value_violation,
                     severity=Severity.CRITICAL,
                     description=message,
                 )
@@ -97,10 +98,11 @@ class ParametersSectionRuleSet(SectionRuleSet):
                 message = self._create_message(
                     message=f'"SendHumanMin" is set to "{human_min.assigned}", the value must be numerical',
                     file=self._FILE_TYPE,
+                    section=self._SECTION_NAME,
                     line_number=human_min.line_number,
                 )
                 self._add_violation(
-                    name="ValueViolation",
+                    name=Violations.value_violation,
                     severity=Severity.CRITICAL,
                     description=message,
                 )
@@ -110,10 +112,11 @@ class ParametersSectionRuleSet(SectionRuleSet):
                 message = self._create_message(
                     message=f'"SendHumanMax" is set to {float(human_max.assigned)} this cannot be less than 0',
                     file=self._FILE_TYPE,
+                    section=self._SECTION_NAME,
                     line_number=human_max.line_number,
                 )
                 self._add_violation(
-                    name="ValueViolation",
+                    name=Violations.value_violation,
                     severity=Severity.CRITICAL,
                     description=message,
                 )
@@ -121,11 +124,12 @@ class ParametersSectionRuleSet(SectionRuleSet):
             if human_max:
                 message = self._create_message(
                     message=f'"SendHumanMax" is set to "{human_max.assigned}", the value must be numerical',
+                    section=self._SECTION_NAME,
                     file=self._FILE_TYPE,
                     line_number=human_max.line_number,
                 )
                 self._add_violation(
-                    name="ValueViolation",
+                    name=Violations.value_violation,
                     severity=Severity.CRITICAL,
                     description=message,
                 )

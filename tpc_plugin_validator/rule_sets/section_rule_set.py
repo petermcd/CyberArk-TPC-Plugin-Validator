@@ -5,7 +5,7 @@ from collections import Counter
 from tpc_plugin_validator.lexer.utilities.token_name import TokenName
 from tpc_plugin_validator.rule_sets.rule_set import RuleSet
 from tpc_plugin_validator.utilities.severity import Severity
-from tpc_plugin_validator.utilities.types import CONFIG_TYPE
+from tpc_plugin_validator.utilities.types import CONFIG_TYPE, Violations
 
 
 class SectionRuleSet(RuleSet):
@@ -38,10 +38,11 @@ class SectionRuleSet(RuleSet):
                 message: str = self._create_message(
                     message=f'The assignment "{token_name}" has been declared {counted_keys[token_name]} times',
                     file=self._FILE_TYPE,
+                    section=self._SECTION_NAME,
                     line_number=None,
                 )
                 self._add_violation(
-                    name="DuplicateAssignmentViolation",
+                    name=Violations.duplicate_assignment_violation,
                     description=message,
                     severity=Severity.CRITICAL,
                 )

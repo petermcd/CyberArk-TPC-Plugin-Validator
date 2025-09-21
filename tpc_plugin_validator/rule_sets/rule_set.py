@@ -1,19 +1,11 @@
 """Abstract class for all rule sets."""
 
 from abc import ABC
-from enum import Enum
 
 from tpc_plugin_validator.utilities.exceptions import ProgrammingError
 from tpc_plugin_validator.utilities.severity import Severity
-from tpc_plugin_validator.utilities.types import CONFIG_TYPE
+from tpc_plugin_validator.utilities.types import CONFIG_TYPE, FileNames, SectionNames, Violations
 from tpc_plugin_validator.utilities.validation_result import ValidationResult
-
-
-class FileNames(Enum):
-    """Enum to hold the valid file names."""
-
-    process = "process.ini"
-    prompts = "prompts.ini"
 
 
 class RuleSet(ABC):
@@ -27,7 +19,7 @@ class RuleSet(ABC):
 
     _CONFIG_KEY: str = ""
     _FILE_TYPE: FileNames = FileNames.prompts
-    _SECTION_NAME: str = ""
+    _SECTION_NAME: SectionNames = SectionNames.default
     _VALID_TOKENS: list[str] = []
 
     def __init__(self, process_file, prompts_file, config: CONFIG_TYPE) -> None:
@@ -54,7 +46,7 @@ class RuleSet(ABC):
         """
         return self._violations
 
-    def _add_violation(self, name: str, description: str, severity: Severity) -> None:
+    def _add_violation(self, name: Violations, description: str, severity: Severity) -> None:
         """
         Add a new violation.
 
@@ -64,14 +56,16 @@ class RuleSet(ABC):
         """
         self._violations.append(
             ValidationResult(
-                rule=name,
+                rule=name.value,
                 message=description,
                 severity=severity,
             )
         )
 
     @staticmethod
-    def _create_message(message: str, file: FileNames | None = None, line_number: int | None = None) -> str:
+    def _create_message(
+        message: str, file: FileNames | None = None, section: SectionNames | None = None, line_number: int | None = None
+    ) -> str:
         """
         Construct a violation message.
 
@@ -83,6 +77,8 @@ class RuleSet(ABC):
         """
         if file:
             message = f"{message}, file: {file.value}"
+        if section:
+            message = f"{message}, section: {section.value}"
         if line_number:
             message = f"{message}, line: {line_number}"
 
@@ -99,7 +95,7 @@ class RuleSet(ABC):
         for section in self._prompts_file.keys():
             self._file_sections[FileNames.prompts.value][section.lower()] = section
 
-    def _get_section(self, file: FileNames, section_name: str):
+    def _get_section(self, file: FileNames, section_name: SectionNames):
         """
         Fetch the specified section from the specified file.
 
@@ -117,7 +113,7 @@ class RuleSet(ABC):
         else:
             raise ProgrammingError(f"Invalid file name provided to _get_section in {type(self).__name__}.")
 
-        section_name_fetched = self._file_sections[file.value].get(section_name.lower(), None)
+        section_name_fetched = self._file_sections[file.value].get(section_name.value.lower(), None)
         return fetch_from.get(section_name_fetched, None) if section_name_fetched else None
 
     def _get_section_name(self, file: FileNames, section_name: str) -> str | None:
@@ -131,7 +127,7 @@ class RuleSet(ABC):
         """
         return self._file_sections[file.value].get(section_name.lower(), None)
 
-    def _validate_tokens(self, file: FileNames, section_override: str | None = None) -> None:
+    def _validate_tokens(self, file: FileNames, section_override: SectionNames | None = None) -> None:
         """
         Validate the token types against _VALID_TOKENS in the section.
 
@@ -140,10 +136,6 @@ class RuleSet(ABC):
         """
 
         required_section = section_override or self._SECTION_NAME
-        if not required_section:
-            raise ProgrammingError(
-                f"self._SECTION_NAME has not been declared and section_override has not been populated in {type(self).__name__}."
-            )
 
         section = self._get_section(file=file, section_name=required_section)
 
@@ -152,13 +144,14 @@ class RuleSet(ABC):
 
         for token in section:
             if token.token_name not in self._VALID_TOKENS:
-                message = self._create_message(
-                    message=f'The token type "{token.token_name}" is not valid in the "{required_section}" section',
+                message: str = self._create_message(
+                    message=f'The token type "{token.token_name}" is not valid in this section',
                     file=file,
+                    section=required_section,
                     line_number=token.line_number,
                 )
                 self._add_violation(
-                    name="InvalidTokenTypeViolation",
+                    name=Violations.invalid_token_type_violation,
                     description=message,
                     severity=Severity.WARNING,
                 )

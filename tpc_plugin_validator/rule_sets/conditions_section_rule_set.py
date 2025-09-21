@@ -2,10 +2,9 @@
 
 from tpc_plugin_validator.lexer.tokens.assignment import Assignment
 from tpc_plugin_validator.lexer.utilities.token_name import TokenName
-from tpc_plugin_validator.rule_sets.rule_set import FileNames
 from tpc_plugin_validator.rule_sets.section_rule_set import SectionRuleSet
 from tpc_plugin_validator.utilities.severity import Severity
-from tpc_plugin_validator.utilities.types import CONFIG_TYPE
+from tpc_plugin_validator.utilities.types import CONFIG_TYPE, FileNames, SectionNames, Violations
 
 
 class ConditionsSectionRuleSet(SectionRuleSet):
@@ -15,7 +14,7 @@ class ConditionsSectionRuleSet(SectionRuleSet):
 
     _CONFIG_KEY: str = "conditions"
     _FILE_TYPE: FileNames = FileNames.prompts
-    _SECTION_NAME: str = "conditions"
+    _SECTION_NAME: SectionNames = SectionNames.conditions
     _VALID_TOKENS: list[str] = [
         TokenName.ASSIGNMENT.value,
         TokenName.COMMENT.value,
@@ -50,7 +49,7 @@ class ConditionsSectionRuleSet(SectionRuleSet):
             for token in self._get_section(file=self._FILE_TYPE, section_name=self._SECTION_NAME)
             if token.token_name == TokenName.ASSIGNMENT.value
         )
-        transitions = self._get_section(file=FileNames.process, section_name="transitions")
+        transitions = self._get_section(file=FileNames.process, section_name=SectionNames.transitions)
 
         for token in required_tokens:
             found = False
@@ -61,13 +60,14 @@ class ConditionsSectionRuleSet(SectionRuleSet):
                     found = True
                     continue
                 if token.name.lower() == transition.condition.lower():
-                    message = self._create_message(
+                    message: str = self._create_message(
                         message=f'The condition "{token.name}" is declared but is used as "{transition.condition}"',
                         file=self._FILE_TYPE,
+                        section=self._SECTION_NAME,
                         line_number=token.line_number,
                     )
                     self._add_violation(
-                        name="NameCaseMismatchViolation",
+                        name=Violations.name_case_mismatch_violation,
                         description=message,
                         severity=Severity.WARNING,
                     )
@@ -78,10 +78,11 @@ class ConditionsSectionRuleSet(SectionRuleSet):
             message = self._create_message(
                 message=f'The condition "{token.name}" is declared but is not used',
                 file=self._FILE_TYPE,
+                section=self._SECTION_NAME,
                 line_number=token.line_number,
             )
             self._add_violation(
-                name="UnusedConditionViolation",
+                name=Violations.unused_condition_violation,
                 description=message,
                 severity=Severity.WARNING,
             )

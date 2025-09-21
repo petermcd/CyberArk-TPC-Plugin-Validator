@@ -1,10 +1,9 @@
 """Handle validation of the CPM Parameters Validation section in the process file."""
 
 from tpc_plugin_validator.lexer.utilities.token_name import TokenName
-from tpc_plugin_validator.rule_sets.rule_set import FileNames
 from tpc_plugin_validator.rule_sets.section_rule_set import SectionRuleSet
 from tpc_plugin_validator.utilities.severity import Severity
-from tpc_plugin_validator.utilities.types import CONFIG_TYPE
+from tpc_plugin_validator.utilities.types import CONFIG_TYPE, FileNames, SectionNames, Violations
 
 
 class CPMParametersValidationSectionRuleSet(SectionRuleSet):
@@ -14,7 +13,7 @@ class CPMParametersValidationSectionRuleSet(SectionRuleSet):
 
     _CONFIG_KEY: str = "cpm_parameters_validation"
     _FILE_TYPE: FileNames = FileNames.process
-    _SECTION_NAME: str = "CPM Parameters Validation"
+    _SECTION_NAME: SectionNames = SectionNames.cpm_parameters_validation
     _VALID_TOKENS: list[str] = [
         TokenName.CPM_PARAMETER_VALIDATION.value,
         TokenName.COMMENT.value,
@@ -62,10 +61,11 @@ class CPMParametersValidationSectionRuleSet(SectionRuleSet):
             message: str = self._create_message(
                 message=f'The parameter "{token.name}" has been validated but is not used',
                 file=self._FILE_TYPE,
+                section=self._SECTION_NAME,
                 line_number=token.line_number,
             )
             self._add_violation(
-                name="UnusedParameterViolation",
+                name=Violations.unused_parameter_violation,
                 description=message,
                 severity=Severity.WARNING,
             )
@@ -79,14 +79,14 @@ class CPMParametersValidationSectionRuleSet(SectionRuleSet):
         :return: True if used, otherwise False.
         """
 
-        conditions = self._get_section(file=FileNames.prompts, section_name="conditions")
+        conditions = self._get_section(file=FileNames.prompts, section_name=SectionNames.conditions)
         for condition in conditions:
             if condition.token_name != TokenName.ASSIGNMENT.value:
                 continue
             if condition.assigned and f"<{token.name}>" in condition.assigned:
                 return True
 
-        states = self._get_section(file=FileNames.process, section_name="states")
+        states = self._get_section(file=FileNames.process, section_name=SectionNames.states)
         for state in states:
             if state.token_name != TokenName.ASSIGNMENT.value:
                 continue

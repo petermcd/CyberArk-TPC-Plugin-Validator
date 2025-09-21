@@ -28,22 +28,22 @@ class TestCPMParametersValidationSectionRuleSet(object):
                     ValidationResult(
                         rule="InvalidTokenTypeViolation",
                         severity=Severity.WARNING,
-                        message='The token type "Transition" is not valid in the "CPM Parameters Validation" section, file: process.ini, line: 53.',
+                        message='The token type "Transition" is not valid in this section, file: process.ini, section: CPM Parameters Validation, line: 53.',
                     ),
                     ValidationResult(
                         rule="UnusedParameterViolation",
                         severity=Severity.WARNING,
-                        message='The parameter "extrapass2\\Username" has been validated but is not used, file: process.ini, line: 54.',
+                        message='The parameter "extrapass2\\Username" has been validated but is not used, file: process.ini, section: CPM Parameters Validation, line: 54.',
                     ),
                     ValidationResult(
                         rule="UnusedParameterViolation",
                         severity=Severity.WARNING,
-                        message='The parameter "extrapass2\\Username" has been validated but is not used, file: process.ini, line: 56.',
+                        message='The parameter "extrapass2\\Username" has been validated but is not used, file: process.ini, section: CPM Parameters Validation, line: 56.',
                     ),
                     ValidationResult(
                         rule="DuplicateAssignmentViolation",
                         severity=Severity.CRITICAL,
-                        message='The assignment "extrapass2\\Username" has been declared 2 times, file: process.ini.',
+                        message='The assignment "extrapass2\\Username" has been declared 2 times, file: process.ini, section: CPM Parameters Validation.',
                     ),
                 ],
             ),

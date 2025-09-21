@@ -26,7 +26,7 @@ class TestPromptsFileRuleSets(object):
                     ValidationResult(
                         rule="InvalidTokenTypeViolation",
                         severity=Severity.WARNING,
-                        message='The token type "Transition" is not valid in the "default" section, file: prompts.ini, line: 8.',
+                        message='The token type "Transition" is not valid in this section, file: prompts.ini, section: default, line: 8.',
                     ),
                     ValidationResult(
                         rule="SectionNameCaseViolation",

@@ -5,10 +5,9 @@ from collections import Counter
 from tpc_plugin_validator.lexer.tokens.assignment import Assignment
 from tpc_plugin_validator.lexer.tokens.transition import Transition
 from tpc_plugin_validator.lexer.utilities.token_name import TokenName
-from tpc_plugin_validator.rule_sets.rule_set import FileNames
 from tpc_plugin_validator.rule_sets.section_rule_set import SectionRuleSet
 from tpc_plugin_validator.utilities.severity import Severity
-from tpc_plugin_validator.utilities.types import CONFIG_TYPE
+from tpc_plugin_validator.utilities.types import CONFIG_TYPE, FileNames, SectionNames, Violations
 
 
 class TransitionsSectionRuleSet(SectionRuleSet):
@@ -18,7 +17,7 @@ class TransitionsSectionRuleSet(SectionRuleSet):
 
     _CONFIG_KEY: str = "transitions"
     _FILE_TYPE: FileNames = FileNames.process
-    _SECTION_NAME: str = "transitions"
+    _SECTION_NAME: SectionNames = SectionNames.transitions
     _VALID_TOKENS: list[str] = [
         TokenName.TRANSITION.value,
         TokenName.COMMENT.value,
@@ -55,7 +54,7 @@ class TransitionsSectionRuleSet(SectionRuleSet):
         return next(
             (
                 state
-                for state in self._get_section(file=self._FILE_TYPE, section_name="states")
+                for state in self._get_section(file=self._FILE_TYPE, section_name=SectionNames.states)
                 if state.token_name == TokenName.FAIL_STATE.value and state.name.lower() == name.lower()
             ),
             None,
@@ -81,10 +80,11 @@ class TransitionsSectionRuleSet(SectionRuleSet):
                 message: str = self._create_message(
                     message=f'The transition "{state}" has been declared {state_transitions_counted[state]} times, a transition tuple must be unique',
                     file=self._FILE_TYPE,
+                    section=self._SECTION_NAME,
                     line_number=None,
                 )
                 self._add_violation(
-                    name="DuplicateTransitionViolation",
+                    name=Violations.duplicate_transition_violation,
                     description=message,
                     severity=Severity.WARNING,
                 )
@@ -113,10 +113,11 @@ class TransitionsSectionRuleSet(SectionRuleSet):
             message: str = self._create_message(
                 message=f'The state "{transition.current_state}" attempts to transition to "{transition.next_state}" which does not exist',
                 file=self._FILE_TYPE,
+                section=self._SECTION_NAME,
                 line_number=transition.line_number,
             )
             self._add_violation(
-                name="InvalidTransitionViolation",
+                name=Violations.invalid_transition_violation,
                 description=message,
                 severity=Severity.CRITICAL,
             )
@@ -139,10 +140,11 @@ class TransitionsSectionRuleSet(SectionRuleSet):
             message: str = self._create_message(
                 message=f'The state "{transition.current_state}" does not have a valid path leading to it',
                 file=self._FILE_TYPE,
+                section=self._SECTION_NAME,
                 line_number=transition.line_number,
             )
             self._add_violation(
-                name="InvalidTransitionViolation",
+                name=Violations.invalid_transition_violation,
                 description=message,
                 severity=Severity.CRITICAL,
             )

@@ -28,22 +28,22 @@ class TestConditionsSectionRuleSet(object):
                     ValidationResult(
                         rule="InvalidTokenTypeViolation",
                         severity=Severity.WARNING,
-                        message='The token type "Transition" is not valid in the "conditions" section, file: prompts.ini, line: 18.',
+                        message='The token type "Transition" is not valid in this section, file: prompts.ini, section: conditions, line: 18.',
                     ),
                     ValidationResult(
                         rule="DuplicateAssignmentViolation",
                         severity=Severity.CRITICAL,
-                        message='The assignment "failure" has been declared 2 times, file: prompts.ini.',
+                        message='The assignment "failure" has been declared 2 times, file: prompts.ini, section: conditions.',
                     ),
                     ValidationResult(
                         rule="NameCaseMismatchViolation",
                         severity=Severity.WARNING,
-                        message='The condition "Hello" is declared but is used as "hello", file: prompts.ini, line: 13.',
+                        message='The condition "Hello" is declared but is used as "hello", file: prompts.ini, section: conditions, line: 13.',
                     ),
                     ValidationResult(
                         rule="UnusedConditionViolation",
                         severity=Severity.WARNING,
-                        message='The condition "Unused" is declared but is not used, file: prompts.ini, line: 19.',
+                        message='The condition "Unused" is declared but is not used, file: prompts.ini, section: conditions, line: 19.',
                     ),
                 ],
             ),

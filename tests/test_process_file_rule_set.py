@@ -26,7 +26,7 @@ class TestProcessFileRuleSet(object):
                     ValidationResult(
                         rule="InvalidTokenTypeViolation",
                         severity=Severity.WARNING,
-                        message='The token type "Transition" is not valid in the "default" section, file: process.ini, line: 8.',
+                        message='The token type "Transition" is not valid in this section, file: process.ini, section: default, line: 8.',
                     ),
                     ValidationResult(
                         rule="SectionNameCaseViolation",
@@ -51,7 +51,7 @@ class TestProcessFileRuleSet(object):
                     ValidationResult(
                         rule="InvalidSectionNameViolation",
                         severity=Severity.WARNING,
-                        message='An invalid section "Dummy Section" identified, file: process.ini.',
+                        message='Invalid section "Dummy Section" identified, file: process.ini.',
                     ),
                 ],
             ),

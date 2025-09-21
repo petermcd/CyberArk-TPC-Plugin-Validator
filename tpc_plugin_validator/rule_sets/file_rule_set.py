@@ -1,8 +1,8 @@
 """Base class for all file rule sets."""
 
-from tpc_plugin_validator.rule_sets.rule_set import FileNames, RuleSet
+from tpc_plugin_validator.rule_sets.rule_set import RuleSet
 from tpc_plugin_validator.utilities.severity import Severity
-from tpc_plugin_validator.utilities.types import ValidSectionConfig, CONFIG_TYPE
+from tpc_plugin_validator.utilities.types import ValidSectionConfig, CONFIG_TYPE, FileNames, Violations
 
 
 class FileRuleSet(RuleSet):
@@ -33,13 +33,13 @@ class FileRuleSet(RuleSet):
 
         for required_section_name in required_sections:
             if not self._get_section_name(file=file, section_name=required_section_name):
-                message = self._create_message(
+                message: str = self._create_message(
                     message=f'"{required_section_name}" is a required section but this is missing',
                     file=file,
                     line_number=None,
                 )
                 self._add_violation(
-                    name="MissingSectionViolation",
+                    name=Violations.missing_section_violation,
                     description=message,
                     severity=self._VALID_SECTIONS[required_section_name].get("severity_level", Severity.CRITICAL),
                 )
@@ -59,24 +59,24 @@ class FileRuleSet(RuleSet):
             if section in self._VALID_SECTIONS.keys():
                 continue
             elif section_name in valid_sections_dict:
-                message = self._create_message(
+                message: str = self._create_message(
                     message=f'The section "{valid_sections_dict[section_name]}" has been declared as "{section}"',
                     file=file,
                     line_number=None,
                 )
                 self._add_violation(
-                    name="SectionNameCaseViolation",
+                    name=Violations.section_name_case_violation,
                     description=message,
                     severity=Severity.WARNING,
                 )
             else:
                 message = self._create_message(
-                    message=f'An invalid section "{section}" identified',
+                    message=f'Invalid section "{section}" identified',
                     file=file,
                     line_number=None,
                 )
                 self._add_violation(
-                    name="InvalidSectionNameViolation",
+                    name=Violations.invalid_section_name_violation,
                     description=message,
                     severity=Severity.WARNING,
                 )

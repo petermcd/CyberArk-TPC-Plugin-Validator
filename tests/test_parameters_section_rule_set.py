@@ -28,17 +28,17 @@ class TestParametersSectionRuleSet(object):
                     ValidationResult(
                         rule="InvalidTokenTypeViolation",
                         severity=Severity.WARNING,
-                        message='The token type "Transition" is not valid in the "parameters" section, file: process.ini, line: 63.',
+                        message='The token type "Transition" is not valid in this section, file: process.ini, section: parameters, line: 63.',
                     ),
                     ValidationResult(
                         rule="ValueViolation",
                         severity=Severity.CRITICAL,
-                        message='"SendHumanMin" is set to 1.0 and "SendHumanMax" is set to 0.0, "SendHumanMin" cannot be greater than "SendHumanMax", file: process.ini.',
+                        message='"SendHumanMin" is set to 1.0 and "SendHumanMax" is set to 0.0, "SendHumanMin" cannot be greater than "SendHumanMax", file: process.ini, section: parameters.',
                     ),
                     ValidationResult(
                         rule="DuplicateAssignmentViolation",
                         severity=Severity.CRITICAL,
-                        message='The assignment "PromptTimeout" has been declared 2 times, file: process.ini.',
+                        message='The assignment "PromptTimeout" has been declared 2 times, file: process.ini, section: parameters.',
                     ),
                 ],
             ),
@@ -49,12 +49,12 @@ class TestParametersSectionRuleSet(object):
                     ValidationResult(
                         rule="ValueViolation",
                         severity=Severity.CRITICAL,
-                        message='"SendHumanMin" is set to -1.0 this cannot be less than 0, file: process.ini, line: 64.',
+                        message='"SendHumanMin" is set to -1.0 this cannot be less than 0, file: process.ini, section: parameters, line: 64.',
                     ),
                     ValidationResult(
                         rule="ValueViolation",
                         severity=Severity.CRITICAL,
-                        message='"SendHumanMax" is set to -1.0 this cannot be less than 0, file: process.ini, line: 65.',
+                        message='"SendHumanMax" is set to -1.0 this cannot be less than 0, file: process.ini, section: parameters, line: 65.',
                     ),
                 ],
             ),
@@ -65,12 +65,12 @@ class TestParametersSectionRuleSet(object):
                     ValidationResult(
                         rule="ValueViolation",
                         severity=Severity.CRITICAL,
-                        message='"SendHumanMin" is set to "twenty-two", the value must be numerical, file: process.ini, line: 64.',
+                        message='"SendHumanMin" is set to "twenty-two", the value must be numerical, file: process.ini, section: parameters, line: 64.',
                     ),
                     ValidationResult(
                         rule="ValueViolation",
                         severity=Severity.CRITICAL,
-                        message='"SendHumanMax" is set to "twenty-three", the value must be numerical, file: process.ini, line: 65.',
+                        message='"SendHumanMax" is set to "twenty-three", the value must be numerical, file: process.ini, section: parameters, line: 65.',
                     ),
                 ],
             ),

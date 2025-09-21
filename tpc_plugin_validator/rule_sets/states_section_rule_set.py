@@ -5,10 +5,9 @@ from collections import Counter
 from tpc_plugin_validator.lexer.tokens.assignment import Assignment
 from tpc_plugin_validator.lexer.tokens.fail_state import FailState
 from tpc_plugin_validator.lexer.utilities.token_name import TokenName
-from tpc_plugin_validator.rule_sets.rule_set import FileNames
 from tpc_plugin_validator.rule_sets.section_rule_set import SectionRuleSet
 from tpc_plugin_validator.utilities.severity import Severity
-from tpc_plugin_validator.utilities.types import CONFIG_TYPE
+from tpc_plugin_validator.utilities.types import CONFIG_TYPE, FileNames, SectionNames, Violations
 
 
 class StatesSectionRuleSet(SectionRuleSet):
@@ -18,7 +17,7 @@ class StatesSectionRuleSet(SectionRuleSet):
 
     _CONFIG_KEY: str = "states"
     _FILE_TYPE: FileNames = FileNames.process
-    _SECTION_NAME: str = "states"
+    _SECTION_NAME: SectionNames = SectionNames.states
     _VALID_TOKENS: list[str] = [
         TokenName.ASSIGNMENT.value,
         TokenName.COMMENT.value,
@@ -57,13 +56,14 @@ class StatesSectionRuleSet(SectionRuleSet):
                 break
             elif token.token_name == "Assignment" and token.name.lower() == "end":
                 end_state = token
-                message = self._create_message(
+                message: str = self._create_message(
                     message=f'The END state has been declared as "{end_state.name}", the END state should be in upper case',
                     file=self._FILE_TYPE,
+                    section=self._SECTION_NAME,
                     line_number=end_state.line_number,
                 )
                 self._add_violation(
-                    name="NameCaseViolation",
+                    name=Violations.name_case_violation,
                     description=message,
                     severity=Severity.CRITICAL,
                 )
@@ -72,10 +72,11 @@ class StatesSectionRuleSet(SectionRuleSet):
             message = self._create_message(
                 message=f'The END state has been assigned the value "{end_state.assigned}", the END state should not have a value',
                 file=self._FILE_TYPE,
+                section=self._SECTION_NAME,
                 line_number=end_state.line_number,
             )
             self._add_violation(
-                name="ValueViolation",
+                name=Violations.value_violation,
                 description=message,
                 severity=Severity.CRITICAL,
             )
@@ -92,13 +93,14 @@ class StatesSectionRuleSet(SectionRuleSet):
         for fail_state in fail_states:
             codes.append(fail_state.code)
             if fail_state.code < lower_limit or fail_state.code > upper_limit:
-                message = self._create_message(
+                message: str = self._create_message(
                     message=f'The fail state "{fail_state.name}" has an invalid failure code of "{fail_state.code}", the failure code should be between {lower_limit} and {upper_limit}',
                     file=self._FILE_TYPE,
+                    section=self._SECTION_NAME,
                     line_number=fail_state.line_number,
                 )
                 self._add_violation(
-                    name="ValueViolation",
+                    name=Violations.value_violation,
                     description=message,
                     severity=Severity.CRITICAL,
                 )
@@ -109,10 +111,11 @@ class StatesSectionRuleSet(SectionRuleSet):
                 message = self._create_message(
                     message=f'The code "{code}" has been assigned {counted_codes[code]} times to failure states',
                     file=self._FILE_TYPE,
+                    section=self._SECTION_NAME,
                     line_number=None,
                 )
                 self._add_violation(
-                    name="ValueViolation",
+                    name=Violations.value_violation,
                     description=message,
                     severity=Severity.WARNING,
                 )
