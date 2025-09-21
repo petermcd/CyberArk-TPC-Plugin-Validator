@@ -6,11 +6,6 @@ from typing import TypedDict
 from tpc_plugin_validator.utilities.severity import Severity
 
 
-class ValidSectionConfig(TypedDict):
-    required: bool
-    severity_level: Severity
-
-
 CONFIG_TYPE = dict[str, dict[str, bool | int | str]]
 
 
@@ -31,6 +26,11 @@ class SectionNames(Enum):
     parameters = "parameters"
     states = "states"
     transitions = "transitions"
+
+
+class ValidSectionConfig(TypedDict):
+    required: bool
+    severity_level: Severity
 
 
 class Violations(Enum):
