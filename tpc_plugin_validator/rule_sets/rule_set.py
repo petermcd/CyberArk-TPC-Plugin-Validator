@@ -1,40 +1,42 @@
-"""Parent class for rule sets."""
-from abc import ABC
-from collections import Counter
+"""Abstract class for all rule sets."""
 
-from tpc_plugin_validator.lexer.utilities.token_name import TokenName
+from abc import ABC
+
+from tpc_plugin_validator.utilities.exceptions import ProgrammingError
 from tpc_plugin_validator.utilities.severity import Severity
+from tpc_plugin_validator.utilities.types import CONFIG_TYPE, FileNames, SectionNames, Violations
 from tpc_plugin_validator.utilities.validation_result import ValidationResult
 
 
 class RuleSet(ABC):
-    """Parent class for rule sets."""
-
     __slots__ = (
-        '_config',
-        '_found_section_name',
-        '_process_content',
-        '_prompts_content',
-        '_violations',
+        "_config",
+        "_file_sections",
+        "_process_file",
+        "_prompts_file",
+        "_violations",
     )
 
-    CONFIG_KEY: str = ''
-    SECTION_NAME: str = ''
-    VALID_TOKEN_TYPES: set[str] = {TokenName.ASSIGNMENT.value, TokenName.COMMENT.value,}
+    _CONFIG_KEY: str = ""
+    _FILE_TYPE: FileNames = FileNames.prompts
+    _SECTION_NAME: SectionNames = SectionNames.default
+    _VALID_TOKENS: list[str] = []
 
-    def __init__(self, process, prompts, config: dict[str, dict[str, bool | int | str]]) -> None:
+    def __init__(self, process_file, prompts_file, config: CONFIG_TYPE) -> None:
         """
         Initialize the rule set with prompts and process configurations.
 
-        :param process: Parsed process file.
-        :param prompts: Parsed prompts file.
-        :param config: Not used, but included for interface consistency.
+        :param process_file: Parsed process file.
+        :param prompts_file: Parsed prompts file.
+        :param config: Configuration.
         """
-        self._config = config.get(self.CONFIG_KEY, {})
-        self._found_section_name = ''
-        self._process_content = process
-        self._prompts_content = prompts
+        self._config = config.get(self._CONFIG_KEY, {})
+        self._file_sections: dict[str, dict[str, str]] = {}
+        self._process_file = process_file
+        self._prompts_file = prompts_file
         self._violations: list[ValidationResult] = []
+
+        self._extract_sections()
 
     def get_violations(self) -> list[ValidationResult]:
         """
@@ -44,7 +46,7 @@ class RuleSet(ABC):
         """
         return self._violations
 
-    def _add_violation(self, name: str, description: str, severity: Severity) -> None:
+    def _add_violation(self, name: Violations, description: str, severity: Severity) -> None:
         """
         Add a new violation.
 
@@ -54,54 +56,102 @@ class RuleSet(ABC):
         """
         self._violations.append(
             ValidationResult(
-                rule=name,
+                rule=name.value,
                 message=description,
                 severity=severity,
             )
         )
 
-    def _check_duplicates(self, tokens, rule_name: str, file_type: str):
+    @staticmethod
+    def _create_message(
+        message: str, file: FileNames | None = None, section: SectionNames | None = None, line_number: int | None = None
+    ) -> str:
         """
-        Check to ensure there are no duplicate assignment tokens.
+        Construct a violation message.
 
-        :param tokens: A list of tokens.
-        :param file_type: The type of file being processed (process, prompts).
+        :param message: The message.
+        :param file: The name of the file from the Filenames enum.
+        :param line_number: The line number the message relates too.
+
+        :return: The constructed message.
         """
-        token_keys: list[str] = []
-        token_keys.extend(token.name for token in tokens if token.token_name == TokenName.ASSIGNMENT.value)
-        counted_keys = Counter(token_keys)
-        for token_name in counted_keys:
-            if counted_keys[token_name] > 1:
+        if file:
+            message = f"{message}, file: {file.value}"
+        if section:
+            message = f"{message}, section: {section.value}"
+        if line_number:
+            message = f"{message}, line: {line_number}"
+
+        return f"{message}."
+
+    def _extract_sections(self) -> None:
+        """Create a dictionary of section names so that we can work regardless of case."""
+        self._file_sections = {
+            str(FileNames.process.value): {},
+            str(FileNames.prompts.value): {},
+        }
+        for section in self._process_file.keys():
+            self._file_sections[FileNames.process.value][section.lower()] = section
+        for section in self._prompts_file.keys():
+            self._file_sections[FileNames.prompts.value][section.lower()] = section
+
+    def _get_section(self, file: FileNames, section_name: SectionNames):
+        """
+        Fetch the specified section from the specified file.
+
+        :param file: The name of the file from the Filenames enum.
+        :param section_name: Section to fetch.
+
+        :raises ProgrammingError: If an invalid file is given.
+
+        :return: The section requested.
+        """
+        if file.value == FileNames.process.value:
+            fetch_from = self._process_file
+        elif file.value == FileNames.prompts.value:
+            fetch_from = self._prompts_file
+        else:
+            raise ProgrammingError(f"Invalid file name provided to _get_section in {type(self).__name__}.")
+
+        section_name_fetched = self._file_sections[file.value].get(section_name.value.lower(), None)
+        return fetch_from.get(section_name_fetched, None) if section_name_fetched else None
+
+    def _get_section_name(self, file: FileNames, section_name: str) -> str | None:
+        """
+        Fetch the section name as it was specified in the given file.
+
+        :param file: The name of the file from the Filenames enum.
+        :param section_name: The section name we require.
+
+        :return: The section name as it was provided in the file.
+        """
+        return self._file_sections[file.value].get(section_name.lower(), None)
+
+    def _validate_tokens(self, file: FileNames, section_override: SectionNames | None = None) -> None:
+        """
+        Validate the token types against _VALID_TOKENS in the section.
+
+        :param file: The name of the file from the Filenames enum.
+        :param section_override: The section to analyze if not self._SECTION_NAME.
+        """
+
+        required_section = section_override or self._SECTION_NAME
+
+        section = self._get_section(file=file, section_name=required_section)
+
+        if not section:
+            return
+
+        for token in section:
+            if token.token_name not in self._VALID_TOKENS:
+                message: str = self._create_message(
+                    message=f'The token type "{token.token_name}" is not valid in this section',
+                    file=file,
+                    section=required_section,
+                    line_number=token.line_number,
+                )
                 self._add_violation(
-                    name=rule_name,
-                    description=f'The assignment "{token_name}" has been declared {counted_keys[token_name]} times in the {file_type} file.',
+                    name=Violations.invalid_token_type_violation,
+                    description=message,
                     severity=Severity.WARNING,
                 )
-
-    def _check_section_exists(self, file_content) -> bool:
-        """Check to make sure that a section is named appropriately."""
-
-        section_keys = file_content.keys()
-        for section_key in section_keys:
-            if self.SECTION_NAME == section_key:
-                self._found_section_name = section_key
-                return True
-            elif self.SECTION_NAME.lower() == section_key.lower():
-                self._add_violation(
-                    name='SectionCaseMismatchViolation',
-                    description=f'The "{self.SECTION_NAME}" section has been declared as "{section_key}".',
-                    severity=Severity.WARNING,
-                )
-                self._found_section_name = section_key
-                return True
-        return False
-
-    def _token_is_valid(self, token) -> bool:
-        """
-        Check to ensure that the given token is valid for this section.
-
-        :param token: The token to check.
-
-        :return: True if valid, Otherwise False.
-        """
-        return token.token_name in self.VALID_TOKEN_TYPES

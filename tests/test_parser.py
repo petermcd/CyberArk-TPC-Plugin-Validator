@@ -1,4 +1,5 @@
-"""Tests for the Parser class in tpc_plugin_validator.parser module."""
+"""Tests for the parser."""
+
 import pytest
 
 from tpc_plugin_validator.parser.parser import Parser
@@ -8,19 +9,19 @@ class TestParser(object):
     """Test for the Parser class."""
 
     @pytest.mark.parametrize(
-        'process_file,prompts_file,expected_error',
+        "process_file,prompts_file,expected_error",
         [
             (
-                'tests/data/CRITICAL-Process-File-Doesnt-Exist/process.ini',
-                'tests/data/CRITICAL-Process-File-Doesnt-Exist/prompts.ini',
+                "tests/data/CRITICAL-Process-File-Doesnt-Exist/process.ini",
+                "tests/data/valid-prompts.ini",
                 'The process file "tests/data/CRITICAL-Process-File-Doesnt-Exist/process.ini" does not exist or is not accessible.',
             ),
             (
-                'tests/data/CRITICAL-Prompts-File-Doesnt-Exist/process.ini',
-                'tests/data/CRITICAL-Prompts-File-Doesnt-Exist/prompts.ini',
+                "tests/data/valid-process.ini",
+                "tests/data/CRITICAL-Prompts-File-Doesnt-Exist/prompts.ini",
                 'The prompts file "tests/data/CRITICAL-Prompts-File-Doesnt-Exist/prompts.ini" does not exist or is not accessible.',
             ),
-        ]
+        ],
     )
     def test_parser_file_error(self, process_file: str, prompts_file: str, expected_error: str) -> None:
         """
