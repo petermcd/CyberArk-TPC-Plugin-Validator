@@ -1,4 +1,5 @@
 """Test the lexer."""
+
 import pytest
 
 from tpc_plugin_validator.lexer.lexer import Lexer
@@ -15,16 +16,16 @@ class TestLexer(object):
     """Test the lexer."""
 
     @pytest.mark.parametrize(
-        'line,expected_token_list',
+        "line,expected_token_list",
         [
             (
-                'TestVar',
+                "TestVar",
                 [
                     (
                         TokenName.ASSIGNMENT,
                         Assignment(
                             line_number=1,
-                            name='TestVar',
+                            name="TestVar",
                             equals=None,
                             assigned=None,
                         ),
@@ -32,53 +33,53 @@ class TestLexer(object):
                 ],
             ),
             (
-                'testvar    =   ',
+                "testvar    =   ",
                 [
                     (
                         TokenName.ASSIGNMENT,
                         Assignment(
                             line_number=1,
-                            name='testvar',
-                            equals='=',
+                            name="testvar",
+                            equals="=",
                             assigned=None,
                         ),
                     ),
                 ],
             ),
             (
-                'test_var = 123',
+                "test_var = 123",
                 [
                     (
                         TokenName.ASSIGNMENT,
                         Assignment(
                             line_number=1,
-                            name='test_var',
-                            equals='=',
-                            assigned='123',
+                            name="test_var",
+                            equals="=",
+                            assigned="123",
                         ),
                     ),
                 ],
             ),
             (
-                '# this is a standard comment     ',
+                "# this is a standard comment     ",
                 [
                     (
                         TokenName.COMMENT,
                         Comment(
                             line_number=1,
-                            content='# this is a standard comment',
+                            content="# this is a standard comment",
                         ),
                     ),
                 ],
             ),
             (
-                ';this is a standard comment',
+                ";this is a standard comment",
                 [
                     (
                         TokenName.COMMENT,
                         Comment(
                             line_number=1,
-                            content=';this is a standard comment',
+                            content=";this is a standard comment",
                         ),
                     ),
                 ],
@@ -89,7 +90,7 @@ class TestLexer(object):
                     (
                         TokenName.FAIL_STATE,
                         FailState(
-                            name='standard',
+                            name="standard",
                             line_number=1,
                             message="'This is a standard fail state'",
                             code=1234,
@@ -98,14 +99,14 @@ class TestLexer(object):
                 ],
             ),
             (
-                "standard   =  FAIL  ('This is a standard fail state, isn\'t it?',     2468)",
+                "standard   =  FAIL  ('This is a standard fail state, isn't it?',     2468)",
                 [
                     (
                         TokenName.FAIL_STATE,
                         FailState(
-                            name='standard',
+                            name="standard",
                             line_number=1,
-                            message="'This is a standard fail state, isn\'t it?'",
+                            message="'This is a standard fail state, isn't it?'",
                             code=2468,
                         ),
                     ),
@@ -117,7 +118,7 @@ class TestLexer(object):
                     (
                         TokenName.FAIL_STATE,
                         FailState(
-                            name='standard',
+                            name="standard",
                             line_number=1,
                             message="This is a standard fail state, isn't it?",
                             code=2468,
@@ -126,72 +127,72 @@ class TestLexer(object):
                 ],
             ),
             (
-                '[Some Section Header]',
+                "[Some Section Header]",
                 [
                     (
                         TokenName.SECTION_HEADER,
                         SectionHeader(
                             line_number=1,
-                            name='Some Section Header',
+                            name="Some Section Header",
                         ),
                     ),
                 ],
             ),
             (
-                '   [Some Section Header]    ',
+                "   [Some Section Header]    ",
                 [
                     (
                         TokenName.SECTION_HEADER,
                         SectionHeader(
                             line_number=1,
-                            name='Some Section Header',
+                            name="Some Section Header",
                         ),
                     ),
                 ],
             ),
             (
-                'state1,condition,state2',
+                "state1,condition,state2",
                 [
                     (
                         TokenName.TRANSITION,
                         Transition(
                             line_number=1,
-                            current_state='state1',
-                            condition='condition',
-                            next_state='state2',
+                            current_state="state1",
+                            condition="condition",
+                            next_state="state2",
                         ),
                     ),
                 ],
             ),
             (
-                ' state_1    ,   condition2    , STATE2   ',
+                " state_1    ,   condition2    , STATE2   ",
                 [
                     (
                         TokenName.TRANSITION,
                         Transition(
                             line_number=1,
-                            current_state='state_1',
-                            condition='condition2',
-                            next_state='STATE2',
+                            current_state="state_1",
+                            condition="condition2",
+                            next_state="STATE2",
                         ),
                     ),
                 ],
             ),
             (
-                '[Some Section Header]\r\rTestVar\r',
+                "[Some Section Header]\r\rTestVar\r",
                 [
                     (
                         TokenName.SECTION_HEADER,
                         SectionHeader(
                             line_number=1,
-                            name='Some Section Header',
+                            name="Some Section Header",
                         ),
                     ),
                     (
                         TokenName.ASSIGNMENT,
                         Assignment(
                             line_number=3,
-                            name='TestVar',
+                            name="TestVar",
                             equals=None,
                             assigned=None,
                         ),
@@ -213,16 +214,18 @@ class TestLexer(object):
         assert tokens == expected_token_list
 
     @pytest.mark.parametrize(
-        'line,expected_exception,expected_error',
+        "line,expected_exception,expected_error",
         [
             (
-                'This line will not match',
+                "This line will not match",
                 LexerException,
                 'Unable to parse "This line will not match" on line 1',
             ),
         ],
     )
-    def test_unmatched_lines(self, line: str, expected_exception: Exception, expected_error: str) -> None:
+    def test_unmatched_lines(
+        self, line: str, expected_exception: Exception, expected_error: str
+    ) -> None:
         """
         Test to ensure that the lexer fails in an expected way when it identifies a line it cannot deal with.
 

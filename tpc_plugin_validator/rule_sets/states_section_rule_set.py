@@ -1,4 +1,5 @@
 """Handle validation of the states section in the process file."""
+
 from collections import Counter
 
 from tpc_plugin_validator.lexer.tokens.assignment import Assignment
@@ -14,16 +15,18 @@ class StatesSectionRuleSet(SectionRuleSet):
     Handle validation of the states section in the process file.
     """
 
-    _CONFIG_KEY: str = 'states'
+    _CONFIG_KEY: str = "states"
     _FILE_TYPE: FileNames = FileNames.process
-    _SECTION_NAME: str = 'states'
+    _SECTION_NAME: str = "states"
     _VALID_TOKENS: list[str] = [
         TokenName.ASSIGNMENT.value,
         TokenName.COMMENT.value,
         TokenName.FAIL_STATE.value,
     ]
 
-    def __init__(self, process_file, prompts_file, config: dict[str, dict[str, bool | int | str]]) -> None:
+    def __init__(
+        self, process_file, prompts_file, config: dict[str, dict[str, bool | int | str]]
+    ) -> None:
         """
         Initialize the states section rule set with prompts and process configurations.
 
@@ -32,14 +35,14 @@ class StatesSectionRuleSet(SectionRuleSet):
         :param config: Not used, but included for interface consistency.
         """
         super().__init__(
-            prompts_file=prompts_file,
-            process_file=process_file,
-            config=config
+            prompts_file=prompts_file, process_file=process_file, config=config
         )
 
     def validate(self) -> None:
         """Validate the states section of the process file."""
-        section = self._get_section(file=self._FILE_TYPE, section_name=self._SECTION_NAME)
+        section = self._get_section(
+            file=self._FILE_TYPE, section_name=self._SECTION_NAME
+        )
         if not section:
             # Missing sections are handled at the file level.
             return
@@ -51,13 +54,15 @@ class StatesSectionRuleSet(SectionRuleSet):
 
     def _validate_end_state(self) -> None:
         """Validate that the states contain a valid END state."""
-        section = self._get_section(file=self._FILE_TYPE, section_name=self._SECTION_NAME)
+        section = self._get_section(
+            file=self._FILE_TYPE, section_name=self._SECTION_NAME
+        )
         end_state: Assignment | None = None
         for token in section:
-            if token.token_name == TokenName.ASSIGNMENT.value and token.name == 'END':
+            if token.token_name == TokenName.ASSIGNMENT.value and token.name == "END":
                 end_state = token
                 break
-            elif token.token_name == 'Assignment' and token.name.lower() == 'end':
+            elif token.token_name == "Assignment" and token.name.lower() == "end":
                 end_state = token
                 message = self._create_message(
                     message=f'The END state has been declared as "{end_state.name}", the END state should be in upper case',
@@ -65,7 +70,7 @@ class StatesSectionRuleSet(SectionRuleSet):
                     line_number=end_state.line_number,
                 )
                 self._add_violation(
-                    name='NameCaseViolation',
+                    name="NameCaseViolation",
                     description=message,
                     severity=Severity.CRITICAL,
                 )
@@ -77,7 +82,7 @@ class StatesSectionRuleSet(SectionRuleSet):
                 line_number=end_state.line_number,
             )
             self._add_violation(
-                name='ValueViolation',
+                name="ValueViolation",
                 description=message,
                 severity=Severity.CRITICAL,
             )
@@ -100,7 +105,7 @@ class StatesSectionRuleSet(SectionRuleSet):
                     line_number=fail_state.line_number,
                 )
                 self._add_violation(
-                    name='ValueViolation',
+                    name="ValueViolation",
                     description=message,
                     severity=Severity.CRITICAL,
                 )
@@ -114,18 +119,18 @@ class StatesSectionRuleSet(SectionRuleSet):
                     line_number=None,
                 )
                 self._add_violation(
-                    name='ValueViolation',
+                    name="ValueViolation",
                     description=message,
                     severity=Severity.WARNING,
                 )
 
     def _validate_fail_states(self) -> None:
         """Check fail states."""
-        section = self._get_section(file=self._FILE_TYPE, section_name=self._SECTION_NAME)
+        section = self._get_section(
+            file=self._FILE_TYPE, section_name=self._SECTION_NAME
+        )
         fail_states: list[FailState] = []
         fail_states.extend(
-            token
-            for token in section
-            if token.token_name == TokenName.FAIL_STATE.value
+            token for token in section if token.token_name == TokenName.FAIL_STATE.value
         )
         self._validate_fail_state_codes(fail_states=fail_states)

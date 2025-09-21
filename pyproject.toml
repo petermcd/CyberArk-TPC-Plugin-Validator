@@ -20,7 +20,6 @@ classifiers = [
 
 [dependency-groups]
 dev = [
-    "isort>=6.0.1",
     "pytest>=8.4.2",
     "pytest-cov>=6.3.0",
     "pytest-mypy-plugins>=3.2.0",

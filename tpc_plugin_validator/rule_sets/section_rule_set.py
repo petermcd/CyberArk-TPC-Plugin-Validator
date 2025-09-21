@@ -1,4 +1,5 @@
 """Base class for all section rule sets."""
+
 from collections import Counter
 
 from tpc_plugin_validator.lexer.utilities.token_name import TokenName
@@ -7,8 +8,9 @@ from tpc_plugin_validator.utilities.severity import Severity
 
 
 class SectionRuleSet(RuleSet):
-
-    def __init__(self, process_file, prompts_file, config: dict[str, dict[str, bool | int | str]]) -> None:
+    def __init__(
+        self, process_file, prompts_file, config: dict[str, dict[str, bool | int | str]]
+    ) -> None:
         """
         Initialize the section rule set with prompts and process configurations.
 
@@ -24,9 +26,16 @@ class SectionRuleSet(RuleSet):
 
     def _validate_duplicates(self) -> None:
         """Validate that the section does not contain duplicate assignments."""
-        section = self._get_section(file=self._FILE_TYPE, section_name=self._SECTION_NAME)
+        section = self._get_section(
+            file=self._FILE_TYPE, section_name=self._SECTION_NAME
+        )
         token_keys: list[str] = []
-        token_keys.extend(token.name for token in section if token.token_name in (TokenName.ASSIGNMENT.value, TokenName.CPM_PARAMETER_VALIDATION.value))
+        token_keys.extend(
+            token.name
+            for token in section
+            if token.token_name
+            in (TokenName.ASSIGNMENT.value, TokenName.CPM_PARAMETER_VALIDATION.value)
+        )
         counted_keys = Counter(token_keys)
         for token_name in counted_keys:
             if counted_keys[token_name] > 1:
@@ -36,7 +45,7 @@ class SectionRuleSet(RuleSet):
                     line_number=None,
                 )
                 self._add_violation(
-                    name='DuplicateAssignmentViolation',
+                    name="DuplicateAssignmentViolation",
                     description=message,
                     severity=Severity.CRITICAL,
                 )

@@ -1,4 +1,5 @@
 """Handle validation of the conditions section in the process file."""
+
 from tpc_plugin_validator.lexer.tokens.assignment import Assignment
 from tpc_plugin_validator.lexer.utilities.token_name import TokenName
 from tpc_plugin_validator.rule_sets.rule_set import FileNames
@@ -11,15 +12,17 @@ class ConditionsSectionRuleSet(SectionRuleSet):
     Handle validation of the conditions section in the process file.
     """
 
-    _CONFIG_KEY: str = 'conditions'
+    _CONFIG_KEY: str = "conditions"
     _FILE_TYPE: FileNames = FileNames.prompts
-    _SECTION_NAME: str = 'conditions'
+    _SECTION_NAME: str = "conditions"
     _VALID_TOKENS: list[str] = [
         TokenName.ASSIGNMENT.value,
         TokenName.COMMENT.value,
     ]
 
-    def __init__(self, process_file, prompts_file, config: dict[str, dict[str, bool | int | str]]) -> None:
+    def __init__(
+        self, process_file, prompts_file, config: dict[str, dict[str, bool | int | str]]
+    ) -> None:
         """
         Initialize the conditions section rule set with prompts and process configurations.
 
@@ -28,14 +31,14 @@ class ConditionsSectionRuleSet(SectionRuleSet):
         :param config: Not used, but included for interface consistency.
         """
         super().__init__(
-            prompts_file=prompts_file,
-            process_file=process_file,
-            config=config
+            prompts_file=prompts_file, process_file=process_file, config=config
         )
 
     def validate(self) -> None:
         """Validate the conditions section of the prompts file."""
-        section = self._get_section(file=self._FILE_TYPE, section_name=self._SECTION_NAME)
+        section = self._get_section(
+            file=self._FILE_TYPE, section_name=self._SECTION_NAME
+        )
         if not section:
             # Missing sections are handled at the file level.
             return
@@ -49,10 +52,14 @@ class ConditionsSectionRuleSet(SectionRuleSet):
         required_tokens: list[Assignment] = []
         required_tokens.extend(
             token
-            for token in self._get_section(file=self._FILE_TYPE, section_name=self._SECTION_NAME)
+            for token in self._get_section(
+                file=self._FILE_TYPE, section_name=self._SECTION_NAME
+            )
             if token.token_name == TokenName.ASSIGNMENT.value
         )
-        transitions = self._get_section(file=FileNames.process, section_name='transitions')
+        transitions = self._get_section(
+            file=FileNames.process, section_name="transitions"
+        )
 
         for token in required_tokens:
             found = False
@@ -69,7 +76,7 @@ class ConditionsSectionRuleSet(SectionRuleSet):
                         line_number=token.line_number,
                     )
                     self._add_violation(
-                        name='NameCaseMismatchViolation',
+                        name="NameCaseMismatchViolation",
                         description=message,
                         severity=Severity.WARNING,
                     )
@@ -83,7 +90,7 @@ class ConditionsSectionRuleSet(SectionRuleSet):
                 line_number=token.line_number,
             )
             self._add_violation(
-                name='UnusedConditionViolation',
+                name="UnusedConditionViolation",
                 description=message,
                 severity=Severity.WARNING,
             )

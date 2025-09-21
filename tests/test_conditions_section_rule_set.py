@@ -3,8 +3,9 @@
 import pytest
 
 from tpc_plugin_validator.parser.parser import Parser
-from tpc_plugin_validator.rule_sets.conditions_section_rule_set import \
-    ConditionsSectionRuleSet
+from tpc_plugin_validator.rule_sets.conditions_section_rule_set import (
+    ConditionsSectionRuleSet,
+)
 from tpc_plugin_validator.utilities.severity import Severity
 from tpc_plugin_validator.utilities.validation_result import ValidationResult
 
@@ -13,34 +14,34 @@ class TestConditionsSectionRuleSet(object):
     """Tests for the debug information rule set."""
 
     @pytest.mark.parametrize(
-        'process_file,prompts_file,expected_results',
+        "process_file,prompts_file,expected_results",
         [
             (
-                'tests/data/valid-process.ini',
-                'tests/data/valid-prompts.ini',
+                "tests/data/valid-process.ini",
+                "tests/data/valid-prompts.ini",
                 [],
             ),
             (
-                'tests/data/invalid-process.ini',
-                'tests/data/invalid-prompts.ini',
+                "tests/data/invalid-process.ini",
+                "tests/data/invalid-prompts.ini",
                 [
                     ValidationResult(
-                        rule='InvalidTokenTypeViolation',
+                        rule="InvalidTokenTypeViolation",
                         severity=Severity.WARNING,
                         message='The token type "Transition" is not valid in the "conditions" section, file: prompts.ini, line: 18.',
                     ),
                     ValidationResult(
-                        rule='DuplicateAssignmentViolation',
+                        rule="DuplicateAssignmentViolation",
                         severity=Severity.CRITICAL,
                         message='The assignment "failure" has been declared 2 times, file: prompts.ini.',
                     ),
                     ValidationResult(
-                        rule='NameCaseMismatchViolation',
+                        rule="NameCaseMismatchViolation",
                         severity=Severity.WARNING,
                         message='The condition "Hello" is declared but is used as "hello", file: prompts.ini, line: 13.',
                     ),
                     ValidationResult(
-                        rule='UnusedConditionViolation',
+                        rule="UnusedConditionViolation",
                         severity=Severity.WARNING,
                         message='The condition "Unused" is declared but is not used, file: prompts.ini, line: 19.',
                     ),
@@ -48,7 +49,12 @@ class TestConditionsSectionRuleSet(object):
             ),
         ],
     )
-    def test_conditions_section_rule_set(self, process_file: str, prompts_file: str, expected_results: list[ValidationResult]) -> None:
+    def test_conditions_section_rule_set(
+        self,
+        process_file: str,
+        prompts_file: str,
+        expected_results: list[ValidationResult],
+    ) -> None:
         """
         Tests for the conditions section rule set.
 
@@ -60,7 +66,9 @@ class TestConditionsSectionRuleSet(object):
         process_file = parser.process_file
         prompts_file = parser.prompts_file
 
-        rule = ConditionsSectionRuleSet(prompts_file=prompts_file, process_file=process_file, config={})
+        rule = ConditionsSectionRuleSet(
+            prompts_file=prompts_file, process_file=process_file, config={}
+        )
         rule.validate()
         results = rule.get_violations()
 
