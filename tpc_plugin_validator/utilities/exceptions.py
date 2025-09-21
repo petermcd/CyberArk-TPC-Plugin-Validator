@@ -6,5 +6,5 @@ class LexerException(Exception):
     pass
 
 class ProgrammingError(Exception):
-    """Raised an error occurs due to a programming error."""
+    """Raised when an error occurs due to a programming error."""
     pass

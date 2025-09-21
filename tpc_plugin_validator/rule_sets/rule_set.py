@@ -112,6 +112,8 @@ class RuleSet(ABC):
             fetch_from = self._process_file
         elif file.value == FileNames.prompts.value:
             fetch_from = self._prompts_file
+        else:
+            raise ProgrammingError(f'Invalid file name provided to _get_section in {type(self).__name__}.')
 
         section_name_fetched = self._file_sections[file.value].get(section_name.lower(), None)
         return fetch_from.get(section_name_fetched, None) if section_name_fetched else None

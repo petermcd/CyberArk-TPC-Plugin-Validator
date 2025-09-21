@@ -35,7 +35,6 @@ class Lexer(object):
         self._source = source
         self._token_specs = [
             (re.compile(ASSIGNMENT, re.IGNORECASE), TokenName.ASSIGNMENT, '_process_assignment'),
-            (re.compile(ASSIGNMENT, re.IGNORECASE), TokenName.ASSIGNMENT, '_process_assignment'),
             (re.compile(COMMENT, re.IGNORECASE), TokenName.COMMENT, '_process_comment'),
             (re.compile(CPM_PARAMETER_VALIDATION, re.IGNORECASE), TokenName.CPM_PARAMETER_VALIDATION, '_process_cpm_parameter_validation'),
             (re.compile(FAIL_STATE, re.IGNORECASE), TokenName.FAIL_STATE, '_process_fail_state'),
