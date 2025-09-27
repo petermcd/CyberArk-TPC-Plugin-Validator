@@ -36,5 +36,6 @@ def main() -> None:
     result = validator.get_violations()
     print(result)
 
+
 if __name__ == "__main__":
     sys.exit(main())
