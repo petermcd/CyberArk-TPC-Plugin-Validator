@@ -1,6 +1,6 @@
 [project]
 name = "cyberark-tpc-plugin-validator"
-version = "0.1.0"
+version = "0.2.0"
 description = "A tool to help validate a custom TPC plugin."
 authors = [{ name = "Peter McDonald", email = "git@petermcdonald.co.uk"}]
 readme = "README.md"
@@ -27,6 +27,9 @@ dev = [
     "troml>=0.4.1",
     "ty>=0.0.1a20",
 ]
+
+[project.scripts]
+tpc-validator = "tpc_plugin_validator.main:main"
 
 [tool.pytest.ini_options]
 addopts = "--cov=tpc_plugin_validator --cov-report term-missing --cov-report xml:coverage.xml"

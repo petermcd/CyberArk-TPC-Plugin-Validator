@@ -62,11 +62,15 @@ class TestTransitionsSectionRuleSet(object):
         :param prompts_file: Path to the prompts file to use for the test case.
         :param expected_results: List of expected ValidationResult
         """
-        parser = Parser(process_file=process_file, prompts_file=prompts_file)
-        process_file = parser.process_file
-        prompts_file = parser.prompts_file
+        with open(process_file, "r") as process_fh, open(prompts_file, "r") as prompts_fh:
+            process_file_content = process_fh.read()
+            prompts_file_content = prompts_fh.read()
 
-        rule = TransitionsSectionRuleSet(prompts_file=prompts_file, process_file=process_file, config={})
+        parser = Parser(process_file=process_file_content, prompts_file=prompts_file_content)
+        parsed_process_file = parser.process_file
+        parsed_prompts_file = parser.prompts_file
+
+        rule = TransitionsSectionRuleSet(prompts_file=parsed_prompts_file, process_file=parsed_process_file, config={})
         rule.validate()
         results = rule.get_violations()
 

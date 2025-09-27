@@ -25,26 +25,12 @@ class Parser(object):
         :param process_file (str): Path to the process configuration file.
         :param prompts_file (str): Path to the prompt configuration file.
         """
-        self._process_file_path: str = process_file
-        self._prompts_file_path: str = prompts_file
 
-        if not os.path.isfile(self._process_file_path):
-            raise FileNotFoundError(
-                f'The process file "{self._process_file_path}" does not exist or is not accessible.'
-            )
+        process_lexer = Lexer(source=process_file)
+        self._prepare_process(lexed_process=process_lexer)
 
-        if not os.path.isfile(self._prompts_file_path):
-            raise FileNotFoundError(
-                f'The prompts file "{self._prompts_file_path}" does not exist or is not accessible.'
-            )
-
-        with open(self._process_file_path, "r", encoding="utf-8") as process_handler:
-            process_lexer = Lexer(source=process_handler.read())
-            self._prepare_process(lexed_process=process_lexer)
-
-        with open(self._prompts_file_path, "r", encoding="utf-8") as prompts_handler:
-            prompts_lexer = Lexer(source=prompts_handler.read())
-            self._prepare_prompts(lexed_prompts=prompts_lexer)
+        prompts_lexer = Lexer(source=prompts_file)
+        self._prepare_prompts(lexed_prompts=prompts_lexer)
 
     def _prepare_process(self, lexed_process: Lexer) -> None:
         """
