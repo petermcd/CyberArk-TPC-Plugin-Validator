@@ -2,6 +2,7 @@
 
 import argparse
 import os
+import sys
 
 from tpc_plugin_validator.parser.parser import Parser
 from tpc_plugin_validator.validator import Validator
@@ -34,3 +35,6 @@ def main() -> None:
     validator.validate()
     result = validator.get_violations()
     print(result)
+
+if __name__ == "__main__":
+    sys.exit(main())
