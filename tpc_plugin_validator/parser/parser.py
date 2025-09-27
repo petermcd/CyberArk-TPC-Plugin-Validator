@@ -1,7 +1,5 @@
 """Parser module for reading and processing configuration files."""
 
-import os
-
 from tpc_plugin_validator.lexer.lexer import Lexer
 from tpc_plugin_validator.lexer.tokens.section_header import SectionHeader
 from tpc_plugin_validator.lexer.utilities.token_name import TokenName
