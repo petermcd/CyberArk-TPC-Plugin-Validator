@@ -55,6 +55,16 @@ class TestConditionsSectionRuleSet(object):
                         severity=Severity.WARNING,
                         message='The condition "CD" is declared but is not used, file: prompts.ini, section: conditions, line: 22.',
                     ),
+                    ValidationResult(
+                        rule="InvalidWordViolation",
+                        severity=Severity.CRITICAL,
+                        message="The word 'sql' is reserved and cannot be used as a name in an assignment, file: prompts.ini, section: conditions, line: 23.",
+                    ),
+                    ValidationResult(
+                        rule="UnusedConditionViolation",
+                        severity=Severity.WARNING,
+                        message='The condition "sql" is declared but is not used, file: prompts.ini, section: conditions, line: 23.',
+                    ),
                 ],
             ),
         ],
