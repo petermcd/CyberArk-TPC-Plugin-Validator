@@ -58,6 +58,11 @@ class TestStatesSectionRuleSet(object):
                         severity=Severity.CRITICAL,
                         message='The assignment "Wait" has been declared 2 times, file: process.ini, section: states.',
                     ),
+                    ValidationResult(
+                        rule="InvalidWordViolation",
+                        severity=Severity.CRITICAL,
+                        message="The word 'source' is reserved and cannot be used as a name in an assignment, file: process.ini, section: states, line: 22.",
+                    ),
                 ],
             ),
         ],

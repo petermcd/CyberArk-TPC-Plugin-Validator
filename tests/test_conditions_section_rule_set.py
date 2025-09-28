@@ -45,6 +45,16 @@ class TestConditionsSectionRuleSet(object):
                         severity=Severity.WARNING,
                         message='The condition "Unused" is declared but is not used, file: prompts.ini, section: conditions, line: 19.',
                     ),
+                    ValidationResult(
+                        rule="InvalidWordViolation",
+                        severity=Severity.CRITICAL,
+                        message="The word 'CD' is reserved and cannot be used as a name in an assignment, file: prompts.ini, section: conditions, line: 22.",
+                    ),
+                    ValidationResult(
+                        rule="UnusedConditionViolation",
+                        severity=Severity.WARNING,
+                        message='The condition "CD" is declared but is not used, file: prompts.ini, section: conditions, line: 22.',
+                    ),
                 ],
             ),
         ],

@@ -85,6 +85,16 @@ class TestDebugInformationSectionRuleSet(object):
                         severity=Severity.CRITICAL,
                         message="Line could not be parsed, file: process.ini, section: Debug Information, line: 81.",
                     ),
+                    ValidationResult(
+                        rule="InvalidWordViolation",
+                        severity=Severity.CRITICAL,
+                        message="The word 'debug' is reserved and cannot be used as a name in an assignment, file: process.ini, section: Debug Information, line: 82.",
+                    ),
+                    ValidationResult(
+                        rule="NameViolation",
+                        severity=Severity.WARNING,
+                        message='The setting "debug" is not a valid setting. Valid settings are: DebugLogFullParsingInfo, DebugLogFullExecutionInfo, DebugLogDetailBuiltInActions, ExpectLog, ConsoleOutput, file: process.ini, section: Debug Information, line: 82.',
+                    ),
                 ],
             ),
         ],
