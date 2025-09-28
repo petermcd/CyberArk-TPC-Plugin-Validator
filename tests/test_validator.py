@@ -19,7 +19,7 @@ class TestValidator(object):
             )
         ],
     )
-    def test_validator(self, process_file: str ,prompts_file: str, violations: list[ValidationResult]) -> None:
+    def test_validator(self, process_file: str, prompts_file: str, violations: list[ValidationResult]) -> None:
         """
         Test to ensure that the validator works.
 
@@ -33,7 +33,9 @@ class TestValidator(object):
         with open(prompts_file, "r") as prompts_fh:
             prompts_file_content = prompts_fh.read()
 
-        validator = Validator(process_file_content=process_file_content, prompts_file_content=prompts_file_content, config={})
+        validator = Validator(
+            process_file_content=process_file_content, prompts_file_content=prompts_file_content, config={}
+        )
         validator.validate()
         assert validator.get_violations() == violations
 
@@ -47,7 +49,9 @@ class TestValidator(object):
             )
         ],
     )
-    def test_validator_with_file_path(self, process_file: str ,prompts_file: str, violations: list[ValidationResult]) -> None:
+    def test_validator_with_file_path(
+        self, process_file: str, prompts_file: str, violations: list[ValidationResult]
+    ) -> None:
         """
         Test to ensure that the validator works.
 
@@ -66,21 +70,23 @@ class TestValidator(object):
             (
                 "tests/data/doesnt_exist/process.ini",
                 "tests/data/doesnt_exist/prompts.ini",
-                'Process file not found: tests/data/doesnt_exist/process.ini'
+                "Process file not found: tests/data/doesnt_exist/process.ini",
             ),
             (
                 "tests/data/doesnt_exist/process.ini",
                 "tests/data/valid-prompts.ini",
-                'Process file not found: tests/data/doesnt_exist/process.ini'
+                "Process file not found: tests/data/doesnt_exist/process.ini",
             ),
             (
                 "tests/data/valid-process.ini",
                 "tests/data/doesnt_exist/prompts.ini",
-                'Process file not found: tests/data/doesnt_exist/prompts.ini'
+                "Process file not found: tests/data/doesnt_exist/prompts.ini",
             ),
         ],
     )
-    def test_validator_with_file_path_exception(self, process_file: str ,prompts_file: str, expected_message: str) -> None:
+    def test_validator_with_file_path_exception(
+        self, process_file: str, prompts_file: str, expected_message: str
+    ) -> None:
         """
         Test to ensure that the validator works.
 

@@ -17,7 +17,9 @@ def main() -> None:
     args = arg_parse.parse_args()
 
     try:
-        validator = Validator.with_file(process_file_path=args.process_file, prompts_file_path=args.prompts_file, config={})
+        validator = Validator.with_file(
+            process_file_path=args.process_file, prompts_file_path=args.prompts_file, config={}
+        )
     except FileNotFoundError:
         print("One or both of the specified files do not exist.")
         sys.exit(1)
@@ -34,7 +36,6 @@ def main() -> None:
         print(f"{violation.severity} - {violation.rule} - {violation.message}")
 
     sys.exit(1)
-
 
 
 if __name__ == "__main__":
