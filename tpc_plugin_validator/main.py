@@ -1,10 +1,8 @@
 """Entry point for the TPC Plugin Validator module."""
 
 import argparse
-import os
 import sys
 
-from tpc_plugin_validator.parser.parser import Parser
 from tpc_plugin_validator.validator import Validator
 
 
@@ -18,23 +16,25 @@ def main() -> None:
     arg_parse.add_argument("prompts_file", type=str, help="Path to the prompts file to validate")
     args = arg_parse.parse_args()
 
-    if not os.path.isfile(args.process_file):
-        arg_parse.error(f'The process file "{args.process_file}" does not exist or is not accessible.')
+    try:
+        validator = Validator.with_file(process_file_path=args.process_file, prompts_file_path=args.prompts_file, config={})
+    except FileNotFoundError:
+        print("One or both of the specified files do not exist.")
+        sys.exit(1)
 
-    if not os.path.isfile(args.prompts_file):
-        arg_parse.error(f'The prompts file "{args.prompts_file}" does not exist or is not accessible.')
-
-    with open(args.process_file, "r", encoding="utf-8") as process_handler:
-        process_file = process_handler.read()
-
-    with open(args.prompts_file, "r", encoding="utf-8") as prompts_handler:
-        prompts_file = prompts_handler.read()
-
-    parser = Parser(process_file=process_file, prompts_file=prompts_file)
-    validator = Validator(parser=parser, config={})
     validator.validate()
-    result = validator.get_violations()
-    print(result)
+    violations = validator.get_violations()
+
+    if not violations:
+        print("No violations found. The files are valid.")
+        sys.exit(0)
+
+    print(f"{len(violations)} violations found:")
+    for violation in violations:
+        print(f"{violation.severity} - {violation.rule} - {violation.message}")
+
+    sys.exit(1)
+
 
 
 if __name__ == "__main__":
