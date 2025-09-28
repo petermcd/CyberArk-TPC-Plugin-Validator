@@ -1,5 +1,6 @@
 """Class to manage validations."""
 
+import os
 from typing import Callable
 
 from tpc_plugin_validator.parser.parser import Parser
@@ -35,14 +36,19 @@ class Validator(object):
         "_validations",
     )
 
-    def __init__(self, parser: Parser, config: CONFIG_TYPE) -> None:
+    def __init__(self, process_file_content: str, prompts_file_content: str, config: CONFIG_TYPE) -> None:
         """
         Standard init for the Validator class.
 
-        :param parser: Parser object
+        :param process_file_content: Content for the process file.
+        :param prompts_file_content: Content for the prompts file.
+        :param config: Configuration
         """
         self._config: CONFIG_TYPE = config
-        self._parser: Parser = parser
+        self._parser: Parser = Parser(
+            process_file=process_file_content,
+            prompts_file=prompts_file_content,
+        )
         self._validations: list[ValidationResult] = []
         self._rule_sets: set[Callable] = {
             ConditionsSectionRuleSet,
@@ -73,3 +79,30 @@ class Validator(object):
             )
             validator.validate()
             self._validations = self._validations + validator.get_violations()
+
+    @classmethod
+    def with_file(cls, process_file_path: str, prompts_file_path: str, config: CONFIG_TYPE) -> "Validator":
+        """
+        Set the file to be validated.
+
+        :param process_file_path: Path to the process file.
+        :param prompts_file_path: Path to the prompts file.
+        :param config: Configuration
+
+        :return: Self
+        """
+        if not os.path.isfile(process_file_path):
+            raise FileNotFoundError(f"Process file not found: {process_file_path}")
+
+        if not os.path.isfile(prompts_file_path):
+            raise FileNotFoundError(f"Process file not found: {prompts_file_path}")
+
+        with open(process_file_path, "r", encoding="utf-8") as process_file:
+            process_file_content: str = process_file.read()
+
+        with open(prompts_file_path, "r", encoding="utf-8") as prompts_file:
+            prompts_file_content: str = prompts_file.read()
+
+        return Validator(
+            process_file_content=process_file_content, prompts_file_content=prompts_file_content, config=config
+        )
