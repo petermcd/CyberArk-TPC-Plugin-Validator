@@ -23,9 +23,9 @@ classifiers = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/petermcd/CyberArk-TPC-Plugin-Validator"
-Repository = "https://github.com/petermcd/CyberArk-TPC-Plugin-Validator.git"
-Issues = "https://github.com/petermcd/CyberArk-TPC-Plugin-Validator/issues"
+homepage = "https://github.com/petermcd/CyberArk-TPC-Plugin-Validator"
+repository = "https://github.com/petermcd/CyberArk-TPC-Plugin-Validator.git"
+issues = "https://github.com/petermcd/CyberArk-TPC-Plugin-Validator/issues"
 
 [dependency-groups]
 dev = [
