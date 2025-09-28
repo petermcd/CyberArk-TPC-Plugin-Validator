@@ -146,7 +146,7 @@ class RuleSet(ABC):
         for token in section:
             if token.token_name == TokenName.PARSE_ERROR.value:
                 message: str = self._create_message(
-                    message='Line could not be parsed',
+                    message="Line could not be parsed",
                     file=file,
                     section=required_section,
                     line_number=token.line_number,

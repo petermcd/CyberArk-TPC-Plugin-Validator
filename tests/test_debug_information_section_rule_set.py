@@ -83,7 +83,7 @@ class TestDebugInformationSectionRuleSet(object):
                     ValidationResult(
                         rule="ParseErrorViolation",
                         severity=Severity.CRITICAL,
-                        message='Line could not be parsed, file: process.ini, section: Debug Information, line: 81.',
+                        message="Line could not be parsed, file: process.ini, section: Debug Information, line: 81.",
                     ),
                 ],
             ),
