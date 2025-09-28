@@ -9,11 +9,12 @@ from tpc_plugin_validator.lexer.tokens.cpm_parameter_validation import (
     CPMParameterValidation,
 )
 from tpc_plugin_validator.lexer.tokens.fail_state import FailState
+from tpc_plugin_validator.lexer.tokens.parse_error import ParseError
 from tpc_plugin_validator.lexer.tokens.section_header import SectionHeader
 from tpc_plugin_validator.lexer.tokens.transition import Transition
 from tpc_plugin_validator.lexer.utilities.token_name import TokenName
 
-ALL_TOKEN_TYPES = Assignment | Comment | FailState | CPMParameterValidation | SectionHeader | Transition
+ALL_TOKEN_TYPES = Assignment | Comment | FailState | CPMParameterValidation | ParseError | SectionHeader | Transition
 
 
 class TokenSpecs(TypedDict):

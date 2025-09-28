@@ -6,6 +6,7 @@ from tpc_plugin_validator.lexer.tokens.cpm_parameter_validation import (
     CPMParameterValidation,
 )
 from tpc_plugin_validator.lexer.tokens.fail_state import FailState
+from tpc_plugin_validator.lexer.tokens.parse_error import ParseError
 from tpc_plugin_validator.lexer.tokens.section_header import SectionHeader
 from tpc_plugin_validator.lexer.tokens.transition import Transition
 from tpc_plugin_validator.lexer.utilities.regex import (
@@ -18,14 +19,13 @@ from tpc_plugin_validator.lexer.utilities.regex import (
 )
 from tpc_plugin_validator.lexer.utilities.token_name import TokenName
 from tpc_plugin_validator.lexer.utilities.types import ALL_TOKEN_TYPES, TokenSpecs
-from tpc_plugin_validator.utilities.exceptions import LexerException
 
 
 class Lexer(object):
     """Object to handle processing the ini files."""
 
     __slots__ = (
-        "_parsed_data",
+        "_tokens",
         "_source",
         "_token_specs",
     )
@@ -33,7 +33,7 @@ class Lexer(object):
     def __init__(self, source: str) -> None:
         """Standard init for the Lexer object."""
 
-        self._parsed_data: list[
+        self._tokens: list[
             tuple[
                 TokenName,
                 ALL_TOKEN_TYPES,
@@ -76,11 +76,9 @@ class Lexer(object):
     def process(self) -> None:
         """
         Process the content of the file line by line.
-
-        :raises LexerException: If the line is not valid.
         """
 
-        if self._parsed_data:
+        if self._tokens:
             # Returning as we have parsed the data already.
             return
 
@@ -91,7 +89,7 @@ class Lexer(object):
                     break
             else:
                 if line.strip():
-                    raise LexerException(f'Unable to parse "{line}" on line {line_number}')
+                    self._process_parse_error(line=line, line_number=line_number)
 
     def _process_assignment(self, match: re.Match, line_number: int) -> None:
         """
@@ -103,7 +101,7 @@ class Lexer(object):
         equals = str(match["equals"]).strip() if match.groupdict().get("equals", None) else None
         assigned_stripped = str(match["value"]).strip() if match.groupdict().get("value", None) else None
         assigned = assigned_stripped or None
-        self._parsed_data.append(
+        self._tokens.append(
             (
                 TokenName.ASSIGNMENT,
                 Assignment(
@@ -121,7 +119,7 @@ class Lexer(object):
 
         :param match: Regex match of the comment.
         """
-        self._parsed_data.append(
+        self._tokens.append(
             (
                 TokenName.COMMENT,
                 Comment(
@@ -141,7 +139,7 @@ class Lexer(object):
         if match["allowcharacters"]:
             allow_characters = str(match["allowcharacters"]).strip()
 
-        self._parsed_data.append(
+        self._tokens.append(
             (
                 TokenName.CPM_PARAMETER_VALIDATION,
                 CPMParameterValidation(
@@ -160,7 +158,7 @@ class Lexer(object):
 
         :param match: Regex match of the fail state.
         """
-        self._parsed_data.append(
+        self._tokens.append(
             (
                 TokenName.FAIL_STATE,
                 FailState(
@@ -172,13 +170,30 @@ class Lexer(object):
             )
         )
 
+    def _process_parse_error(self, line: str, line_number: int) -> None:
+        """
+        Process a line that has a parse error.
+
+        :param line: The line that has the parse error.
+        :param line_number: The line number of the line that has the parse error.
+        """
+        self._tokens.append(
+            (
+                TokenName.PARSE_ERROR,
+                ParseError(
+                    content=line.strip(),
+                    line_number=line_number,
+                ),
+            )
+        )
+
     def _process_section_header(self, match: re.Match, line_number: int) -> None:
         """
         Process the provided section header.
 
         :param match: Regex match of the section header.
         """
-        self._parsed_data.append(
+        self._tokens.append(
             (
                 TokenName.SECTION_HEADER,
                 SectionHeader(
@@ -194,7 +209,7 @@ class Lexer(object):
 
         :param match: Regex match of the transitions.
         """
-        self._parsed_data.append(
+        self._tokens.append(
             (
                 TokenName.TRANSITION,
                 Transition(
@@ -216,6 +231,6 @@ class Lexer(object):
         ]
     ]:
         """A list of tokens found by the lexer."""
-        if not self._parsed_data:
+        if not self._tokens:
             self.process()
-        return self._parsed_data
+        return self._tokens

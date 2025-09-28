@@ -11,17 +11,15 @@ class Parser(object):
 
     __slots__ = (
         "_process_file",
-        "_process_file_path",
         "_prompts_file",
-        "_prompts_file_path",
     )
 
     def __init__(self, process_file: str, prompts_file: str) -> None:
         """
         Initializes the Parser with the given process and prompts files.
 
-        :param process_file (str): Path to the process configuration file.
-        :param prompts_file (str): Path to the prompt configuration file.
+        :param process_file (str): Content of the process file.
+        :param prompts_file (str): Content of the prompts file.
         """
 
         process_lexer = Lexer(source=process_file)
