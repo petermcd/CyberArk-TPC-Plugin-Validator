@@ -40,6 +40,11 @@ class TestParametersSectionRuleSet(object):
                         severity=Severity.CRITICAL,
                         message='The assignment "PromptTimeout" has been declared 2 times, file: process.ini, section: parameters.',
                     ),
+                    ValidationResult(
+                        rule="InvalidWordViolation",
+                        severity=Severity.CRITICAL,
+                        message="The word 'open' is reserved and cannot be used as a name in an assignment, file: process.ini, section: parameters, line: 68.",
+                    ),
                 ],
             ),
             (

@@ -41,6 +41,7 @@ class Violations(Enum):
     invalid_section_name_violation = "InvalidSectionNameViolation"
     invalid_token_type_violation = "InvalidTokenTypeViolation"
     invalid_transition_violation = "InvalidTransitionViolation"
+    invalid_word_violation = "InvalidWordViolation"
     logging_enabled_violation = "LoggingEnabledViolation"
     missing_section_violation = "MissingSectionViolation"
     name_case_mismatch_violation = "NameCaseMismatchViolation"
