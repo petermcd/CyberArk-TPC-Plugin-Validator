@@ -80,6 +80,9 @@ class CPMParametersValidationSectionRuleSet(SectionRuleSet):
         """
 
         conditions = self._get_section(file=FileNames.prompts, section_name=SectionNames.conditions)
+        if not conditions:
+            return False
+
         for condition in conditions:
             if condition.token_name != TokenName.ASSIGNMENT.value:
                 continue
