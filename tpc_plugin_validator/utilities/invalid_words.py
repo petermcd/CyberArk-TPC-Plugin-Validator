@@ -1,4 +1,4 @@
-""" "Invalid words that cannot be used in TPC plugin identifiers."""
+"""Invalid words that cannot be used in TPC plugin identifiers."""
 
 INVALID_WORDS = {
     "cd",

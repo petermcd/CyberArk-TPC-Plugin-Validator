@@ -2,7 +2,7 @@
 
 import pytest
 
-from tpc_plugin_validator.parser.parser import Parser
+from tpc_plugin_parser.parser import Parser
 from tpc_plugin_validator.rule_sets.transitions_section_rule_set import (
     TransitionsSectionRuleSet,
 )

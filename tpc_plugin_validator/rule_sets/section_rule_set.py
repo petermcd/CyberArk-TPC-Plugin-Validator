@@ -2,7 +2,7 @@
 
 from collections import Counter
 
-from tpc_plugin_validator.lexer.utilities.token_name import TokenName
+from tpc_plugin_parser.lexer.utilities.token_name import TokenName
 from tpc_plugin_validator.rule_sets.rule_set import RuleSet
 from tpc_plugin_validator.utilities.severity import Severity
 from tpc_plugin_validator.utilities.types import CONFIG_TYPE, Violations

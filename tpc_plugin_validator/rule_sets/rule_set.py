@@ -2,7 +2,7 @@
 
 from abc import ABC
 
-from tpc_plugin_validator.lexer.utilities.token_name import TokenName
+from tpc_plugin_parser.lexer.utilities.token_name import TokenName
 from tpc_plugin_validator.utilities.exceptions import ProgrammingError
 from tpc_plugin_validator.utilities.invalid_words import INVALID_WORDS
 from tpc_plugin_validator.utilities.severity import Severity
