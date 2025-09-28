@@ -1,6 +1,6 @@
 """Handle validation of the prompts file."""
 
-from tpc_plugin_validator.lexer.utilities.token_name import TokenName
+from tpc_plugin_parser.lexer.utilities.token_name import TokenName
 from tpc_plugin_validator.rule_sets.file_rule_set import FileRuleSet
 from tpc_plugin_validator.utilities.severity import Severity
 from tpc_plugin_validator.utilities.types import ValidSectionConfig, CONFIG_TYPE, FileNames, SectionNames

@@ -1,12 +1,14 @@
 [project]
 name = "cyberark-tpc-plugin-validator"
-version = "0.5.0"
+version = "0.6.0"
 description = "A tool to help validate a custom TPC plugin."
 authors = [{ name = "Peter McDonald", email = "git@petermcdonald.co.uk"}]
 readme = "README.md"
 license = { file = "LICENSE" }
 requires-python = ">=3.11"
-dependencies = []
+dependencies = [
+    "cyberark-tpc-plugin-parser>=0.1.0",
+]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Programming Language :: Python",

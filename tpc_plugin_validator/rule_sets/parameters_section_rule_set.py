@@ -2,8 +2,8 @@
 
 import contextlib
 
-from tpc_plugin_validator.lexer.tokens.assignment import Assignment
-from tpc_plugin_validator.lexer.utilities.token_name import TokenName
+from tpc_plugin_parser.lexer.tokens.assignment import Assignment
+from tpc_plugin_parser.lexer.utilities.token_name import TokenName
 from tpc_plugin_validator.rule_sets.section_rule_set import SectionRuleSet
 from tpc_plugin_validator.utilities.severity import Severity
 from tpc_plugin_validator.utilities.types import CONFIG_TYPE, FileNames, SectionNames, Violations

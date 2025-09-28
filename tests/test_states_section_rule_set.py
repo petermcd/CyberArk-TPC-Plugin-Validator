@@ -2,7 +2,7 @@
 
 import pytest
 
-from tpc_plugin_validator.parser.parser import Parser
+from tpc_plugin_parser.parser import Parser
 from tpc_plugin_validator.rule_sets.states_section_rule_set import StatesSectionRuleSet
 from tpc_plugin_validator.utilities.severity import Severity
 from tpc_plugin_validator.utilities.validation_result import ValidationResult
