@@ -46,6 +46,7 @@ class Violations(Enum):
     name_case_mismatch_violation = "NameCaseMismatchViolation"
     name_case_violation = "NameCaseViolation"
     name_violation = "NameViolation"
+    parse_error_violation = "ParseErrorViolation"
     section_name_case_violation = "SectionNameCaseViolation"
     unused_condition_violation = "UnusedConditionViolation"
     unused_parameter_violation = "UnusedParameterViolation"

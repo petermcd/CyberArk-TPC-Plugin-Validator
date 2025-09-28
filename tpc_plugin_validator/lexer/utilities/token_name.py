@@ -10,5 +10,6 @@ class TokenName(Enum):
     COMMENT = "Comment"
     FAIL_STATE = "Fail State"
     CPM_PARAMETER_VALIDATION = "CPM Parameter Validation"
+    PARSE_ERROR = "Parse Error"
     SECTION_HEADER = "Section Header"
     TRANSITION = "Transition"

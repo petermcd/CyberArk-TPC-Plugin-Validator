@@ -80,6 +80,11 @@ class TestDebugInformationSectionRuleSet(object):
                         severity=Severity.CRITICAL,
                         message='The assignment "COnsoleOutput" has been declared 2 times, file: process.ini, section: Debug Information.',
                     ),
+                    ValidationResult(
+                        rule="ParseErrorViolation",
+                        severity=Severity.CRITICAL,
+                        message='Line could not be parsed, file: process.ini, section: Debug Information, line: 81.',
+                    ),
                 ],
             ),
         ],

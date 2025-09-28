@@ -2,6 +2,7 @@
 
 from abc import ABC
 
+from tpc_plugin_validator.lexer.utilities.token_name import TokenName
 from tpc_plugin_validator.utilities.exceptions import ProgrammingError
 from tpc_plugin_validator.utilities.severity import Severity
 from tpc_plugin_validator.utilities.types import CONFIG_TYPE, FileNames, SectionNames, Violations
@@ -143,7 +144,19 @@ class RuleSet(ABC):
             return
 
         for token in section:
-            if token.token_name not in self._VALID_TOKENS:
+            if token.token_name == TokenName.PARSE_ERROR.value:
+                message: str = self._create_message(
+                    message='Line could not be parsed',
+                    file=file,
+                    section=required_section,
+                    line_number=token.line_number,
+                )
+                self._add_violation(
+                    name=Violations.parse_error_violation,
+                    description=message,
+                    severity=Severity.CRITICAL,
+                )
+            elif token.token_name not in self._VALID_TOKENS:
                 message: str = self._create_message(
                     message=f'The token type "{token.token_name}" is not valid in this section',
                     file=file,

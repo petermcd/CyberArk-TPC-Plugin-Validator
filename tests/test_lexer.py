@@ -6,10 +6,10 @@ from tpc_plugin_validator.lexer.lexer import Lexer
 from tpc_plugin_validator.lexer.tokens.assignment import Assignment
 from tpc_plugin_validator.lexer.tokens.comment import Comment
 from tpc_plugin_validator.lexer.tokens.fail_state import FailState
+from tpc_plugin_validator.lexer.tokens.parse_error import ParseError
 from tpc_plugin_validator.lexer.tokens.section_header import SectionHeader
 from tpc_plugin_validator.lexer.tokens.transition import Transition
 from tpc_plugin_validator.lexer.utilities.token_name import TokenName
-from tpc_plugin_validator.utilities.exceptions import LexerException
 
 
 class TestLexer(object):
@@ -214,24 +214,29 @@ class TestLexer(object):
         assert tokens == expected_token_list
 
     @pytest.mark.parametrize(
-        "line,expected_exception,expected_error",
+        "line,expected_tokens",
         [
             (
-                "This line will not match",
-                LexerException,
-                'Unable to parse "This line will not match" on line 1',
+                "This line will not match.",
+                [
+                    ParseError(
+                        line_number=1,
+                        content="This line will not match.",
+                    )
+                ],
             ),
         ],
     )
-    def test_unmatched_lines(self, line: str, expected_exception: Exception, expected_error: str) -> None:
+    def test_unmatched_lines(self, line: str, expected_tokens: list[ParseError]) -> None:
         """
-        Test to ensure that the lexer fails in an expected way when it identifies a line it cannot deal with.
+        Test to ensure that the lexer returns a ParseError token.
 
         :param line: The line to be parsed.
-        :param expected_exception: The exception that should be thrown.
-        :param expected_error: The message the exception should provide.
+        :param expected_tokens: Parse error tokens.
         """
         lex: Lexer = Lexer(source=line)
-        with pytest.raises(expected_exception) as excinfo:
-            lex.process()
-        assert str(excinfo.value) == expected_error
+        lex.process()
+        found_tokens = lex.tokens
+        assert len(found_tokens) == len(expected_tokens)
+        assert found_tokens[0][1].content == expected_tokens[0].content
+        assert found_tokens[0][1].line_number == expected_tokens[0].line_number
