@@ -1,7 +1,8 @@
 [project]
 name = "cyberark-tpc-plugin-validator"
-version = "0.6.0"
+version = "0.6.1"
 description = "A tool to help validate a custom TPC plugin."
+keywords = ["cyberark", "validate", "tpc"]
 authors = [{ name = "Peter McDonald", email = "git@petermcdonald.co.uk"}]
 readme = "README.md"
 license = { file = "LICENSE" }
@@ -17,8 +18,14 @@ classifiers = [
     "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: 3.14",
     "Programming Language :: Python :: 3.15",
+    "Topic :: Software Development :: Testing",
     "Typing :: Typed",
 ]
+
+[project.urls]
+Homepage = "https://github.com/petermcd/CyberArk-TPC-Plugin-Validator"
+Repository = "https://github.com/petermcd/CyberArk-TPC-Plugin-Validator.git"
+Issues = "https://github.com/petermcd/CyberArk-TPC-Plugin-Validator/issues"
 
 [dependency-groups]
 dev = [
