@@ -15,6 +15,12 @@ class TransitionsSectionRuleSet(SectionRuleSet):
     Handle validation of the transitions section in the process file.
     """
 
+    __slots__ = (
+        "_default_initial_state",
+        "_initial_state",
+        "_initial_state_warned",
+    )
+
     _CONFIG_KEY: str = "transitions"
     _FILE_TYPE: FileNames = FileNames.process
     _SECTION_NAME: SectionNames = SectionNames.transitions
@@ -31,6 +37,9 @@ class TransitionsSectionRuleSet(SectionRuleSet):
         :param prompts_file: Parsed prompts file.
         :param config: Configuration.
         """
+        self._default_initial_state: str = "Init"
+        self._file_sections: str = "init"
+        self._initial_state_warned: bool = False
         super().__init__(prompts_file=prompts_file, process_file=process_file, config=config)
 
     def validate(self) -> None:
@@ -39,6 +48,12 @@ class TransitionsSectionRuleSet(SectionRuleSet):
         if not section:
             # Missing sections are handled at the file level.
             return
+
+        for transition in section:
+            # Set the initial state from the first transition.
+            if transition.token_name == TokenName.TRANSITION.value:
+                self._initial_state = transition.current_state.lower()
+                break
 
         self._validate_tokens(file=self._FILE_TYPE)
         self._validate_duplicates()
@@ -131,7 +146,23 @@ class TransitionsSectionRuleSet(SectionRuleSet):
         """
         if transition.token_name != TokenName.TRANSITION.value:
             return
-        if transition.current_state.lower() == "init":
+        if transition.current_state.lower() == self._default_initial_state.lower():
+            return
+        if transition.current_state.lower() == self._initial_state:
+            if self._initial_state_warned:
+                return
+            message: str = self._create_message(
+                message=f'The start state "{transition.current_state}" for clarity should be called "{self._default_initial_state}"',
+                file=self._FILE_TYPE,
+                section=self._SECTION_NAME,
+                line_number=transition.line_number,
+            )
+            self._add_violation(
+                name=Violations.name_violation,
+                description=message,
+                severity=Severity.WARNING,
+            )
+            self._initial_state_warned = True
             return
         to_states: list[str] = []
         to_states.extend(value.next_state for value in transitions if value.token_name == TokenName.TRANSITION.value)

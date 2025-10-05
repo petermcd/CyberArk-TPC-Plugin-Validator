@@ -33,7 +33,7 @@ class TestTransitionsSectionRuleSet(object):
                     ValidationResult(
                         rule="DuplicateTransitionViolation",
                         severity=Severity.WARNING,
-                        message='The transition "Init,hello,wait" has been declared 2 times, a transition tuple must be unique, file: process.ini, section: transitions.',
+                        message='The transition "Begin,hello,wait" has been declared 2 times, a transition tuple must be unique, file: process.ini, section: transitions.',
                     ),
                     ValidationResult(
                         rule="InvalidTransitionViolation",
@@ -44,6 +44,11 @@ class TestTransitionsSectionRuleSet(object):
                         rule="InvalidTransitionViolation",
                         severity=Severity.CRITICAL,
                         message='The state "NoPrevious" does not have a valid path leading to it, file: process.ini, section: transitions, line: 37.',
+                    ),
+                    ValidationResult(
+                        rule="NameViolation",
+                        severity=Severity.WARNING,
+                        message='The start state "Begin" for clarity should be called "Init", file: process.ini, section: transitions, line: 33.',
                     ),
                 ],
             ),
