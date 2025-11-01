@@ -38,6 +38,7 @@ class Violations(Enum):
 
     duplicate_assignment_violation = "DuplicateAssignmentViolation"
     duplicate_transition_violation = "DuplicateTransitionViolation"
+    invalid_condition_violation = "InvalidConditionViolation"
     invalid_section_name_violation = "InvalidSectionNameViolation"
     invalid_token_type_violation = "InvalidTokenTypeViolation"
     invalid_transition_violation = "InvalidTransitionViolation"

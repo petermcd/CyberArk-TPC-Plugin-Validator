@@ -56,6 +56,7 @@ class TransitionsSectionRuleSet(SectionRuleSet):
                 break
 
         self._validate_tokens(file=self._FILE_TYPE)
+        self._validate_conditions()
         self._validate_duplicates()
         self._validate_state_paths()
 
@@ -64,7 +65,7 @@ class TransitionsSectionRuleSet(SectionRuleSet):
         Fetch a fail state with the given name.
 
         :param name: The name of the state to fetch.
-        :return: The state token or None if the token does not exist.
+        :return: The state token or None if the token has not been declared.
         """
         return next(
             (
@@ -74,6 +75,40 @@ class TransitionsSectionRuleSet(SectionRuleSet):
             ),
             None,
         )
+
+    def _validate_conditions(self) -> None:
+        """Validate the conditions used in transitions."""
+        conditions = self._get_section(file=FileNames.prompts, section_name=SectionNames.conditions)
+        for transition in self._get_section(file=self._FILE_TYPE, section_name=SectionNames.transitions):
+            found = False
+            if transition.token_name != TokenName.TRANSITION.value:
+                continue
+            for condition in conditions:
+                if condition.token_name != TokenName.ASSIGNMENT.value:
+                    continue
+                if transition.condition == condition.name:
+                    found = True
+                    break
+                if transition.condition.lower() == condition.name.lower():
+                    found = True
+                    self._add_violation(
+                        name=Violations.name_case_mismatch_violation,
+                        message=f'The condition "{condition.name}" is declared but is used as "{transition.condition}".',
+                        severity=Severity.WARNING,
+                        file=self._FILE_TYPE,
+                        section=self._SECTION_NAME,
+                        line=transition.line_number,
+                    )
+                    break
+            if not found:
+                self._add_violation(
+                    name=Violations.invalid_condition_violation,
+                    severity=Severity.CRITICAL,
+                    message=f'The condition "{transition.condition}" used in the transition from "{transition.current_state}" to "{transition.next_state}" but has not been declared.',
+                    file=self._FILE_TYPE,
+                    section=self._SECTION_NAME,
+                    line=transition.line_number,
+                )
 
     def _validate_duplicates(self) -> None:
         """Check for duplicate state transitions."""
@@ -92,16 +127,14 @@ class TransitionsSectionRuleSet(SectionRuleSet):
         state_transitions_counted = Counter(state_transitions_joined)
         for state in state_transitions_counted:
             if state_transitions_counted[state] > 1:
-                message: str = self._create_message(
-                    message=f'The transition "{state}" has been declared {state_transitions_counted[state]} times, a transition tuple must be unique',
-                    file=self._FILE_TYPE,
-                    section=self._SECTION_NAME,
-                    line_number=None,
-                )
+                # TODO - Update so that we can output the line number of the transition
                 self._add_violation(
                     name=Violations.duplicate_transition_violation,
-                    description=message,
                     severity=Severity.WARNING,
+                    message=f'The transition "{state}" has been declared {state_transitions_counted[state]} times, a transition triple must be unique.',
+                    file=self._FILE_TYPE,
+                    section=self._SECTION_NAME,
+                    line=None,
                 )
 
     def _validate_next_transition(self, transition: Transition, transitions) -> None:
@@ -125,16 +158,14 @@ class TransitionsSectionRuleSet(SectionRuleSet):
             if fail_state_token and fail_state_token.token_name == TokenName.FAIL_STATE.value:
                 # failure condition, nothing follows this.
                 return
-            message: str = self._create_message(
-                message=f'The state "{transition.current_state}" attempts to transition to "{transition.next_state}" which does not exist',
-                file=self._FILE_TYPE,
-                section=self._SECTION_NAME,
-                line_number=transition.line_number,
-            )
+
             self._add_violation(
                 name=Violations.invalid_transition_violation,
-                description=message,
                 severity=Severity.CRITICAL,
+                message=f'The state "{transition.current_state}" attempts to transition to "{transition.next_state}" but has not been declared.',
+                file=self._FILE_TYPE,
+                section=self._SECTION_NAME,
+                line=transition.line_number,
             )
 
     def _validate_previous_transition(self, transition: Transition, transitions) -> None:
@@ -151,16 +182,14 @@ class TransitionsSectionRuleSet(SectionRuleSet):
         if transition.current_state.lower() == self._initial_state:
             if self._initial_state_warned:
                 return
-            message: str = self._create_message(
-                message=f'The start state "{transition.current_state}" for clarity should be called "{self._default_initial_state}"',
-                file=self._FILE_TYPE,
-                section=self._SECTION_NAME,
-                line_number=transition.line_number,
-            )
+
             self._add_violation(
                 name=Violations.name_violation,
-                description=message,
                 severity=Severity.WARNING,
+                message=f'The start state "{transition.current_state}", for clarity should be called "{self._default_initial_state}".',
+                file=self._FILE_TYPE,
+                section=self._SECTION_NAME,
+                line=transition.line_number,
             )
             self._initial_state_warned = True
             return
@@ -168,16 +197,13 @@ class TransitionsSectionRuleSet(SectionRuleSet):
         to_states.extend(value.next_state for value in transitions if value.token_name == TokenName.TRANSITION.value)
         to_states_set = set(to_states)
         if transition.current_state not in to_states_set:
-            message: str = self._create_message(
-                message=f'The state "{transition.current_state}" does not have a valid path leading to it',
-                file=self._FILE_TYPE,
-                section=self._SECTION_NAME,
-                line_number=transition.line_number,
-            )
             self._add_violation(
                 name=Violations.invalid_transition_violation,
-                description=message,
                 severity=Severity.CRITICAL,
+                message=f'The state "{transition.current_state}" does not have a valid transition leading to it.',
+                file=self._FILE_TYPE,
+                section=self._SECTION_NAME,
+                line=transition.line_number,
             )
 
     def _validate_state_paths(self) -> None:

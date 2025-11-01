@@ -66,28 +66,23 @@ class DebugInformationSectionRuleSet(SectionRuleSet):
             return True
         for valid_setting in valid_settings:
             if token.name.lower() == valid_setting.lower():
-                message: str = self._create_message(
-                    message=f'The setting "{token.name}" should be set as "{valid_setting}"',
-                    file=self._FILE_TYPE,
-                    section=self._SECTION_NAME,
-                    line_number=token.line_number,
-                )
                 self._add_violation(
                     name=Violations.name_case_violation,
-                    description=message,
                     severity=Severity.WARNING,
+                    message=f'The setting "{token.name}" should be set as "{valid_setting}".',
+                    file=self._FILE_TYPE,
+                    section=self._SECTION_NAME,
+                    line=token.line_number,
                 )
                 return True
-        message = self._create_message(
-            message=f'The setting "{token.name}" is not a valid setting. Valid settings are: {", ".join(valid_settings)}',
-            file=self._FILE_TYPE,
-            section=self._SECTION_NAME,
-            line_number=token.line_number,
-        )
+
         self._add_violation(
             name=Violations.name_violation,
-            description=message,
             severity=Severity.WARNING,
+            message=f'The setting "{token.name}" is not a valid setting. Valid settings are: {", ".join(valid_settings)}.',
+            file=self._FILE_TYPE,
+            section=self._SECTION_NAME,
+            line=token.line_number,
         )
         return False
 
@@ -100,55 +95,43 @@ class DebugInformationSectionRuleSet(SectionRuleSet):
         valid_values = ["yes", "no"]
 
         if not token.assigned:
-            message: str = self._create_message(
-                message=f'The value for "{token.name}" is blank. Setting should be explicitly set to "no"',
-                file=self._FILE_TYPE,
-                section=self._SECTION_NAME,
-                line_number=token.line_number,
-            )
             self._add_violation(
                 name=Violations.value_violation,
-                description=message,
                 severity=Severity.WARNING,
+                message=f'The value for "{token.name}" is blank. Setting should be explicitly set to "no".',
+                file=self._FILE_TYPE,
+                section=self._SECTION_NAME,
+                line=token.line_number,
             )
             return
 
         if token.assigned.lower() not in valid_values:
-            message = self._create_message(
-                message=f'The value for "{token.name}" is set to "{token.assigned}" and is invalid. Valid values are "no" and "yes"',
-                file=self._FILE_TYPE,
-                section=self._SECTION_NAME,
-                line_number=token.line_number,
-            )
             self._add_violation(
                 name=Violations.value_violation,
-                description=message,
                 severity=Severity.CRITICAL,
+                message=f'The value for "{token.name}" is set to "{token.assigned}" and is invalid. Valid values are "no" and "yes".',
+                file=self._FILE_TYPE,
+                section=self._SECTION_NAME,
+                line=token.line_number,
             )
             return
 
         if token.assigned.lower() != token.assigned:
-            message = self._create_message(
-                message=f'The value for "{token.name}" is set to "{token.assigned}" this should be in lower case',
-                file=self._FILE_TYPE,
-                section=self._SECTION_NAME,
-                line_number=token.line_number,
-            )
             self._add_violation(
                 name=Violations.value_case_violation,
-                description=message,
                 severity=Severity.WARNING,
+                message=f'The value for "{token.name}" is set to "{token.assigned}" this should be in lower case.',
+                file=self._FILE_TYPE,
+                section=self._SECTION_NAME,
+                line=token.line_number,
             )
 
         if token.assigned.lower() != "no":
-            message = self._create_message(
-                message=f'The value for "{token.name}" is set to "{token.assigned}". It is recommended to set all settings in this section to "no" for production environments',
-                file=self._FILE_TYPE,
-                section=self._SECTION_NAME,
-                line_number=token.line_number,
-            )
             self._add_violation(
                 name=Violations.logging_enabled_violation,
-                description=message,
                 severity=Severity.CRITICAL if self._config.get("enabled", True) else Severity.INFO,
+                message=f'The value for "{token.name}" is set to "{token.assigned}". It is recommended to set all settings in this section to "no" for production environments.',
+                file=self._FILE_TYPE,
+                section=self._SECTION_NAME,
+                line=token.line_number,
             )

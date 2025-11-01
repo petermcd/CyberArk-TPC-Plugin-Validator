@@ -60,29 +60,24 @@ class ConditionsSectionRuleSet(SectionRuleSet):
                     found = True
                     continue
                 if token.name.lower() == transition.condition.lower():
-                    message: str = self._create_message(
-                        message=f'The condition "{token.name}" is declared but is used as "{transition.condition}"',
-                        file=self._FILE_TYPE,
-                        section=self._SECTION_NAME,
-                        line_number=token.line_number,
-                    )
                     self._add_violation(
                         name=Violations.name_case_mismatch_violation,
-                        description=message,
+                        message=f'The condition "{token.name}" is declared but is used as "{transition.condition}".',
                         severity=Severity.WARNING,
+                        file=self._FILE_TYPE,
+                        section=self._SECTION_NAME,
+                        line=token.line_number,
                     )
                     found = True
                     break
             if found:
                 continue
-            message = self._create_message(
-                message=f'The condition "{token.name}" is declared but is not used',
-                file=self._FILE_TYPE,
-                section=self._SECTION_NAME,
-                line_number=token.line_number,
-            )
+
             self._add_violation(
                 name=Violations.unused_condition_violation,
-                description=message,
                 severity=Severity.WARNING,
+                message=f'The condition "{token.name}" is declared but is not used.',
+                file=self._FILE_TYPE,
+                section=self._SECTION_NAME,
+                line=token.line_number,
             )

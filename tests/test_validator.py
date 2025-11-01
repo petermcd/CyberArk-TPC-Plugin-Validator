@@ -70,17 +70,17 @@ class TestValidator(object):
             (
                 "tests/data/doesnt_exist/process.ini",
                 "tests/data/doesnt_exist/prompts.ini",
-                "Process file not found: tests/data/doesnt_exist/process.ini",
+                "The process file was not found: tests/data/doesnt_exist/process.ini",
             ),
             (
                 "tests/data/doesnt_exist/process.ini",
                 "tests/data/valid-prompts.ini",
-                "Process file not found: tests/data/doesnt_exist/process.ini",
+                "The process file was not found: tests/data/doesnt_exist/process.ini",
             ),
             (
                 "tests/data/valid-process.ini",
                 "tests/data/doesnt_exist/prompts.ini",
-                "Process file not found: tests/data/doesnt_exist/prompts.ini",
+                "The prompts file was not found: tests/data/doesnt_exist/prompts.ini",
             ),
         ],
     )

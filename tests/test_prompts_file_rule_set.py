@@ -24,14 +24,19 @@ class TestPromptsFileRuleSets(object):
                 "tests/data/invalid-prompts.ini",
                 [
                     ValidationResult(
-                        rule="InvalidTokenTypeViolation",
-                        severity=Severity.WARNING,
-                        message='The token type "Transition" is not valid in this section, file: prompts.ini, section: default, line: 8.',
-                    ),
-                    ValidationResult(
                         rule="SectionNameCaseViolation",
                         severity=Severity.WARNING,
-                        message='The section "conditions" has been declared as "Conditions", file: prompts.ini.',
+                        message='The section "conditions" has been declared as "Conditions".',
+                        file="prompts.ini",
+                        section="conditions",
+                    ),
+                    ValidationResult(
+                        rule="InvalidTokenTypeViolation",
+                        severity=Severity.WARNING,
+                        message='The token type "Transition" is not valid in the "default" section.',
+                        file="prompts.ini",
+                        section="default",
+                        line=8,
                     ),
                 ],
             ),
@@ -42,7 +47,9 @@ class TestPromptsFileRuleSets(object):
                     ValidationResult(
                         rule="MissingSectionViolation",
                         severity=Severity.CRITICAL,
-                        message='"conditions" is a required section but this is missing, file: prompts.ini.',
+                        message='"conditions" is a required section but has not been declared.',
+                        file="prompts.ini",
+                        section="conditions",
                     ),
                 ],
             ),

@@ -58,16 +58,13 @@ class CPMParametersValidationSectionRuleSet(SectionRuleSet):
             if self._validate_token_utilised(token=token):
                 continue
 
-            message: str = self._create_message(
-                message=f'The parameter "{token.name}" has been validated but is not used',
-                file=self._FILE_TYPE,
-                section=self._SECTION_NAME,
-                line_number=token.line_number,
-            )
             self._add_violation(
                 name=Violations.unused_parameter_violation,
-                description=message,
                 severity=Severity.WARNING,
+                message=f'The parameter "{token.name}" has been validated but is not used.',
+                file=self._FILE_TYPE,
+                section=self._SECTION_NAME,
+                line=token.line_number,
             )
 
     def _validate_token_utilised(self, token) -> bool:
