@@ -92,10 +92,11 @@ class TransitionsSectionRuleSet(SectionRuleSet):
         state_transitions_counted = Counter(state_transitions_joined)
         for state in state_transitions_counted:
             if state_transitions_counted[state] > 1:
+                # TODO - Update so that we can output the line number of the transition
                 self._add_violation(
                     name=Violations.duplicate_transition_violation,
                     severity=Severity.WARNING,
-                    message=f'The transition "{state}" has been declared {state_transitions_counted[state]} times, a transition tuple must be unique.',
+                    message=f'The transition "{state}" has been declared {state_transitions_counted[state]} times, a transition triple must be unique.',
                     file=self._FILE_TYPE,
                     section=self._SECTION_NAME,
                     line=None,

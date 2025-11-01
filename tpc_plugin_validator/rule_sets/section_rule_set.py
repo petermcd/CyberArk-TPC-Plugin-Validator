@@ -35,6 +35,7 @@ class SectionRuleSet(RuleSet):
         counted_keys = Counter(token_keys)
         for token_name in counted_keys:
             if counted_keys[token_name] > 1:
+                # TODO - Update so that we can output the line number of the section
                 self._add_violation(
                     name=Violations.duplicate_assignment_violation,
                     severity=Severity.CRITICAL,

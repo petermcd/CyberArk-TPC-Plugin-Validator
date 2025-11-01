@@ -74,6 +74,7 @@ class ParametersSectionRuleSet(SectionRuleSet):
                     message=f'"SendHumanMin" cannot be greater than "SendHumanMax", "SendHumanMin" is set to {float(human_min.assigned)} and "SendHumanMax" is set to {float(human_max.assigned)}.',
                     section=self._SECTION_NAME,
                     file=self._FILE_TYPE,
+                    line=human_min.line_number,
                 )
 
         try:

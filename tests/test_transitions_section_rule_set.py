@@ -36,7 +36,7 @@ class TestTransitionsSectionRuleSet(object):
                     ValidationResult(
                         rule='DuplicateTransitionViolation',
                         severity=Severity.WARNING,
-                        message='The transition "Begin,hello,wait" has been declared 2 times, a transition tuple must be unique.',
+                        message='The transition "Begin,hello,wait" has been declared 2 times, a transition triple must be unique.',
                         file='process.ini',
                         section='transitions',
                     ),

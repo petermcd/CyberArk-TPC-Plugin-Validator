@@ -78,7 +78,25 @@ class Validator(object):
                 config=self._config,
             )
             validator.validate()
-            self._violations = self._violations + validator.get_violations()
+            self._violations = self.sort_violations(self._violations + validator.get_violations())
+
+    @classmethod
+    def sort_violations(cls, violations: list[ValidationResult]) -> list[ValidationResult]:
+        """
+        Sort violations by file, section, and line.
+
+        :param violations: List of ValidationResult
+
+        :return: Sorted list of ValidationResult
+        """
+        return sorted(
+            violations,
+            key=lambda violation: (
+                str(violation.file) if violation.file is not None else '',
+                str(violation.section) if violation.section is not None else '',
+                violation.line if violation.line is not None else -1,
+            ),
+        )
 
     @classmethod
     def with_file(cls, process_file_path: str, prompts_file_path: str, config: CONFIG_TYPE) -> 'Validator':

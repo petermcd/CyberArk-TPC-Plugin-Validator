@@ -99,6 +99,7 @@ class StatesSectionRuleSet(SectionRuleSet):
         counted_codes = Counter(codes)
         for code in counted_codes:
             if counted_codes[code] > 1:
+                # TODO - Update so that we can output the line number of the fail state
                 self._add_violation(
                     name=Violations.value_violation,
                     severity=Severity.WARNING,

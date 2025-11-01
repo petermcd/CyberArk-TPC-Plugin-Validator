@@ -39,6 +39,7 @@ class TestParametersSectionRuleSet(object):
                         message='"SendHumanMin" cannot be greater than "SendHumanMax", "SendHumanMin" is set to 1.0 and "SendHumanMax" is set to 0.0.',
                         file='process.ini',
                         section='parameters',
+                        line=66,
                     ),
                     ValidationResult(
                         rule='DuplicateAssignmentViolation',

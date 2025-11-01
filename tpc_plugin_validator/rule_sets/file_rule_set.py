@@ -56,6 +56,7 @@ class FileRuleSet(RuleSet):
             if section in self._VALID_SECTIONS.keys():
                 continue
             elif section_name in valid_sections_dict:
+                # TODO - Update so that we can output the line number of the section
                 self._add_violation(
                     name=Violations.section_name_case_violation,
                     severity=Severity.WARNING,
@@ -64,6 +65,7 @@ class FileRuleSet(RuleSet):
                     section=valid_sections_dict[section_name],
                 )
             else:
+                # TODO - Update so that we can output the line number of the section
                 self._add_violation(
                     name=Violations.invalid_section_name_violation,
                     severity=Severity.WARNING,
