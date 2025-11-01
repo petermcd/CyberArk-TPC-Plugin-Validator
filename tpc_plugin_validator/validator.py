@@ -33,7 +33,7 @@ class Validator(object):
         '_config',
         '_parser',
         '_rule_sets',
-        '_validations',
+        '_violations',
     )
 
     def __init__(self, process_file_content: str, prompts_file_content: str, config: CONFIG_TYPE) -> None:
@@ -49,7 +49,7 @@ class Validator(object):
             process_file=process_file_content,
             prompts_file=prompts_file_content,
         )
-        self._validations: list[ValidationResult] = []
+        self._violations: list[ValidationResult] = []
         self._rule_sets: set[Callable] = {
             ConditionsSectionRuleSet,
             CPMParametersValidationSectionRuleSet,
@@ -67,7 +67,7 @@ class Validator(object):
 
         :return: List of ValidationResult
         """
-        return self._validations
+        return self._violations
 
     def validate(self) -> None:
         """Execute validations."""
@@ -78,7 +78,7 @@ class Validator(object):
                 config=self._config,
             )
             validator.validate()
-            self._validations = self._validations + validator.get_violations()
+            self._violations = self._violations + validator.get_violations()
 
     @classmethod
     def with_file(cls, process_file_path: str, prompts_file_path: str, config: CONFIG_TYPE) -> 'Validator':
