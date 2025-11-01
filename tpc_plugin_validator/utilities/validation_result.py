@@ -25,5 +25,6 @@ class ValidationResult(object):
             output_message += f", section: {self.section}"
         if self.line is not None:
             output_message += f", line: {self.line}"
-        output_message += "."
+        if any([self.file, self.section, self.line]):
+            output_message += "."
         return output_message
