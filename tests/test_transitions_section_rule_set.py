@@ -2,91 +2,118 @@
 
 import pytest
 
-from tpc_plugin_parser.parser import Parser
-from tpc_plugin_validator.rule_sets.transitions_section_rule_set import (
-    TransitionsSectionRuleSet,
-)
 from tpc_plugin_validator.utilities.severity import Severity
 from tpc_plugin_validator.utilities.validation_result import ValidationResult
+from tpc_plugin_validator.validator import Validator
 
 
 class TestTransitionsSectionRuleSet(object):
     """Tests for the transitions section rule set."""
 
     @pytest.mark.parametrize(
-        "process_file,prompts_file,expected_results",
+        "process_file,prompts_file,expected_violations",
         [
             (
-                "tests/data/valid-process.ini",
-                "tests/data/valid-prompts.ini",
-                [],
-            ),
-            (
-                "tests/data/invalid-process.ini",
-                "tests/data/invalid-prompts.ini",
+                "tests/data/transitions-invalid-process.ini",
+                "tests/data/transitions-invalid-prompts.ini",
                 [
+                    # Test to ensure duplicate transitions are caught.
                     ValidationResult(
                         rule="DuplicateTransitionViolation",
-                        severity=Severity.WARNING,
-                        message='The transition "Begin,hello,wait" has been declared 2 times, a transition triple must be unique.',
+                        severity=Severity.CRITICAL,
+                        message='The transition "Wait,Failure,SomeFailure" has been declared 2 times, a transition triple must be unique.',
                         file="process.ini",
                         section="transitions",
                     ),
+                    # Test to ensure states in transitions are in the same case as they are declared.
+                    ValidationResult(
+                        rule="NameCaseMismatchViolation",
+                        severity=Severity.WARNING,
+                        message='The state "Wait" is declared but is used with different casing in the transition next state.',
+                        file="process.ini",
+                        section="transitions",
+                        line=21,
+                    ),
+                    # Test to ensure that the init name is caught if anything other than Init.
                     ValidationResult(
                         rule="NameViolation",
                         severity=Severity.WARNING,
                         message='The start state "Begin", for clarity should be called "Init".',
                         file="process.ini",
                         section="transitions",
-                        line=33,
+                        line=21,
                     ),
+                    # Test to ensure states in transitions are in the same case as they are declared.
                     ValidationResult(
                         rule="NameCaseMismatchViolation",
                         severity=Severity.WARNING,
-                        message='The condition "Hello" is declared but is used as "hello".',
+                        message='The state "Wait" is declared but is used with different casing in the transition current state.',
                         file="process.ini",
                         section="transitions",
-                        line=33,
+                        line=22,
                     ),
+                    # Test to ensure that conditions used in transitions have been declard.
+                    ValidationResult(
+                        rule="InvalidConditionViolation",
+                        severity=Severity.CRITICAL,
+                        message='The condition "SQL" used in the transition from "IsWaiting" to "END" but has not been declared.',
+                        file="process.ini",
+                        section="transitions",
+                        line=24,
+                    ),
+                    # Test to ensure that states used in transitions have been declared.
                     ValidationResult(
                         rule="InvalidTransitionViolation",
                         severity=Severity.CRITICAL,
-                        message='The state "wait" attempts to transition to "NoNext" but has not been declared.',
+                        message='The state "NoPrevious" used in the transition current state has not been declared.',
                         file="process.ini",
                         section="transitions",
-                        line=36,
+                        line=28,
                     ),
+                    # Test to ensure that transitions can be reached.
                     ValidationResult(
                         rule="InvalidTransitionViolation",
                         severity=Severity.CRITICAL,
                         message='The state "NoPrevious" does not have a valid transition leading to it.',
                         file="process.ini",
                         section="transitions",
-                        line=37,
+                        line=28,
                     ),
+                    # Test to ensure that states in transitions have been declared.
                     ValidationResult(
-                        rule="NameCaseMismatchViolation",
-                        severity=Severity.WARNING,
-                        message='The condition "Hello" is declared but is used as "hello".',
+                        rule="InvalidTransitionViolation",
+                        severity=Severity.CRITICAL,
+                        message='The state "NoNext" used in the transition next state has not been declared.',
                         file="process.ini",
                         section="transitions",
-                        line=39,
+                        line=29,
                     ),
+                    # Test to ensure that states in transitions have been declared.
+                    ValidationResult(
+                        rule="InvalidTransitionViolation",
+                        severity=Severity.CRITICAL,
+                        message='The state "Wait" attempts to transition to "NoNext" but has not been declared.',
+                        file="process.ini",
+                        section="transitions",
+                        line=29,
+                    ),
+                    # Test invalid token type in transitions section are caught.
                     ValidationResult(
                         rule="InvalidTokenTypeViolation",
-                        severity=Severity.WARNING,
+                        severity=Severity.CRITICAL,
                         message='The token type "Assignment" is not valid in the "transitions" section.',
                         file="process.ini",
                         section="transitions",
-                        line=40,
+                        line=31,
                     ),
+                    # Test for ensuring parse errors are caught.
                     ValidationResult(
-                        rule="InvalidConditionViolation",
+                        rule="ParseErrorViolation",
                         severity=Severity.CRITICAL,
-                        message='The condition "sql3" used in the transition from "IsWaiting" to "END" but has not been declared.',
+                        message="Line could not be parsed correctly.",
                         file="process.ini",
                         section="transitions",
-                        line=42,
+                        line=32,
                     ),
                 ],
             ),
@@ -96,28 +123,22 @@ class TestTransitionsSectionRuleSet(object):
         self,
         process_file: str,
         prompts_file: str,
-        expected_results: list[ValidationResult],
+        expected_violations: list[ValidationResult],
     ) -> None:
         """
         Tests for the transitions section rule set.
 
         :param process_file: Path to the process file to use for the test case.
         :param prompts_file: Path to the prompts file to use for the test case.
-        :param expected_results: List of expected ValidationResult
+        :param expected_violations: List of expected ValidationResult
         """
-        with open(process_file, "r") as process_fh, open(prompts_file, "r") as prompts_fh:
-            process_file_content = process_fh.read()
-            prompts_file_content = prompts_fh.read()
+        validate = Validator.with_file(prompts_file_path=prompts_file, process_file_path=process_file, config={})
+        validate.validate()
+        results = validate.get_violations()
 
-        parser = Parser(process_file=process_file_content, prompts_file=prompts_file_content)
-        parsed_process_file = parser.process_file
-        parsed_prompts_file = parser.prompts_file
-
-        rule = TransitionsSectionRuleSet(prompts_file=parsed_prompts_file, process_file=parsed_process_file, config={})
-        rule.validate()
-        results = rule.get_violations()
-
-        assert len(results) == len(expected_results)
+        assert len(results) == len(expected_violations)
 
         for result in results:
-            assert result in expected_results
+            assert result in expected_violations
+
+        assert validate.get_violations() == expected_violations

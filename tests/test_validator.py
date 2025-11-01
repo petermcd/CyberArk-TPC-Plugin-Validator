@@ -13,6 +13,7 @@ class TestValidator(object):
         "process_file,prompts_file,violations",
         [
             (
+                # Test to ensure that valid files produce no violations.
                 "tests/data/valid-process.ini",
                 "tests/data/valid-prompts.ini",
                 [],
@@ -40,29 +41,45 @@ class TestValidator(object):
         assert validator.get_violations() == violations
 
     @pytest.mark.parametrize(
-        "process_file,prompts_file,violations",
+        "process_file,prompts_file,expected_violations",
         [
             (
+                # Test to ensure that valid files produce no violations.
                 "tests/data/valid-process.ini",
                 "tests/data/valid-prompts.ini",
                 [],
-            )
+            ),
+            (
+                # Test to ensure that valid files produce no violations.
+                "tests/data/valid-process-alt.ini",
+                "tests/data/valid-prompts-alt.ini",
+                [],
+            ),
         ],
     )
     def test_validator_with_file_path(
-        self, process_file: str, prompts_file: str, violations: list[ValidationResult]
+        self,
+        process_file: str,
+        prompts_file: str,
+        expected_violations: list[ValidationResult],
     ) -> None:
         """
         Test to ensure that the validator works.
 
         :param process_file: Path to the process file to test.
         :param prompts_file: Path to the prompts file to test.
-        :param violations: Expected violations.
+        :param expected_violations: Expected violations.
         """
+        validate = Validator.with_file(prompts_file_path=prompts_file, process_file_path=process_file, config={})
+        validate.validate()
+        results = validate.get_violations()
 
-        validator = Validator.with_file(process_file_path=process_file, prompts_file_path=prompts_file, config={})
-        validator.validate()
-        assert validator.get_violations() == violations
+        assert len(results) == len(expected_violations)
+
+        for result in results:
+            assert result in expected_violations
+
+        assert validate.get_violations() == expected_violations
 
     @pytest.mark.parametrize(
         "process_file,prompts_file,expected_message",

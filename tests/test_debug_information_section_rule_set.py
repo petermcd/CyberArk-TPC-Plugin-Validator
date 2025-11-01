@@ -2,172 +2,152 @@
 
 import pytest
 
-from tpc_plugin_parser.parser import Parser
-from tpc_plugin_validator.rule_sets.debug_information_section_rule_set import (
-    DebugInformationSectionRuleSet,
-)
+from tpc_plugin_validator.validator import Validator
 from tpc_plugin_validator.utilities.severity import Severity
 from tpc_plugin_validator.utilities.validation_result import ValidationResult
 
 
 class TestDebugInformationSectionRuleSet(object):
-    """Tests for the debug information section rule set."""
+    """Tests for the debug information rule set."""
 
     @pytest.mark.parametrize(
-        "process_file,prompts_file,expected_results",
+        "process_file,prompts_file,expected_violations",
         [
             (
-                "tests/data/valid-process.ini",
-                "tests/data/valid-prompts.ini",
-                [],
-            ),
-            (
-                "tests/data/invalid-process.ini",
-                "tests/data/invalid-prompts.ini",
+                "tests/data/debug-information-invalid-process.ini",
+                "tests/data/debug-information-invalid-prompts.ini",
                 [
+                    # Test for ensuring duplicate assignments are caught.
                     ValidationResult(
                         rule="DuplicateAssignmentViolation",
                         severity=Severity.CRITICAL,
-                        message='The assignment "COnsoleOutput" has been declared 2 times.',
+                        message='The assignment "ExpectLog" has been declared 2 times.',
                         file="process.ini",
                         section="Debug Information",
                     ),
-                    ValidationResult(
-                        rule="InvalidTokenTypeViolation",
-                        severity=Severity.WARNING,
-                        message='The token type "Transition" is not valid in the "Debug Information" section.',
-                        file="process.ini",
-                        section="Debug Information",
-                        line=73,
-                    ),
+                    # Test for ensuring blank values are caught when no = present
                     ValidationResult(
                         rule="ValueViolation",
                         severity=Severity.WARNING,
                         message='The value for "DebugLogFullParsingInfo" is blank. Setting should be explicitly set to "no".',
                         file="process.ini",
                         section="Debug Information",
-                        line=74,
+                        line=44,
                     ),
+                    # Test for ensuring blank values are caught when no = present
+                    ValidationResult(
+                        rule="ValueViolation",
+                        severity=Severity.WARNING,
+                        message='The value for "DebugLogFullExecutionInfo" is blank. Setting should be explicitly set to "no".',
+                        file="process.ini",
+                        section="Debug Information",
+                        line=45,
+                    ),
+                    # Test for ensuring setting name case violation is caught.
+                    ValidationResult(
+                        rule="NameCaseViolation",
+                        severity=Severity.WARNING,
+                        message='The setting "expectlog" should be set as "ExpectLog".',
+                        file="process.ini",
+                        section="Debug Information",
+                        line=48,
+                    ),
+                    # Test for ensuring setting value case violation is caught.
                     ValidationResult(
                         rule="ValueCaseViolation",
                         severity=Severity.WARNING,
-                        message='The value for "DebugLogFullExecutionInfo" is set to "No" this should be in lower case.',
+                        message='The value for "expectlog" is set to "Yes" this should be in lower case.',
                         file="process.ini",
                         section="Debug Information",
-                        line=75,
+                        line=48,
                     ),
-                    ValidationResult(
-                        rule="ValueViolation",
-                        severity=Severity.CRITICAL,
-                        message='The value for "DebugLogDetailBuiltInActions" is set to "maybe" and is invalid. Valid values are "no" and "yes".',
-                        file="process.ini",
-                        section="Debug Information",
-                        line=76,
-                    ),
+                    # Test for ensuring logging is disabled.
                     ValidationResult(
                         rule="LoggingEnabledViolation",
                         severity=Severity.CRITICAL,
-                        message='The value for "ExpectLog" is set to "yes". It is recommended to set all settings in this section to "no" for production environments.',
+                        message='The value for "expectlog" is set to "Yes". It is recommended to set all settings in this section to "no" for production environments.',
                         file="process.ini",
                         section="Debug Information",
-                        line=77,
+                        line=48,
                     ),
+                    # Test for ensuring invalid setting values are caught.
                     ValidationResult(
-                        rule="ValueCaseViolation",
-                        severity=Severity.WARNING,
-                        message='The value for "COnsoleOutput" is set to "No" this should be in lower case.',
+                        rule="ValueViolation",
+                        severity=Severity.CRITICAL,
+                        message='The value for "ConsoleOutput" is set to "Maybe" and is invalid. Valid values are "no" and "yes".',
                         file="process.ini",
                         section="Debug Information",
-                        line=78,
+                        line=49,
                     ),
+                    # Test invalid token type in debug information section are caught.
                     ValidationResult(
-                        rule="NameCaseViolation",
-                        severity=Severity.WARNING,
-                        message='The setting "COnsoleOutput" should be set as "ConsoleOutput".',
+                        rule="InvalidTokenTypeViolation",
+                        severity=Severity.CRITICAL,
+                        message='The token type "Transition" is not valid in the "Debug Information" section.',
                         file="process.ini",
                         section="Debug Information",
-                        line=78,
+                        line=50,
                     ),
+                    # Test for ensuring invalid setting names are caught.
                     ValidationResult(
                         rule="NameViolation",
                         severity=Severity.WARNING,
-                        message='The setting "InvalidName" is not a valid setting. Valid settings are: DebugLogFullParsingInfo, DebugLogFullExecutionInfo, DebugLogDetailBuiltInActions, ExpectLog, ConsoleOutput.',
+                        message='The setting "InvalidSetting" is not a valid setting. Valid settings are: DebugLogFullParsingInfo, DebugLogFullExecutionInfo, DebugLogDetailBuiltInActions, ExpectLog, ConsoleOutput.',
                         file="process.ini",
                         section="Debug Information",
-                        line=79,
+                        line=51,
                     ),
-                    ValidationResult(
-                        rule="NameCaseViolation",
-                        severity=Severity.WARNING,
-                        message='The setting "COnsoleOutput" should be set as "ConsoleOutput".',
-                        file="process.ini",
-                        section="Debug Information",
-                        line=80,
-                    ),
-                    ValidationResult(
-                        rule="ValueCaseViolation",
-                        severity=Severity.WARNING,
-                        message='The value for "COnsoleOutput" is set to "No" this should be in lower case.',
-                        file="process.ini",
-                        section="Debug Information",
-                        line=80,
-                    ),
+                    # Test for ensuring parse errors are caught.
                     ValidationResult(
                         rule="ParseErrorViolation",
                         severity=Severity.CRITICAL,
                         message="Line could not be parsed correctly.",
                         file="process.ini",
                         section="Debug Information",
-                        line=81,
+                        line=52,
                     ),
+                    # Test reserved words used as condition names are caught.
                     ValidationResult(
                         rule="InvalidWordViolation",
                         severity=Severity.CRITICAL,
                         message='"debug" is a reserved word and cannot be used as a name in an assignment.',
                         file="process.ini",
                         section="Debug Information",
-                        line=82,
+                        line=53,
                     ),
+                    # Test for ensuring invalid setting names are caught.
                     ValidationResult(
                         rule="NameViolation",
                         severity=Severity.WARNING,
                         message='The setting "debug" is not a valid setting. Valid settings are: DebugLogFullParsingInfo, DebugLogFullExecutionInfo, DebugLogDetailBuiltInActions, ExpectLog, ConsoleOutput.',
                         file="process.ini",
                         section="Debug Information",
-                        line=82,
+                        line=53,
                     ),
                 ],
             ),
         ],
     )
-    def test_debug_information_logging_section_rule_set(
+    def test_debug_information_section_rule_set(
         self,
         process_file: str,
         prompts_file: str,
-        expected_results: list[ValidationResult],
+        expected_violations: list[ValidationResult],
     ) -> None:
         """
-        Tests for the debug information section rule set.
+        Tests for the debug information rule set.
 
         :param process_file: Path to the process file to use for the test case.
         :param prompts_file: Path to the prompts file to use for the test case.
-        :param expected_results: List of expected ValidationResult
+        :param expected_violations: List of expected ValidationResult
         """
-        with open(process_file, "r") as process_fh, open(prompts_file, "r") as prompts_fh:
-            process_file_content = process_fh.read()
-            prompts_file_content = prompts_fh.read()
+        validate = Validator.with_file(prompts_file_path=prompts_file, process_file_path=process_file, config={})
+        validate.validate()
+        results = validate.get_violations()
 
-        parser = Parser(process_file=process_file_content, prompts_file=prompts_file_content)
-        parsed_process_file = parser.process_file
-        parsed_prompts_file = parser.prompts_file
-
-        rule = DebugInformationSectionRuleSet(
-            prompts_file=parsed_prompts_file, process_file=parsed_process_file, config={}
-        )
-        rule.validate()
-        results = rule.get_violations()
-
-        assert len(results) == len(expected_results)
+        assert len(results) == len(expected_violations)
 
         for result in results:
-            assert result in expected_results
+            assert result in expected_violations
+
+        assert validate.get_violations() == expected_violations

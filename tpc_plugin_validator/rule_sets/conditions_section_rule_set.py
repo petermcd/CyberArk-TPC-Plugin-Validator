@@ -56,28 +56,15 @@ class ConditionsSectionRuleSet(SectionRuleSet):
             for transition in transitions:
                 if transition.token_name != TokenName.TRANSITION.value:
                     continue
-                if token.name == transition.condition:
-                    found = True
-                    continue
                 if token.name.lower() == transition.condition.lower():
-                    self._add_violation(
-                        name=Violations.name_case_mismatch_violation,
-                        message=f'The condition "{token.name}" is declared but is used as "{transition.condition}".',
-                        severity=Severity.WARNING,
-                        file=self._FILE_TYPE,
-                        section=self._SECTION_NAME,
-                        line=token.line_number,
-                    )
                     found = True
-                    break
-            if found:
-                continue
 
-            self._add_violation(
-                name=Violations.unused_condition_violation,
-                severity=Severity.WARNING,
-                message=f'The condition "{token.name}" is declared but is not used.',
-                file=self._FILE_TYPE,
-                section=self._SECTION_NAME,
-                line=token.line_number,
-            )
+            if not found:
+                self._add_violation(
+                    name=Violations.unused_condition_violation,
+                    severity=Severity.WARNING,
+                    message=f'The condition "{token.name}" is declared but is not used.',
+                    file=self._FILE_TYPE,
+                    section=self._SECTION_NAME,
+                    line=token.line_number,
+                )
