@@ -26,6 +26,13 @@ class TestParametersSectionRuleSet(object):
                 "tests/data/invalid-prompts.ini",
                 [
                     ValidationResult(
+                        rule="DuplicateAssignmentViolation",
+                        severity=Severity.CRITICAL,
+                        message='The assignment "PromptTimeout" has been declared 2 times.',
+                        file="process.ini",
+                        section="parameters",
+                    ),
+                    ValidationResult(
                         rule="InvalidTokenTypeViolation",
                         severity=Severity.WARNING,
                         message='The token type "Transition" is not valid in the "parameters" section.',
@@ -40,13 +47,6 @@ class TestParametersSectionRuleSet(object):
                         file="process.ini",
                         section="parameters",
                         line=66,
-                    ),
-                    ValidationResult(
-                        rule="DuplicateAssignmentViolation",
-                        severity=Severity.CRITICAL,
-                        message='The assignment "PromptTimeout" has been declared 2 times.',
-                        file="process.ini",
-                        section="parameters",
                     ),
                     ValidationResult(
                         rule="InvalidWordViolation",

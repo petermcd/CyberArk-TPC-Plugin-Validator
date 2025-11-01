@@ -26,6 +26,13 @@ class TestCPMParametersValidationSectionRuleSet(object):
                 "tests/data/invalid-prompts.ini",
                 [
                     ValidationResult(
+                        rule="DuplicateAssignmentViolation",
+                        severity=Severity.CRITICAL,
+                        message='The assignment "extrapass2\\Username" has been declared 2 times.',
+                        file="process.ini",
+                        section="CPM Parameters Validation",
+                    ),
+                    ValidationResult(
                         rule="InvalidTokenTypeViolation",
                         severity=Severity.WARNING,
                         message='The token type "Transition" is not valid in the "CPM Parameters Validation" section.',
@@ -48,13 +55,6 @@ class TestCPMParametersValidationSectionRuleSet(object):
                         file="process.ini",
                         section="CPM Parameters Validation",
                         line=56,
-                    ),
-                    ValidationResult(
-                        rule="DuplicateAssignmentViolation",
-                        severity=Severity.CRITICAL,
-                        message='The assignment "extrapass2\\Username" has been declared 2 times.',
-                        file="process.ini",
-                        section="CPM Parameters Validation",
                     ),
                 ],
             ),

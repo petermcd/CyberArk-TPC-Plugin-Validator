@@ -26,14 +26,6 @@ class TestConditionsSectionRuleSet(object):
                 "tests/data/invalid-prompts.ini",
                 [
                     ValidationResult(
-                        rule="InvalidTokenTypeViolation",
-                        severity=Severity.WARNING,
-                        message='The token type "Transition" is not valid in the "conditions" section.',
-                        file="prompts.ini",
-                        section="conditions",
-                        line=18,
-                    ),
-                    ValidationResult(
                         rule="DuplicateAssignmentViolation",
                         severity=Severity.CRITICAL,
                         message='The assignment "failure" has been declared 2 times.',
@@ -47,6 +39,14 @@ class TestConditionsSectionRuleSet(object):
                         file="prompts.ini",
                         section="conditions",
                         line=13,
+                    ),
+                    ValidationResult(
+                        rule="InvalidTokenTypeViolation",
+                        severity=Severity.WARNING,
+                        message='The token type "Transition" is not valid in the "conditions" section.',
+                        file="prompts.ini",
+                        section="conditions",
+                        line=18,
                     ),
                     ValidationResult(
                         rule="UnusedConditionViolation",

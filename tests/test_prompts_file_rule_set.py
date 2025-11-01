@@ -24,19 +24,19 @@ class TestPromptsFileRuleSets(object):
                 "tests/data/invalid-prompts.ini",
                 [
                     ValidationResult(
+                        rule="SectionNameCaseViolation",
+                        severity=Severity.WARNING,
+                        message='The section "conditions" has been declared as "Conditions".',
+                        file="prompts.ini",
+                        section="conditions",
+                    ),
+                    ValidationResult(
                         rule="InvalidTokenTypeViolation",
                         severity=Severity.WARNING,
                         message='The token type "Transition" is not valid in the "default" section.',
                         file="prompts.ini",
                         section="default",
                         line=8,
-                    ),
-                    ValidationResult(
-                        rule="SectionNameCaseViolation",
-                        severity=Severity.WARNING,
-                        message='The section "conditions" has been declared as "Conditions".',
-                        file="prompts.ini",
-                        section="conditions",
                     ),
                 ],
             ),

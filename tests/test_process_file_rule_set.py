@@ -24,12 +24,17 @@ class TestProcessFileRuleSet(object):
                 "tests/data/invalid-prompts.ini",
                 [
                     ValidationResult(
-                        rule="InvalidTokenTypeViolation",
+                        rule="InvalidSectionNameViolation",
                         severity=Severity.WARNING,
-                        message='The token type "Transition" is not valid in the "default" section.',
+                        message='The section "Dummy Section" has been declared but is an invalid section name.',
                         file="process.ini",
-                        section="default",
-                        line=8,
+                    ),
+                    ValidationResult(
+                        rule="SectionNameCaseViolation",
+                        severity=Severity.WARNING,
+                        message='The section "CPM Parameters Validation" has been declared as "cpm Parameters Validation".',
+                        file="process.ini",
+                        section="CPM Parameters Validation",
                     ),
                     ValidationResult(
                         rule="SectionNameCaseViolation",
@@ -39,11 +44,12 @@ class TestProcessFileRuleSet(object):
                         section="Debug Information",
                     ),
                     ValidationResult(
-                        rule="SectionNameCaseViolation",
+                        rule="InvalidTokenTypeViolation",
                         severity=Severity.WARNING,
-                        message='The section "CPM Parameters Validation" has been declared as "cpm Parameters Validation".',
+                        message='The token type "Transition" is not valid in the "default" section.',
                         file="process.ini",
-                        section="CPM Parameters Validation",
+                        section="default",
+                        line=8,
                     ),
                     ValidationResult(
                         rule="SectionNameCaseViolation",
@@ -58,12 +64,6 @@ class TestProcessFileRuleSet(object):
                         message='The section "transitions" has been declared as "Transitions".',
                         file="process.ini",
                         section="transitions",
-                    ),
-                    ValidationResult(
-                        rule="InvalidSectionNameViolation",
-                        severity=Severity.WARNING,
-                        message='The section "Dummy Section" has been declared but is an invalid section name.',
-                        file="process.ini",
                     ),
                 ],
             ),
