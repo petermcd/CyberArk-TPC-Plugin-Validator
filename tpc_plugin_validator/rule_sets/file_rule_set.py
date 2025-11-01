@@ -28,14 +28,14 @@ class FileRuleSet(RuleSet):
         required_sections.extend(
             required_section_name
             for required_section_name in self._VALID_SECTIONS
-            if self._VALID_SECTIONS[required_section_name].get('required', False)
+            if self._VALID_SECTIONS[required_section_name].get("required", False)
         )
 
         for required_section_name in required_sections:
             if not self._get_section_name(file=file, section_name=required_section_name):
                 self._add_violation(
                     name=Violations.missing_section_violation,
-                    severity=self._VALID_SECTIONS[required_section_name].get('severity_level', Severity.CRITICAL),
+                    severity=self._VALID_SECTIONS[required_section_name].get("severity_level", Severity.CRITICAL),
                     message=f'"{required_section_name}" is a required section but has not been declared.',
                     file=file,
                     section=required_section_name,

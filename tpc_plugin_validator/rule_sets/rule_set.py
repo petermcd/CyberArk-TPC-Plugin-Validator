@@ -12,14 +12,14 @@ from tpc_plugin_validator.utilities.validation_result import ValidationResult
 
 class RuleSet(ABC):
     __slots__ = (
-        '_config',
-        '_file_sections',
-        '_process_file',
-        '_prompts_file',
-        '_violations',
+        "_config",
+        "_file_sections",
+        "_process_file",
+        "_prompts_file",
+        "_violations",
     )
 
-    _CONFIG_KEY: str = ''
+    _CONFIG_KEY: str = ""
     _FILE_TYPE: FileNames = FileNames.prompts
     _SECTION_NAME: SectionNames = SectionNames.default
     _VALID_TOKENS: list[str] = []
@@ -107,7 +107,7 @@ class RuleSet(ABC):
         elif file.value == FileNames.prompts.value:
             fetch_from = self._prompts_file
         else:
-            raise ProgrammingError(f'Invalid file name provided to _get_section in {type(self).__name__}.')
+            raise ProgrammingError(f"Invalid file name provided to _get_section in {type(self).__name__}.")
 
         section_name_fetched = self._file_sections[file.value].get(section_name.value.lower(), None)
         return fetch_from.get(section_name_fetched, None) if section_name_fetched else None
@@ -143,7 +143,7 @@ class RuleSet(ABC):
                 self._add_violation(
                     name=Violations.parse_error_violation,
                     severity=Severity.CRITICAL,
-                    message='Line could not be parsed correctly.',
+                    message="Line could not be parsed correctly.",
                     file=file,
                     section=required_section,
                     line=token.line_number,

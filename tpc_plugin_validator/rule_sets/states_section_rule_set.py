@@ -15,7 +15,7 @@ class StatesSectionRuleSet(SectionRuleSet):
     Handle validation of the states section in the process file.
     """
 
-    _CONFIG_KEY: str = 'states'
+    _CONFIG_KEY: str = "states"
     _FILE_TYPE: FileNames = FileNames.process
     _SECTION_NAME: SectionNames = SectionNames.states
     _VALID_TOKENS: list[str] = [
@@ -51,10 +51,10 @@ class StatesSectionRuleSet(SectionRuleSet):
         section = self._get_section(file=self._FILE_TYPE, section_name=self._SECTION_NAME)
         end_state: Assignment | None = None
         for token in section:
-            if token.token_name == TokenName.ASSIGNMENT.value and token.name == 'END':
+            if token.token_name == TokenName.ASSIGNMENT.value and token.name == "END":
                 end_state = token
                 break
-            elif token.token_name == 'Assignment' and token.name.lower() == 'end':
+            elif token.token_name == "Assignment" and token.name.lower() == "end":
                 end_state = token
                 self._add_violation(
                     name=Violations.name_case_violation,

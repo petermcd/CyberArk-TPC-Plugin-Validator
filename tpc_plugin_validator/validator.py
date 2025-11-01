@@ -30,10 +30,10 @@ class Validator(object):
     """Class to manage validations."""
 
     __slots__ = (
-        '_config',
-        '_parser',
-        '_rule_sets',
-        '_violations',
+        "_config",
+        "_parser",
+        "_rule_sets",
+        "_violations",
     )
 
     def __init__(self, process_file_content: str, prompts_file_content: str, config: CONFIG_TYPE) -> None:
@@ -92,14 +92,14 @@ class Validator(object):
         return sorted(
             violations,
             key=lambda violation: (
-                str(violation.file) if violation.file is not None else '',
-                str(violation.section) if violation.section is not None else '',
+                str(violation.file) if violation.file is not None else "",
+                str(violation.section) if violation.section is not None else "",
                 violation.line if violation.line is not None else -1,
             ),
         )
 
     @classmethod
-    def with_file(cls, process_file_path: str, prompts_file_path: str, config: CONFIG_TYPE) -> 'Validator':
+    def with_file(cls, process_file_path: str, prompts_file_path: str, config: CONFIG_TYPE) -> "Validator":
         """
         Set the file to be validated.
 
@@ -110,15 +110,15 @@ class Validator(object):
         :return: Self
         """
         if not os.path.isfile(process_file_path):
-            raise FileNotFoundError(f'The process file was not found: {process_file_path}')
+            raise FileNotFoundError(f"The process file was not found: {process_file_path}")
 
         if not os.path.isfile(prompts_file_path):
-            raise FileNotFoundError(f'The prompts file was not found: {prompts_file_path}')
+            raise FileNotFoundError(f"The prompts file was not found: {prompts_file_path}")
 
-        with open(process_file_path, 'r', encoding='utf-8') as process_file:
+        with open(process_file_path, "r", encoding="utf-8") as process_file:
             process_file_content: str = process_file.read()
 
-        with open(prompts_file_path, 'r', encoding='utf-8') as prompts_file:
+        with open(prompts_file_path, "r", encoding="utf-8") as prompts_file:
             prompts_file_content: str = prompts_file.read()
 
         return Validator(

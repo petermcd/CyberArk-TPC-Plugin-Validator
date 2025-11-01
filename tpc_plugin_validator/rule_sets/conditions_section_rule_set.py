@@ -12,7 +12,7 @@ class ConditionsSectionRuleSet(SectionRuleSet):
     Handle validation of the conditions section in the process file.
     """
 
-    _CONFIG_KEY: str = 'conditions'
+    _CONFIG_KEY: str = "conditions"
     _FILE_TYPE: FileNames = FileNames.prompts
     _SECTION_NAME: SectionNames = SectionNames.conditions
     _VALID_TOKENS: list[str] = [

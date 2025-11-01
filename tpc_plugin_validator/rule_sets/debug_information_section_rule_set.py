@@ -12,7 +12,7 @@ class DebugInformationSectionRuleSet(SectionRuleSet):
     Handle validation of the Debug Information section in the process file.
     """
 
-    _CONFIG_KEY: str = 'debug_information'
+    _CONFIG_KEY: str = "debug_information"
     _FILE_TYPE: FileNames = FileNames.process
     _SECTION_NAME: SectionNames = SectionNames.debug_information
     _VALID_TOKENS: list[str] = [
@@ -56,11 +56,11 @@ class DebugInformationSectionRuleSet(SectionRuleSet):
         :return: True if the setting name is valid regardless of case, False otherwise.
         """
         valid_settings = [
-            'DebugLogFullParsingInfo',
-            'DebugLogFullExecutionInfo',
-            'DebugLogDetailBuiltInActions',
-            'ExpectLog',
-            'ConsoleOutput',
+            "DebugLogFullParsingInfo",
+            "DebugLogFullExecutionInfo",
+            "DebugLogDetailBuiltInActions",
+            "ExpectLog",
+            "ConsoleOutput",
         ]
         if token.name in valid_settings:
             return True
@@ -92,7 +92,7 @@ class DebugInformationSectionRuleSet(SectionRuleSet):
 
         :param token: The setting token.
         """
-        valid_values = ['yes', 'no']
+        valid_values = ["yes", "no"]
 
         if not token.assigned:
             self._add_violation(
@@ -126,10 +126,10 @@ class DebugInformationSectionRuleSet(SectionRuleSet):
                 line=token.line_number,
             )
 
-        if token.assigned.lower() != 'no':
+        if token.assigned.lower() != "no":
             self._add_violation(
                 name=Violations.logging_enabled_violation,
-                severity=Severity.CRITICAL if self._config.get('enabled', True) else Severity.INFO,
+                severity=Severity.CRITICAL if self._config.get("enabled", True) else Severity.INFO,
                 message=f'The value for "{token.name}" is set to "{token.assigned}". It is recommended to set all settings in this section to "no" for production environments.',
                 file=self._FILE_TYPE,
                 section=self._SECTION_NAME,

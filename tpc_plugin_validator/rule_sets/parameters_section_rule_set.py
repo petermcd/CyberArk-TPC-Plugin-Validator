@@ -14,7 +14,7 @@ class ParametersSectionRuleSet(SectionRuleSet):
     Handle validation of the Parameters section in the process file.
     """
 
-    _CONFIG_KEY: str = 'parameters'
+    _CONFIG_KEY: str = "parameters"
     _FILE_TYPE: FileNames = FileNames.process
     _SECTION_NAME: SectionNames = SectionNames.parameters
     _VALID_TOKENS: list[str] = [
@@ -52,9 +52,9 @@ class ParametersSectionRuleSet(SectionRuleSet):
         human_max: Assignment | None = None
 
         for token in section:
-            if token.token_name == TokenName.ASSIGNMENT.value and token.name == 'SendHumanMin':
+            if token.token_name == TokenName.ASSIGNMENT.value and token.name == "SendHumanMin":
                 human_min = token
-            elif token.token_name == TokenName.ASSIGNMENT.value and token.name == 'SendHumanMax':
+            elif token.token_name == TokenName.ASSIGNMENT.value and token.name == "SendHumanMax":
                 human_max = token
 
         if not human_min and not human_max:

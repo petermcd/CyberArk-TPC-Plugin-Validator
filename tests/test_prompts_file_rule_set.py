@@ -12,44 +12,44 @@ class TestPromptsFileRuleSets(object):
     """Tests for the prompts file rule set."""
 
     @pytest.mark.parametrize(
-        'process_file,prompts_file,expected_results',
+        "process_file,prompts_file,expected_results",
         [
             (
-                'tests/data/valid-process.ini',
-                'tests/data/valid-prompts.ini',
+                "tests/data/valid-process.ini",
+                "tests/data/valid-prompts.ini",
                 [],
             ),
             (
-                'tests/data/invalid-process.ini',
-                'tests/data/invalid-prompts.ini',
+                "tests/data/invalid-process.ini",
+                "tests/data/invalid-prompts.ini",
                 [
                     ValidationResult(
-                        rule='InvalidTokenTypeViolation',
+                        rule="InvalidTokenTypeViolation",
                         severity=Severity.WARNING,
                         message='The token type "Transition" is not valid in the "default" section.',
-                        file='prompts.ini',
-                        section='default',
+                        file="prompts.ini",
+                        section="default",
                         line=8,
                     ),
                     ValidationResult(
-                        rule='SectionNameCaseViolation',
+                        rule="SectionNameCaseViolation",
                         severity=Severity.WARNING,
                         message='The section "conditions" has been declared as "Conditions".',
-                        file='prompts.ini',
-                        section='conditions',
+                        file="prompts.ini",
+                        section="conditions",
                     ),
                 ],
             ),
             (
-                'tests/data/empty-process.ini',
-                'tests/data/empty-prompts.ini',
+                "tests/data/empty-process.ini",
+                "tests/data/empty-prompts.ini",
                 [
                     ValidationResult(
-                        rule='MissingSectionViolation',
+                        rule="MissingSectionViolation",
                         severity=Severity.CRITICAL,
                         message='"conditions" is a required section but has not been declared.',
-                        file='prompts.ini',
-                        section='conditions',
+                        file="prompts.ini",
+                        section="conditions",
                     ),
                 ],
             ),
@@ -68,7 +68,7 @@ class TestPromptsFileRuleSets(object):
         :param prompts_file: Path to the prompts file to use for the test case.
         :param expected_results: List of expected ValidationResult
         """
-        with open(process_file, 'r') as process_fh, open(prompts_file, 'r') as prompts_fh:
+        with open(process_file, "r") as process_fh, open(prompts_file, "r") as prompts_fh:
             process_file_content = process_fh.read()
             prompts_file_content = prompts_fh.read()
 

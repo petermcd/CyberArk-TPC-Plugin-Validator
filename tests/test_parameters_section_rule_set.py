@@ -14,90 +14,90 @@ class TestParametersSectionRuleSet(object):
     """Tests for the parameters section rule set."""
 
     @pytest.mark.parametrize(
-        'process_file,prompts_file,expected_results',
+        "process_file,prompts_file,expected_results",
         [
             (
-                'tests/data/valid-process.ini',
-                'tests/data/valid-prompts.ini',
+                "tests/data/valid-process.ini",
+                "tests/data/valid-prompts.ini",
                 [],
             ),
             (
-                'tests/data/invalid-process.ini',
-                'tests/data/invalid-prompts.ini',
+                "tests/data/invalid-process.ini",
+                "tests/data/invalid-prompts.ini",
                 [
                     ValidationResult(
-                        rule='InvalidTokenTypeViolation',
+                        rule="InvalidTokenTypeViolation",
                         severity=Severity.WARNING,
                         message='The token type "Transition" is not valid in the "parameters" section.',
-                        file='process.ini',
-                        section='parameters',
+                        file="process.ini",
+                        section="parameters",
                         line=63,
                     ),
                     ValidationResult(
-                        rule='ValueViolation',
+                        rule="ValueViolation",
                         severity=Severity.CRITICAL,
                         message='"SendHumanMin" cannot be greater than "SendHumanMax", "SendHumanMin" is set to 1.0 and "SendHumanMax" is set to 0.0.',
-                        file='process.ini',
-                        section='parameters',
+                        file="process.ini",
+                        section="parameters",
                         line=66,
                     ),
                     ValidationResult(
-                        rule='DuplicateAssignmentViolation',
+                        rule="DuplicateAssignmentViolation",
                         severity=Severity.CRITICAL,
                         message='The assignment "PromptTimeout" has been declared 2 times.',
-                        file='process.ini',
-                        section='parameters',
+                        file="process.ini",
+                        section="parameters",
                     ),
                     ValidationResult(
-                        rule='InvalidWordViolation',
+                        rule="InvalidWordViolation",
                         severity=Severity.CRITICAL,
                         message='"open" is a reserved word and cannot be used as a name in an assignment.',
-                        file='process.ini',
-                        section='parameters',
+                        file="process.ini",
+                        section="parameters",
                         line=68,
                     ),
                 ],
             ),
             (
-                'tests/data/invalid-process-alt.ini',
-                'tests/data/invalid-prompts.ini',
+                "tests/data/invalid-process-alt.ini",
+                "tests/data/invalid-prompts.ini",
                 [
                     ValidationResult(
-                        rule='ValueViolation',
+                        rule="ValueViolation",
                         severity=Severity.CRITICAL,
                         message='"SendHumanMin" is set to -1.0 this cannot be less than 0.',
-                        file='process.ini',
-                        section='parameters',
+                        file="process.ini",
+                        section="parameters",
                         line=64,
                     ),
                     ValidationResult(
-                        rule='ValueViolation',
+                        rule="ValueViolation",
                         severity=Severity.CRITICAL,
                         message='"SendHumanMax" is set to -1.0 this cannot be less than 0.',
-                        file='process.ini',
-                        section='parameters',
+                        file="process.ini",
+                        section="parameters",
                         line=65,
                     ),
                 ],
             ),
             (
-                'tests/data/invalid-process-alt2.ini',
-                'tests/data/invalid-prompts.ini',
+                "tests/data/invalid-process-alt2.ini",
+                "tests/data/invalid-prompts.ini",
                 [
                     ValidationResult(
-                        rule='ValueViolation',
+                        rule="ValueViolation",
                         severity=Severity.CRITICAL,
                         message='"SendHumanMin" is set to "twenty-two", the value must be numerical.',
-                        file='process.ini',
-                        section='parameters',
+                        file="process.ini",
+                        section="parameters",
                         line=64,
                     ),
                     ValidationResult(
-                        rule='ValueViolation',
+                        rule="ValueViolation",
                         severity=Severity.CRITICAL,
                         message='"SendHumanMax" is set to "twenty-three", the value must be numerical.',
-                        file='process.ini',
-                        section='parameters',
+                        file="process.ini",
+                        section="parameters",
                         line=65,
                     ),
                 ],
@@ -117,7 +117,7 @@ class TestParametersSectionRuleSet(object):
         :param prompts_file: Path to the prompts file to use for the test case.
         :param expected_results: List of expected ValidationResult
         """
-        with open(process_file, 'r') as process_fh, open(prompts_file, 'r') as prompts_fh:
+        with open(process_file, "r") as process_fh, open(prompts_file, "r") as prompts_fh:
             process_file_content = process_fh.read()
             prompts_file_content = prompts_fh.read()
 

@@ -13,11 +13,11 @@ class PromptsFileRuleSet(FileRuleSet):
     Validation of individual section content is handled in their own rulesets.
     """
 
-    _CONFIG_KEY: str = 'prompts'
+    _CONFIG_KEY: str = "prompts"
     _FILE_TYPE: FileNames = FileNames.prompts
     _VALID_SECTIONS: dict[str, ValidSectionConfig] = {
-        SectionNames.conditions.value: {'required': True, 'severity_level': Severity.CRITICAL},
-        SectionNames.default.value: {'required': True, 'severity_level': Severity.CRITICAL},
+        SectionNames.conditions.value: {"required": True, "severity_level": Severity.CRITICAL},
+        SectionNames.default.value: {"required": True, "severity_level": Severity.CRITICAL},
     }
     _VALID_TOKENS: list[str] = [
         TokenName.COMMENT.value,

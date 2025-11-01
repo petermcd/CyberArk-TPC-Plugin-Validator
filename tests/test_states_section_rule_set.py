@@ -12,77 +12,77 @@ class TestStatesSectionRuleSet(object):
     """Tests for the states rule set."""
 
     @pytest.mark.parametrize(
-        'process_file,prompts_file,expected_results',
+        "process_file,prompts_file,expected_results",
         [
             (
-                'tests/data/valid-process.ini',
-                'tests/data/valid-prompts.ini',
+                "tests/data/valid-process.ini",
+                "tests/data/valid-prompts.ini",
                 [],
             ),
             (
-                'tests/data/invalid-process.ini',
-                'tests/data/valid-prompts.ini',
+                "tests/data/invalid-process.ini",
+                "tests/data/valid-prompts.ini",
                 [
                     ValidationResult(
-                        rule='InvalidTokenTypeViolation',
+                        rule="InvalidTokenTypeViolation",
                         severity=Severity.WARNING,
                         message='The token type "Transition" is not valid in the "states" section.',
-                        file='process.ini',
-                        section='states',
+                        file="process.ini",
+                        section="states",
                         line=13,
                     ),
                     ValidationResult(
-                        rule='NameCaseViolation',
+                        rule="NameCaseViolation",
                         severity=Severity.CRITICAL,
                         message='The "END" state has been declared as "end", the "END" state should be in upper case.',
-                        file='process.ini',
-                        section='states',
+                        file="process.ini",
+                        section="states",
                         line=19,
                     ),
                     ValidationResult(
-                        rule='ValueViolation',
+                        rule="ValueViolation",
                         severity=Severity.CRITICAL,
                         message='The "END" state has been assigned the value "123", the "END" state should not have a value.',
-                        file='process.ini',
-                        section='states',
+                        file="process.ini",
+                        section="states",
                         line=19,
                     ),
                     ValidationResult(
-                        rule='ValueViolation',
+                        rule="ValueViolation",
                         severity=Severity.CRITICAL,
                         message='The fail state "SomeFailure" has an invalid failure code of "123", the failure code should be between 1000 and 9999.',
-                        file='process.ini',
-                        section='states',
+                        file="process.ini",
+                        section="states",
                         line=17,
                     ),
                     ValidationResult(
-                        rule='ValueViolation',
+                        rule="ValueViolation",
                         severity=Severity.CRITICAL,
                         message='The fail state "AnotherFailure" has an invalid failure code of "123", the failure code should be between 1000 and 9999.',
-                        file='process.ini',
-                        section='states',
+                        file="process.ini",
+                        section="states",
                         line=18,
                     ),
                     ValidationResult(
-                        rule='ValueViolation',
+                        rule="ValueViolation",
                         severity=Severity.WARNING,
                         message='The code "123" has been assigned to 2 different failure states.',
-                        file='process.ini',
-                        section='states',
+                        file="process.ini",
+                        section="states",
                     ),
                     ValidationResult(
-                        rule='DuplicateAssignmentViolation',
+                        rule="DuplicateAssignmentViolation",
                         severity=Severity.CRITICAL,
                         message='The assignment "Wait" has been declared 2 times.',
-                        file='process.ini',
-                        section='states',
+                        file="process.ini",
+                        section="states",
                     ),
                     ValidationResult(
-                        rule='InvalidWordViolation',
+                        rule="InvalidWordViolation",
                         severity=Severity.CRITICAL,
                         message='"source" is a reserved word and cannot be used as a name in an assignment.',
-                        file='process.ini',
-                        section='states',
+                        file="process.ini",
+                        section="states",
                         line=22,
                     ),
                 ],
@@ -102,7 +102,7 @@ class TestStatesSectionRuleSet(object):
         :param prompts_file: Path to the prompts file to use for the test case.
         :param expected_results: List of expected ValidationResult
         """
-        with open(process_file, 'r') as process_fh, open(prompts_file, 'r') as prompts_fh:
+        with open(process_file, "r") as process_fh, open(prompts_file, "r") as prompts_fh:
             process_file_content = process_fh.read()
             prompts_file_content = prompts_fh.read()
 
