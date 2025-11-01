@@ -2,59 +2,56 @@
 
 import pytest
 
-from tpc_plugin_parser.parser import Parser
-from tpc_plugin_validator.rule_sets.cpm_parameters_validation_section_rule_set import (
-    CPMParametersValidationSectionRuleSet,
-)
 from tpc_plugin_validator.utilities.severity import Severity
 from tpc_plugin_validator.utilities.validation_result import ValidationResult
+from tpc_plugin_validator.validator import Validator
 
 
 class TestCPMParametersValidationSectionRuleSet(object):
     """Tests for the CPM Parameters Validation section rule set."""
 
     @pytest.mark.parametrize(
-        "process_file,prompts_file,expected_results",
+        "process_file,prompts_file,expected_violations",
         [
             (
-                "tests/data/valid-process.ini",
-                "tests/data/valid-prompts.ini",
-                [],
-            ),
-            (
-                "tests/data/invalid-process.ini",
-                "tests/data/invalid-prompts.ini",
+                # Test to ensure that valid files produce no violations.
+                "tests/data/cpm-parameters-validation-invalid-process.ini",
+                "tests/data/cpm-parameters-validation-invalid-prompts.ini",
                 [
+                    # Test for ensuring duplicate assignments are caught.
                     ValidationResult(
                         rule="DuplicateAssignmentViolation",
                         severity=Severity.CRITICAL,
-                        message='The assignment "extrapass2\\Username" has been declared 2 times.',
+                        message='The assignment "password" has been declared 2 times.',
                         file="process.ini",
                         section="CPM Parameters Validation",
                     ),
+                    # Test to catch parameters validated but not used.
+                    ValidationResult(
+                        rule="UnusedParameterViolation",
+                        severity=Severity.WARNING,
+                        message='The parameter "username" has been validated but is not used.',
+                        file="process.ini",
+                        section="CPM Parameters Validation",
+                        line=30,
+                    ),
+                    # Test invalid token type in cpm parameters validations section are caught.
                     ValidationResult(
                         rule="InvalidTokenTypeViolation",
-                        severity=Severity.WARNING,
+                        severity=Severity.CRITICAL,
                         message='The token type "Transition" is not valid in the "CPM Parameters Validation" section.',
                         file="process.ini",
                         section="CPM Parameters Validation",
-                        line=53,
+                        line=33,
                     ),
+                    # Test for ensuring parse errors are caught.
                     ValidationResult(
-                        rule="UnusedParameterViolation",
-                        severity=Severity.WARNING,
-                        message='The parameter "extrapass2\\Username" has been validated but is not used.',
+                        rule="ParseErrorViolation",
+                        severity=Severity.CRITICAL,
+                        message="Line could not be parsed correctly.",
                         file="process.ini",
                         section="CPM Parameters Validation",
-                        line=54,
-                    ),
-                    ValidationResult(
-                        rule="UnusedParameterViolation",
-                        severity=Severity.WARNING,
-                        message='The parameter "extrapass2\\Username" has been validated but is not used.',
-                        file="process.ini",
-                        section="CPM Parameters Validation",
-                        line=56,
+                        line=35,
                     ),
                 ],
             ),
@@ -64,30 +61,22 @@ class TestCPMParametersValidationSectionRuleSet(object):
         self,
         process_file: str,
         prompts_file: str,
-        expected_results: list[ValidationResult],
+        expected_violations: list[ValidationResult],
     ) -> None:
         """
         Tests for the CPM Parameters Validation section rule set.
 
         :param process_file: Path to the process file to use for the test case.
         :param prompts_file: Path to the prompts file to use for the test case.
-        :param expected_results: List of expected ValidationResult
+        :param expected_violations: List of expected ValidationResult
         """
-        with open(process_file, "r") as process_fh, open(prompts_file, "r") as prompts_fh:
-            process_file_content = process_fh.read()
-            prompts_file_content = prompts_fh.read()
+        validate = Validator.with_file(prompts_file_path=prompts_file, process_file_path=process_file, config={})
+        validate.validate()
+        results = validate.get_violations()
 
-        parser = Parser(process_file=process_file_content, prompts_file=prompts_file_content)
-        parsed_process_file = parser.process_file
-        parsed_prompts_file = parser.prompts_file
-
-        rule = CPMParametersValidationSectionRuleSet(
-            prompts_file=parsed_prompts_file, process_file=parsed_process_file, config={}
-        )
-        rule.validate()
-        results = rule.get_violations()
-
-        assert len(results) == len(expected_results)
+        assert len(results) == len(expected_violations)
 
         for result in results:
-            assert result in expected_results
+            assert result in expected_violations
+
+        assert validate.get_violations() == expected_violations

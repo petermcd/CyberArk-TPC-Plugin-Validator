@@ -58,6 +58,7 @@ class TransitionsSectionRuleSet(SectionRuleSet):
         self._validate_tokens(file=self._FILE_TYPE)
         self._validate_conditions()
         self._validate_duplicates()
+        self._validate_states()
         self._validate_state_paths()
 
     def _get_fail_state(self, name: str) -> Assignment | None:
@@ -130,7 +131,7 @@ class TransitionsSectionRuleSet(SectionRuleSet):
                 # TODO - Update so that we can output the line number of the transition
                 self._add_violation(
                     name=Violations.duplicate_transition_violation,
-                    severity=Severity.WARNING,
+                    severity=Severity.CRITICAL,
                     message=f'The transition "{state}" has been declared {state_transitions_counted[state]} times, a transition triple must be unique.',
                     file=self._FILE_TYPE,
                     section=self._SECTION_NAME,
@@ -194,9 +195,11 @@ class TransitionsSectionRuleSet(SectionRuleSet):
             self._initial_state_warned = True
             return
         to_states: list[str] = []
-        to_states.extend(value.next_state for value in transitions if value.token_name == TokenName.TRANSITION.value)
+        to_states.extend(
+            value.next_state.lower() for value in transitions if value.token_name == TokenName.TRANSITION.value
+        )
         to_states_set = set(to_states)
-        if transition.current_state not in to_states_set:
+        if transition.current_state.lower() not in to_states_set:
             self._add_violation(
                 name=Violations.invalid_transition_violation,
                 severity=Severity.CRITICAL,
@@ -205,6 +208,67 @@ class TransitionsSectionRuleSet(SectionRuleSet):
                 section=self._SECTION_NAME,
                 line=transition.line_number,
             )
+
+    def _validate_states(self) -> None:
+        """Validate that states exist for all transitions and are in the correct case."""
+        transitions = self._get_section(file=self._FILE_TYPE, section_name=self._SECTION_NAME)
+        states = self._get_section(file=self._FILE_TYPE, section_name=SectionNames.states)
+        state_names = [
+            state.name
+            for state in states
+            if state.token_name in [TokenName.ASSIGNMENT.value, TokenName.FAIL_STATE.value]
+        ]
+        state_names_lower = [state.name.lower() for state in states if state.token_name == TokenName.ASSIGNMENT.value]
+        for transition in transitions:
+            if transition.token_name != TokenName.TRANSITION.value:
+                continue
+
+            if transition.current_state not in state_names:
+                if transition.current_state.lower() not in state_names_lower:
+                    self._add_violation(
+                        name=Violations.invalid_transition_violation,
+                        severity=Severity.CRITICAL,
+                        message=f'The state "{transition.current_state}" used in the transition current state has not been declared.',
+                        file=self._FILE_TYPE,
+                        section=self._SECTION_NAME,
+                        line=transition.line_number,
+                    )
+                else:
+                    state_name = self.get_first_assignment(
+                        token_list=states,
+                        token_name=transition.current_state,
+                    ).name
+                    self._add_violation(
+                        name=Violations.name_case_mismatch_violation,
+                        severity=Severity.WARNING,
+                        message=f'The state "{state_name}" is declared but is used with different casing in the transition current state.',
+                        file=self._FILE_TYPE,
+                        section=self._SECTION_NAME,
+                        line=transition.line_number,
+                    )
+            if transition.next_state not in state_names:
+                if transition.next_state.lower() not in state_names_lower:
+                    self._add_violation(
+                        name=Violations.invalid_transition_violation,
+                        severity=Severity.CRITICAL,
+                        message=f'The state "{transition.next_state}" used in the transition next state has not been declared.',
+                        file=self._FILE_TYPE,
+                        section=self._SECTION_NAME,
+                        line=transition.line_number,
+                    )
+                else:
+                    state_name = self.get_first_assignment(
+                        token_list=states,
+                        token_name=transition.next_state,
+                    ).name
+                    self._add_violation(
+                        name=Violations.name_case_mismatch_violation,
+                        severity=Severity.WARNING,
+                        message=f'The state "{state_name}" is declared but is used with different casing in the transition next state.',
+                        file=self._FILE_TYPE,
+                        section=self._SECTION_NAME,
+                        line=transition.line_number,
+                    )
 
     def _validate_state_paths(self) -> None:
         """Check to ensure that a state has a valid entry and exit point."""

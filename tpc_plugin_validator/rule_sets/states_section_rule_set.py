@@ -42,6 +42,7 @@ class StatesSectionRuleSet(SectionRuleSet):
             return
 
         self._validate_tokens(file=self._FILE_TYPE)
+        self._validate_state_utilisation()
         self._validate_fail_states()
         self._validate_end_state()
         self._validate_duplicates()
@@ -114,3 +115,30 @@ class StatesSectionRuleSet(SectionRuleSet):
         fail_states: list[FailState] = []
         fail_states.extend(token for token in section if token.token_name == TokenName.FAIL_STATE.value)
         self._validate_fail_state_codes(fail_states=fail_states)
+
+    def _validate_state_utilisation(self):
+        """Validate states are utilised."""
+        states = self._get_section(file=self._FILE_TYPE, section_name=self._SECTION_NAME)
+        transition_section = self._get_section(file=self._FILE_TYPE, section_name=SectionNames.transitions)
+        state_names = [state.name for state in states if state.token_name == TokenName.ASSIGNMENT.value]
+        transitions = [
+            transition for transition in transition_section if transition.token_name == TokenName.TRANSITION.value
+        ]
+        for state_name in state_names:
+            if state_name.lower() == "end":
+                # END state is validated elsewhere.
+                continue
+            found = False
+            for transition in transitions:
+                if state_name in [transition.current_state, transition.next_state]:
+                    found = True
+                    break
+            if not found:
+                # TODO - Update so that we can output the line number of the state declaration
+                self._add_violation(
+                    name=Violations.unused_state_violation,
+                    severity=Severity.WARNING,
+                    message=f'The state "{state_name}" has been declared but is not utilised in the transitions section.',
+                    file=self._FILE_TYPE,
+                    section=self._SECTION_NAME,
+                )

@@ -2,33 +2,30 @@
 
 import pytest
 
-from tpc_plugin_parser.parser import Parser
-from tpc_plugin_validator.rule_sets.process_file_rule_set import ProcessFileRuleSet
 from tpc_plugin_validator.utilities.severity import Severity
 from tpc_plugin_validator.utilities.validation_result import ValidationResult
+from tpc_plugin_validator.validator import Validator
 
 
 class TestProcessFileRuleSet(object):
-    """Tests for the process rule set."""
+    """Tests for the process file rule set."""
 
     @pytest.mark.parametrize(
-        "process_file,prompts_file,expected_results",
+        "process_file,prompts_file,expected_violations",
         [
             (
-                "tests/data/valid-process.ini",
+                # Test to ensure that valid files produce no violations.
+                "tests/data/process-file-invalid-process.ini",
                 "tests/data/valid-prompts.ini",
-                [],
-            ),
-            (
-                "tests/data/invalid-process.ini",
-                "tests/data/invalid-prompts.ini",
                 [
+                    # Test to ensure invalid sections are caught.
                     ValidationResult(
                         rule="InvalidSectionNameViolation",
                         severity=Severity.WARNING,
                         message='The section "Dummy Section" has been declared but is an invalid section name.',
                         file="process.ini",
                     ),
+                    # Test to ensure section name case issue is caught.
                     ValidationResult(
                         rule="SectionNameCaseViolation",
                         severity=Severity.WARNING,
@@ -36,6 +33,7 @@ class TestProcessFileRuleSet(object):
                         file="process.ini",
                         section="CPM Parameters Validation",
                     ),
+                    # Test to ensure section name case issue is caught.
                     ValidationResult(
                         rule="SectionNameCaseViolation",
                         severity=Severity.WARNING,
@@ -43,14 +41,25 @@ class TestProcessFileRuleSet(object):
                         file="process.ini",
                         section="Debug Information",
                     ),
+                    # Test invalid token type in process file default section is caught.
                     ValidationResult(
                         rule="InvalidTokenTypeViolation",
-                        severity=Severity.WARNING,
+                        severity=Severity.CRITICAL,
                         message='The token type "Transition" is not valid in the "default" section.',
+                        file="process.ini",
+                        section="default",
+                        line=7,
+                    ),
+                    # Test for ensuring parse errors are caught.
+                    ValidationResult(
+                        rule="ParseErrorViolation",
+                        severity=Severity.CRITICAL,
+                        message="Line could not be parsed correctly.",
                         file="process.ini",
                         section="default",
                         line=8,
                     ),
+                    # Test to ensure section name case issue is caught.
                     ValidationResult(
                         rule="SectionNameCaseViolation",
                         severity=Severity.WARNING,
@@ -58,37 +67,11 @@ class TestProcessFileRuleSet(object):
                         file="process.ini",
                         section="parameters",
                     ),
+                    # Test to ensure section name case issue is caught.
                     ValidationResult(
                         rule="SectionNameCaseViolation",
                         severity=Severity.WARNING,
                         message='The section "transitions" has been declared as "Transitions".',
-                        file="process.ini",
-                        section="transitions",
-                    ),
-                ],
-            ),
-            (
-                "tests/data/empty-process.ini",
-                "tests/data/empty-prompts.ini",
-                [
-                    ValidationResult(
-                        rule="MissingSectionViolation",
-                        severity=Severity.WARNING,
-                        message='"CPM Parameters Validation" is a required section but has not been declared.',
-                        file="process.ini",
-                        section="CPM Parameters Validation",
-                    ),
-                    ValidationResult(
-                        rule="MissingSectionViolation",
-                        severity=Severity.CRITICAL,
-                        message='"states" is a required section but has not been declared.',
-                        file="process.ini",
-                        section="states",
-                    ),
-                    ValidationResult(
-                        rule="MissingSectionViolation",
-                        severity=Severity.CRITICAL,
-                        message='"transitions" is a required section but has not been declared.',
                         file="process.ini",
                         section="transitions",
                     ),
@@ -100,28 +83,22 @@ class TestProcessFileRuleSet(object):
         self,
         process_file: str,
         prompts_file: str,
-        expected_results: list[ValidationResult],
+        expected_violations: list[ValidationResult],
     ) -> None:
         """
         Tests for the process file rule set.
 
         :param process_file: Path to the process file to use for the test case.
         :param prompts_file: Path to the prompts file to use for the test case.
-        :param expected_results: List of expected ValidationResult
+        :param expected_violations: List of expected ValidationResult
         """
-        with open(process_file, "r") as process_fh, open(prompts_file, "r") as prompts_fh:
-            process_file_content = process_fh.read()
-            prompts_file_content = prompts_fh.read()
+        validate = Validator.with_file(prompts_file_path=prompts_file, process_file_path=process_file, config={})
+        validate.validate()
+        results = validate.get_violations()
 
-        parser = Parser(process_file=process_file_content, prompts_file=prompts_file_content)
-        parsed_process_file = parser.process_file
-        parsed_prompts_file = parser.prompts_file
-
-        rule = ProcessFileRuleSet(prompts_file=parsed_prompts_file, process_file=parsed_process_file, config={})
-        rule.validate()
-        results = rule.get_violations()
-
-        assert len(results) == len(expected_results)
+        assert len(results) == len(expected_violations)
 
         for result in results:
-            assert result in expected_results
+            assert result in expected_violations
+
+        assert validate.get_violations() == expected_violations

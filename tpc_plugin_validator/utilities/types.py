@@ -52,5 +52,6 @@ class Violations(Enum):
     section_name_case_violation = "SectionNameCaseViolation"
     unused_condition_violation = "UnusedConditionViolation"
     unused_parameter_violation = "UnusedParameterViolation"
+    unused_state_violation = "UnusedStateViolation"
     value_case_violation = "ValueCaseViolation"
     value_violation = "ValueViolation"

@@ -110,7 +110,7 @@ class RuleSet(ABC):
             raise ProgrammingError(f"Invalid file name provided to _get_section in {type(self).__name__}.")
 
         section_name_fetched = self._file_sections[file.value].get(section_name.value.lower(), None)
-        return fetch_from.get(section_name_fetched, None) if section_name_fetched else None
+        return fetch_from.get(section_name_fetched, []) if section_name_fetched else []
 
     def _get_section_name(self, file: FileNames, section_name: str) -> str | None:
         """
@@ -163,7 +163,7 @@ class RuleSet(ABC):
             if token.token_name not in self._VALID_TOKENS:
                 self._add_violation(
                     name=Violations.invalid_token_type_violation,
-                    severity=Severity.WARNING,
+                    severity=Severity.CRITICAL,
                     message=f'The token type "{token.token_name}" is not valid in the "{required_section.value}" section.',
                     file=file,
                     section=required_section,
