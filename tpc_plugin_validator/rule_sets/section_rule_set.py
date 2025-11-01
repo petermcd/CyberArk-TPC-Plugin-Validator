@@ -35,14 +35,10 @@ class SectionRuleSet(RuleSet):
         counted_keys = Counter(token_keys)
         for token_name in counted_keys:
             if counted_keys[token_name] > 1:
-                message: str = self._create_message(
-                    message=f'The assignment "{token_name}" has been declared {counted_keys[token_name]} times',
-                    file=self._FILE_TYPE,
-                    section=self._SECTION_NAME,
-                    line_number=None,
-                )
                 self._add_violation(
                     name=Violations.duplicate_assignment_violation,
-                    description=message,
                     severity=Severity.CRITICAL,
+                    message=f'The assignment "{token_name}" has been declared {counted_keys[token_name]} times.',
+                    file=self._FILE_TYPE,
+                    section=self._SECTION_NAME,
                 )

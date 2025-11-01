@@ -36,20 +36,20 @@ class ValidSectionConfig(TypedDict):
 class Violations(Enum):
     """Enum to hold the valid violation types."""
 
-    duplicate_assignment_violation = "DuplicateAssignmentViolation"
-    duplicate_transition_violation = "DuplicateTransitionViolation"
-    invalid_section_name_violation = "InvalidSectionNameViolation"
-    invalid_token_type_violation = "InvalidTokenTypeViolation"
-    invalid_transition_violation = "InvalidTransitionViolation"
-    invalid_word_violation = "InvalidWordViolation"
-    logging_enabled_violation = "LoggingEnabledViolation"
-    missing_section_violation = "MissingSectionViolation"
-    name_case_mismatch_violation = "NameCaseMismatchViolation"
-    name_case_violation = "NameCaseViolation"
-    name_violation = "NameViolation"
-    parse_error_violation = "ParseErrorViolation"
-    section_name_case_violation = "SectionNameCaseViolation"
-    unused_condition_violation = "UnusedConditionViolation"
-    unused_parameter_violation = "UnusedParameterViolation"
-    value_case_violation = "ValueCaseViolation"
-    value_violation = "ValueViolation"
+    duplicate_assignment_violation = 'DuplicateAssignmentViolation'
+    duplicate_transition_violation = 'DuplicateTransitionViolation'
+    invalid_section_name_violation = 'InvalidSectionNameViolation'
+    invalid_token_type_violation = 'InvalidTokenTypeViolation'
+    invalid_transition_violation = 'InvalidTransitionViolation'
+    invalid_word_violation = 'InvalidWordViolation'
+    logging_enabled_violation = 'LoggingEnabledViolation'
+    missing_section_violation = 'MissingSectionViolation'
+    name_case_mismatch_violation = 'NameCaseMismatchViolation'
+    name_case_violation = 'NameCaseViolation'
+    name_violation = 'NameViolation'
+    parse_error_violation = 'ParseErrorViolation'
+    section_name_case_violation = 'SectionNameCaseViolation'
+    unused_condition_violation = 'UnusedConditionViolation'
+    unused_parameter_violation = 'UnusedParameterViolation'
+    value_case_violation = 'ValueCaseViolation'
+    value_violation = 'ValueViolation'

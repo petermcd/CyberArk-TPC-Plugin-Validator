@@ -28,20 +28,17 @@ class FileRuleSet(RuleSet):
         required_sections.extend(
             required_section_name
             for required_section_name in self._VALID_SECTIONS
-            if self._VALID_SECTIONS[required_section_name].get("required", False)
+            if self._VALID_SECTIONS[required_section_name].get('required', False)
         )
 
         for required_section_name in required_sections:
             if not self._get_section_name(file=file, section_name=required_section_name):
-                message: str = self._create_message(
-                    message=f'"{required_section_name}" is a required section but this is missing',
-                    file=file,
-                    line_number=None,
-                )
                 self._add_violation(
                     name=Violations.missing_section_violation,
-                    description=message,
-                    severity=self._VALID_SECTIONS[required_section_name].get("severity_level", Severity.CRITICAL),
+                    severity=self._VALID_SECTIONS[required_section_name].get('severity_level', Severity.CRITICAL),
+                    message=f'"{required_section_name}" is a required section but has not been declared.',
+                    file=file,
+                    section=required_section_name,
                 )
 
     def _validate_sections(self, file: FileNames) -> None:
@@ -59,24 +56,18 @@ class FileRuleSet(RuleSet):
             if section in self._VALID_SECTIONS.keys():
                 continue
             elif section_name in valid_sections_dict:
-                message: str = self._create_message(
-                    message=f'The section "{valid_sections_dict[section_name]}" has been declared as "{section}"',
-                    file=file,
-                    line_number=None,
-                )
                 self._add_violation(
                     name=Violations.section_name_case_violation,
-                    description=message,
                     severity=Severity.WARNING,
+                    message=f'The section "{valid_sections_dict[section_name]}" has been declared as "{section}".',
+                    file=file,
+                    section=valid_sections_dict[section_name],
                 )
             else:
-                message = self._create_message(
-                    message=f'Invalid section "{section}" identified',
-                    file=file,
-                    line_number=None,
-                )
                 self._add_violation(
                     name=Violations.invalid_section_name_violation,
-                    description=message,
                     severity=Severity.WARNING,
+                    message=f'The section "{section}" has been declared but is an invalid section name.',
+                    file=file,
+                    line=None,
                 )

@@ -16,12 +16,12 @@ class TransitionsSectionRuleSet(SectionRuleSet):
     """
 
     __slots__ = (
-        "_default_initial_state",
-        "_initial_state",
-        "_initial_state_warned",
+        '_default_initial_state',
+        '_initial_state',
+        '_initial_state_warned',
     )
 
-    _CONFIG_KEY: str = "transitions"
+    _CONFIG_KEY: str = 'transitions'
     _FILE_TYPE: FileNames = FileNames.process
     _SECTION_NAME: SectionNames = SectionNames.transitions
     _VALID_TOKENS: list[str] = [
@@ -37,8 +37,8 @@ class TransitionsSectionRuleSet(SectionRuleSet):
         :param prompts_file: Parsed prompts file.
         :param config: Configuration.
         """
-        self._default_initial_state: str = "Init"
-        self._file_sections: str = "init"
+        self._default_initial_state: str = 'Init'
+        self._file_sections: str = 'init'
         self._initial_state_warned: bool = False
         super().__init__(prompts_file=prompts_file, process_file=process_file, config=config)
 
@@ -85,23 +85,20 @@ class TransitionsSectionRuleSet(SectionRuleSet):
         )
         state_transitions_joined: list[str] = []
         state_transitions_joined.extend(
-            f"{state_transition.current_state},{state_transition.condition},{state_transition.next_state}"
+            f'{state_transition.current_state},{state_transition.condition},{state_transition.next_state}'
             for state_transition in state_transitions
         )
 
         state_transitions_counted = Counter(state_transitions_joined)
         for state in state_transitions_counted:
             if state_transitions_counted[state] > 1:
-                message: str = self._create_message(
-                    message=f'The transition "{state}" has been declared {state_transitions_counted[state]} times, a transition tuple must be unique',
-                    file=self._FILE_TYPE,
-                    section=self._SECTION_NAME,
-                    line_number=None,
-                )
                 self._add_violation(
                     name=Violations.duplicate_transition_violation,
-                    description=message,
                     severity=Severity.WARNING,
+                    message=f'The transition "{state}" has been declared {state_transitions_counted[state]} times, a transition tuple must be unique.',
+                    file=self._FILE_TYPE,
+                    section=self._SECTION_NAME,
+                    line=None,
                 )
 
     def _validate_next_transition(self, transition: Transition, transitions) -> None:
@@ -113,7 +110,7 @@ class TransitionsSectionRuleSet(SectionRuleSet):
         """
         if transition.token_name != TokenName.TRANSITION.value:
             return
-        if transition.next_state.lower() == "end":
+        if transition.next_state.lower() == 'end':
             return
         from_states: list[str] = []
         from_states.extend(
@@ -125,16 +122,14 @@ class TransitionsSectionRuleSet(SectionRuleSet):
             if fail_state_token and fail_state_token.token_name == TokenName.FAIL_STATE.value:
                 # failure condition, nothing follows this.
                 return
-            message: str = self._create_message(
-                message=f'The state "{transition.current_state}" attempts to transition to "{transition.next_state}" which does not exist',
-                file=self._FILE_TYPE,
-                section=self._SECTION_NAME,
-                line_number=transition.line_number,
-            )
+
             self._add_violation(
                 name=Violations.invalid_transition_violation,
-                description=message,
                 severity=Severity.CRITICAL,
+                message=f'The state "{transition.current_state}" attempts to transition to "{transition.next_state}" which does not exist.',
+                file=self._FILE_TYPE,
+                section=self._SECTION_NAME,
+                line=transition.line_number,
             )
 
     def _validate_previous_transition(self, transition: Transition, transitions) -> None:
@@ -151,16 +146,14 @@ class TransitionsSectionRuleSet(SectionRuleSet):
         if transition.current_state.lower() == self._initial_state:
             if self._initial_state_warned:
                 return
-            message: str = self._create_message(
-                message=f'The start state "{transition.current_state}" for clarity should be called "{self._default_initial_state}"',
-                file=self._FILE_TYPE,
-                section=self._SECTION_NAME,
-                line_number=transition.line_number,
-            )
+
             self._add_violation(
                 name=Violations.name_violation,
-                description=message,
                 severity=Severity.WARNING,
+                message=f'The start state "{transition.current_state}", for clarity should be called "{self._default_initial_state}".',
+                file=self._FILE_TYPE,
+                section=self._SECTION_NAME,
+                line=transition.line_number,
             )
             self._initial_state_warned = True
             return
@@ -168,16 +161,13 @@ class TransitionsSectionRuleSet(SectionRuleSet):
         to_states.extend(value.next_state for value in transitions if value.token_name == TokenName.TRANSITION.value)
         to_states_set = set(to_states)
         if transition.current_state not in to_states_set:
-            message: str = self._create_message(
-                message=f'The state "{transition.current_state}" does not have a valid path leading to it',
-                file=self._FILE_TYPE,
-                section=self._SECTION_NAME,
-                line_number=transition.line_number,
-            )
             self._add_violation(
                 name=Violations.invalid_transition_violation,
-                description=message,
                 severity=Severity.CRITICAL,
+                message=f'The state "{transition.current_state}" does not have a valid transition leading to it.',
+                file=self._FILE_TYPE,
+                section=self._SECTION_NAME,
+                line=transition.line_number,
             )
 
     def _validate_state_paths(self) -> None:

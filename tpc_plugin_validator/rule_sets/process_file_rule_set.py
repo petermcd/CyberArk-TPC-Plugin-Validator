@@ -13,18 +13,18 @@ class ProcessFileRuleSet(FileRuleSet):
     Validation of individual section content is handled in their own rulesets.
     """
 
-    _CONFIG_KEY: str = "process"
+    _CONFIG_KEY: str = 'process'
     _FILE_TYPE: FileNames = FileNames.process
     _VALID_SECTIONS: dict[str, ValidSectionConfig] = {
         SectionNames.cpm_parameters_validation.value: {
-            "required": True,
-            "severity_level": Severity.WARNING,
+            'required': True,
+            'severity_level': Severity.WARNING,
         },
-        SectionNames.debug_information.value: {"required": False, "severity_level": Severity.INFO},
-        SectionNames.default.value: {"required": True, "severity_level": Severity.CRITICAL},
-        SectionNames.parameters.value: {"required": False, "severity_level": Severity.INFO},
-        SectionNames.states.value: {"required": True, "severity_level": Severity.CRITICAL},
-        SectionNames.transitions.value: {"required": True, "severity_level": Severity.CRITICAL},
+        SectionNames.debug_information.value: {'required': False, 'severity_level': Severity.INFO},
+        SectionNames.default.value: {'required': True, 'severity_level': Severity.CRITICAL},
+        SectionNames.parameters.value: {'required': False, 'severity_level': Severity.INFO},
+        SectionNames.states.value: {'required': True, 'severity_level': Severity.CRITICAL},
+        SectionNames.transitions.value: {'required': True, 'severity_level': Severity.CRITICAL},
     }
     _VALID_TOKENS: list[str] = [
         TokenName.COMMENT.value,

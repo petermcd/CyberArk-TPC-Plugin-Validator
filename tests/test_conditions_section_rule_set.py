@@ -14,56 +14,79 @@ class TestConditionsSectionRuleSet(object):
     """Tests for the debug information rule set."""
 
     @pytest.mark.parametrize(
-        "process_file,prompts_file,expected_results",
+        'process_file,prompts_file,expected_results',
         [
             (
-                "tests/data/valid-process.ini",
-                "tests/data/valid-prompts.ini",
+                'tests/data/valid-process.ini',
+                'tests/data/valid-prompts.ini',
                 [],
             ),
             (
-                "tests/data/invalid-process.ini",
-                "tests/data/invalid-prompts.ini",
+                'tests/data/invalid-process.ini',
+                'tests/data/invalid-prompts.ini',
                 [
                     ValidationResult(
-                        rule="InvalidTokenTypeViolation",
+                        rule='InvalidTokenTypeViolation',
                         severity=Severity.WARNING,
-                        message='The token type "Transition" is not valid in this section, file: prompts.ini, section: conditions, line: 18.',
+                        message='The token type "Transition" is not valid in the "conditions" section.',
+                        file='prompts.ini',
+                        section='conditions',
+                        line=18,
                     ),
                     ValidationResult(
-                        rule="DuplicateAssignmentViolation",
+                        rule='DuplicateAssignmentViolation',
                         severity=Severity.CRITICAL,
-                        message='The assignment "failure" has been declared 2 times, file: prompts.ini, section: conditions.',
+                        message='The assignment "failure" has been declared 2 times.',
+                        file='prompts.ini',
+                        section='conditions',
                     ),
                     ValidationResult(
-                        rule="NameCaseMismatchViolation",
+                        rule='NameCaseMismatchViolation',
                         severity=Severity.WARNING,
-                        message='The condition "Hello" is declared but is used as "hello", file: prompts.ini, section: conditions, line: 13.',
+                        message='The condition "Hello" is declared but is used as "hello".',
+                        file='prompts.ini',
+                        section='conditions',
+                        line=13,
                     ),
                     ValidationResult(
-                        rule="UnusedConditionViolation",
+                        rule='UnusedConditionViolation',
                         severity=Severity.WARNING,
-                        message='The condition "Unused" is declared but is not used, file: prompts.ini, section: conditions, line: 19.',
+                        message='The condition "Unused" is declared but is not used.',
+                        file='prompts.ini',
+                        section='conditions',
+                        line=19,
                     ),
                     ValidationResult(
-                        rule="InvalidWordViolation",
+                        rule='InvalidWordViolation',
                         severity=Severity.CRITICAL,
-                        message="The word 'CD' is reserved and cannot be used as a name in an assignment, file: prompts.ini, section: conditions, line: 22.",
+                        message='"CD" is a reserved word and cannot be used as a name in an assignment.',
+                        file='prompts.ini',
+                        section='conditions',
+                        line=22,
                     ),
                     ValidationResult(
-                        rule="UnusedConditionViolation",
+                        rule='UnusedConditionViolation',
                         severity=Severity.WARNING,
-                        message='The condition "CD" is declared but is not used, file: prompts.ini, section: conditions, line: 22.',
+                        message='The condition "CD" is declared but is not used.',
+                        file='prompts.ini',
+                        section='conditions',
+                        line=22,
                     ),
                     ValidationResult(
-                        rule="InvalidWordViolation",
+                        rule='InvalidWordViolation',
                         severity=Severity.CRITICAL,
-                        message="The word 'sql' is reserved and cannot be used as a name in an assignment, file: prompts.ini, section: conditions, line: 23.",
+                        message='"sql" is a reserved word and cannot be used as a name in an assignment.',
+                        file='prompts.ini',
+                        section='conditions',
+                        line=23,
                     ),
                     ValidationResult(
-                        rule="UnusedConditionViolation",
+                        rule='UnusedConditionViolation',
                         severity=Severity.WARNING,
-                        message='The condition "sql" is declared but is not used, file: prompts.ini, section: conditions, line: 23.',
+                        message='The condition "sql" is declared but is not used.',
+                        file='prompts.ini',
+                        section='conditions',
+                        line=23,
                     ),
                 ],
             ),
@@ -82,7 +105,7 @@ class TestConditionsSectionRuleSet(object):
         :param prompts_file: Path to the prompts file to use for the test case.
         :param expected_results: List of expected ValidationResult
         """
-        with open(process_file, "r") as process_fh, open(prompts_file, "r") as prompts_fh:
+        with open(process_file, 'r') as process_fh, open(prompts_file, 'r') as prompts_fh:
             process_file_content = process_fh.read()
             prompts_file_content = prompts_fh.read()
 

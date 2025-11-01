@@ -15,7 +15,7 @@ class StatesSectionRuleSet(SectionRuleSet):
     Handle validation of the states section in the process file.
     """
 
-    _CONFIG_KEY: str = "states"
+    _CONFIG_KEY: str = 'states'
     _FILE_TYPE: FileNames = FileNames.process
     _SECTION_NAME: SectionNames = SectionNames.states
     _VALID_TOKENS: list[str] = [
@@ -51,34 +51,28 @@ class StatesSectionRuleSet(SectionRuleSet):
         section = self._get_section(file=self._FILE_TYPE, section_name=self._SECTION_NAME)
         end_state: Assignment | None = None
         for token in section:
-            if token.token_name == TokenName.ASSIGNMENT.value and token.name == "END":
+            if token.token_name == TokenName.ASSIGNMENT.value and token.name == 'END':
                 end_state = token
                 break
-            elif token.token_name == "Assignment" and token.name.lower() == "end":
+            elif token.token_name == 'Assignment' and token.name.lower() == 'end':
                 end_state = token
-                message: str = self._create_message(
-                    message=f'The END state has been declared as "{end_state.name}", the END state should be in upper case',
-                    file=self._FILE_TYPE,
-                    section=self._SECTION_NAME,
-                    line_number=end_state.line_number,
-                )
                 self._add_violation(
                     name=Violations.name_case_violation,
-                    description=message,
                     severity=Severity.CRITICAL,
+                    message=f'The "END" state has been declared as "{end_state.name}", the "END" state should be in upper case.',
+                    file=self._FILE_TYPE,
+                    section=self._SECTION_NAME,
+                    line=end_state.line_number,
                 )
                 break
         if end_state and end_state.assigned is not None:
-            message = self._create_message(
-                message=f'The END state has been assigned the value "{end_state.assigned}", the END state should not have a value',
-                file=self._FILE_TYPE,
-                section=self._SECTION_NAME,
-                line_number=end_state.line_number,
-            )
             self._add_violation(
                 name=Violations.value_violation,
-                description=message,
                 severity=Severity.CRITICAL,
+                message=f'The "END" state has been assigned the value "{end_state.assigned}", the "END" state should not have a value.',
+                file=self._FILE_TYPE,
+                section=self._SECTION_NAME,
+                line=end_state.line_number,
             )
 
     def _validate_fail_state_codes(self, fail_states: list[FailState]) -> None:
@@ -93,31 +87,24 @@ class StatesSectionRuleSet(SectionRuleSet):
         for fail_state in fail_states:
             codes.append(fail_state.code)
             if fail_state.code < lower_limit or fail_state.code > upper_limit:
-                message: str = self._create_message(
-                    message=f'The fail state "{fail_state.name}" has an invalid failure code of "{fail_state.code}", the failure code should be between {lower_limit} and {upper_limit}',
-                    file=self._FILE_TYPE,
-                    section=self._SECTION_NAME,
-                    line_number=fail_state.line_number,
-                )
                 self._add_violation(
                     name=Violations.value_violation,
-                    description=message,
                     severity=Severity.CRITICAL,
+                    message=f'The fail state "{fail_state.name}" has an invalid failure code of "{fail_state.code}", the failure code should be between {lower_limit} and {upper_limit}.',
+                    file=self._FILE_TYPE,
+                    section=self._SECTION_NAME,
+                    line=fail_state.line_number,
                 )
 
         counted_codes = Counter(codes)
         for code in counted_codes:
             if counted_codes[code] > 1:
-                message = self._create_message(
-                    message=f'The code "{code}" has been assigned {counted_codes[code]} times to failure states',
-                    file=self._FILE_TYPE,
-                    section=self._SECTION_NAME,
-                    line_number=None,
-                )
                 self._add_violation(
                     name=Violations.value_violation,
-                    description=message,
                     severity=Severity.WARNING,
+                    message=f'The code "{code}" has been assigned to {counted_codes[code]} different failure states.',
+                    file=self._FILE_TYPE,
+                    section=self._SECTION_NAME,
                 )
 
     def _validate_fail_states(self) -> None:

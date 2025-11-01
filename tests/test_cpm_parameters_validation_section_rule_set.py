@@ -14,36 +14,47 @@ class TestCPMParametersValidationSectionRuleSet(object):
     """Tests for the CPM Parameters Validation section rule set."""
 
     @pytest.mark.parametrize(
-        "process_file,prompts_file,expected_results",
+        'process_file,prompts_file,expected_results',
         [
             (
-                "tests/data/valid-process.ini",
-                "tests/data/valid-prompts.ini",
+                'tests/data/valid-process.ini',
+                'tests/data/valid-prompts.ini',
                 [],
             ),
             (
-                "tests/data/invalid-process.ini",
-                "tests/data/invalid-prompts.ini",
+                'tests/data/invalid-process.ini',
+                'tests/data/invalid-prompts.ini',
                 [
                     ValidationResult(
-                        rule="InvalidTokenTypeViolation",
+                        rule='InvalidTokenTypeViolation',
                         severity=Severity.WARNING,
-                        message='The token type "Transition" is not valid in this section, file: process.ini, section: CPM Parameters Validation, line: 53.',
+                        message='The token type "Transition" is not valid in the "CPM Parameters Validation" section.',
+                        file='process.ini',
+                        section='CPM Parameters Validation',
+                        line=53,
                     ),
                     ValidationResult(
-                        rule="UnusedParameterViolation",
+                        rule='UnusedParameterViolation',
                         severity=Severity.WARNING,
-                        message='The parameter "extrapass2\\Username" has been validated but is not used, file: process.ini, section: CPM Parameters Validation, line: 54.',
+                        message='The parameter "extrapass2\\Username" has been validated but is not used.',
+                        file='process.ini',
+                        section='CPM Parameters Validation',
+                        line=54,
                     ),
                     ValidationResult(
-                        rule="UnusedParameterViolation",
+                        rule='UnusedParameterViolation',
                         severity=Severity.WARNING,
-                        message='The parameter "extrapass2\\Username" has been validated but is not used, file: process.ini, section: CPM Parameters Validation, line: 56.',
+                        message='The parameter "extrapass2\\Username" has been validated but is not used.',
+                        file='process.ini',
+                        section='CPM Parameters Validation',
+                        line=56,
                     ),
                     ValidationResult(
-                        rule="DuplicateAssignmentViolation",
+                        rule='DuplicateAssignmentViolation',
                         severity=Severity.CRITICAL,
-                        message='The assignment "extrapass2\\Username" has been declared 2 times, file: process.ini, section: CPM Parameters Validation.',
+                        message='The assignment "extrapass2\\Username" has been declared 2 times.',
+                        file='process.ini',
+                        section='CPM Parameters Validation',
                     ),
                 ],
             ),
@@ -62,7 +73,7 @@ class TestCPMParametersValidationSectionRuleSet(object):
         :param prompts_file: Path to the prompts file to use for the test case.
         :param expected_results: List of expected ValidationResult
         """
-        with open(process_file, "r") as process_fh, open(prompts_file, "r") as prompts_fh:
+        with open(process_file, 'r') as process_fh, open(prompts_file, 'r') as prompts_fh:
             process_file_content = process_fh.read()
             prompts_file_content = prompts_fh.read()
 

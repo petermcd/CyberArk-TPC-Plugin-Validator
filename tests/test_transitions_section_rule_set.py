@@ -14,41 +14,55 @@ class TestTransitionsSectionRuleSet(object):
     """Tests for the transitions section rule set."""
 
     @pytest.mark.parametrize(
-        "process_file,prompts_file,expected_results",
+        'process_file,prompts_file,expected_results',
         [
             (
-                "tests/data/valid-process.ini",
-                "tests/data/valid-prompts.ini",
+                'tests/data/valid-process.ini',
+                'tests/data/valid-prompts.ini',
                 [],
             ),
             (
-                "tests/data/invalid-process.ini",
-                "tests/data/invalid-prompts.ini",
+                'tests/data/invalid-process.ini',
+                'tests/data/invalid-prompts.ini',
                 [
                     ValidationResult(
-                        rule="InvalidTokenTypeViolation",
+                        rule='InvalidTokenTypeViolation',
                         severity=Severity.WARNING,
-                        message='The token type "Assignment" is not valid in this section, file: process.ini, section: transitions, line: 40.',
+                        message='The token type "Assignment" is not valid in the "transitions" section.',
+                        file='process.ini',
+                        section='transitions',
+                        line=40,
                     ),
                     ValidationResult(
-                        rule="DuplicateTransitionViolation",
+                        rule='DuplicateTransitionViolation',
                         severity=Severity.WARNING,
-                        message='The transition "Begin,hello,wait" has been declared 2 times, a transition tuple must be unique, file: process.ini, section: transitions.',
+                        message='The transition "Begin,hello,wait" has been declared 2 times, a transition tuple must be unique.',
+                        file='process.ini',
+                        section='transitions',
                     ),
                     ValidationResult(
-                        rule="InvalidTransitionViolation",
+                        rule='InvalidTransitionViolation',
                         severity=Severity.CRITICAL,
-                        message='The state "wait" attempts to transition to "NoNext" which does not exist, file: process.ini, section: transitions, line: 36.',
+                        message='The state "wait" attempts to transition to "NoNext" which does not exist.',
+                        file='process.ini',
+                        section='transitions',
+                        line=36,
                     ),
                     ValidationResult(
-                        rule="InvalidTransitionViolation",
+                        rule='InvalidTransitionViolation',
                         severity=Severity.CRITICAL,
-                        message='The state "NoPrevious" does not have a valid path leading to it, file: process.ini, section: transitions, line: 37.',
+                        message='The state "NoPrevious" does not have a valid transition leading to it.',
+                        file='process.ini',
+                        section='transitions',
+                        line=37,
                     ),
                     ValidationResult(
-                        rule="NameViolation",
+                        rule='NameViolation',
                         severity=Severity.WARNING,
-                        message='The start state "Begin" for clarity should be called "Init", file: process.ini, section: transitions, line: 33.',
+                        message='The start state "Begin", for clarity should be called "Init".',
+                        file='process.ini',
+                        section='transitions',
+                        line=33,
                     ),
                 ],
             ),
@@ -67,7 +81,7 @@ class TestTransitionsSectionRuleSet(object):
         :param prompts_file: Path to the prompts file to use for the test case.
         :param expected_results: List of expected ValidationResult
         """
-        with open(process_file, "r") as process_fh, open(prompts_file, "r") as prompts_fh:
+        with open(process_file, 'r') as process_fh, open(prompts_file, 'r') as prompts_fh:
             process_file_content = process_fh.read()
             prompts_file_content = prompts_fh.read()
 

@@ -12,67 +12,85 @@ class TestProcessFileRuleSet(object):
     """Tests for the process rule set."""
 
     @pytest.mark.parametrize(
-        "process_file,prompts_file,expected_results",
+        'process_file,prompts_file,expected_results',
         [
             (
-                "tests/data/valid-process.ini",
-                "tests/data/valid-prompts.ini",
+                'tests/data/valid-process.ini',
+                'tests/data/valid-prompts.ini',
                 [],
             ),
             (
-                "tests/data/invalid-process.ini",
-                "tests/data/invalid-prompts.ini",
+                'tests/data/invalid-process.ini',
+                'tests/data/invalid-prompts.ini',
                 [
                     ValidationResult(
-                        rule="InvalidTokenTypeViolation",
+                        rule='InvalidTokenTypeViolation',
                         severity=Severity.WARNING,
-                        message='The token type "Transition" is not valid in this section, file: process.ini, section: default, line: 8.',
+                        message='The token type "Transition" is not valid in the "default" section.',
+                        file='process.ini',
+                        section='default',
+                        line=8,
                     ),
                     ValidationResult(
-                        rule="SectionNameCaseViolation",
+                        rule='SectionNameCaseViolation',
                         severity=Severity.WARNING,
-                        message='The section "Debug Information" has been declared as "debug information", file: process.ini.',
+                        message='The section "Debug Information" has been declared as "debug information".',
+                        file='process.ini',
+                        section='Debug Information',
                     ),
                     ValidationResult(
-                        rule="SectionNameCaseViolation",
+                        rule='SectionNameCaseViolation',
                         severity=Severity.WARNING,
-                        message='The section "CPM Parameters Validation" has been declared as "cpm Parameters Validation", file: process.ini.',
+                        message='The section "CPM Parameters Validation" has been declared as "cpm Parameters Validation".',
+                        file='process.ini',
+                        section='CPM Parameters Validation',
                     ),
                     ValidationResult(
-                        rule="SectionNameCaseViolation",
+                        rule='SectionNameCaseViolation',
                         severity=Severity.WARNING,
-                        message='The section "parameters" has been declared as "Parameters", file: process.ini.',
+                        message='The section "parameters" has been declared as "Parameters".',
+                        file='process.ini',
+                        section='parameters',
                     ),
                     ValidationResult(
-                        rule="SectionNameCaseViolation",
+                        rule='SectionNameCaseViolation',
                         severity=Severity.WARNING,
-                        message='The section "transitions" has been declared as "Transitions", file: process.ini.',
+                        message='The section "transitions" has been declared as "Transitions".',
+                        file='process.ini',
+                        section='transitions',
                     ),
                     ValidationResult(
-                        rule="InvalidSectionNameViolation",
+                        rule='InvalidSectionNameViolation',
                         severity=Severity.WARNING,
-                        message='Invalid section "Dummy Section" identified, file: process.ini.',
+                        message='The section "Dummy Section" has been declared but is an invalid section name.',
+                        file='process.ini',
                     ),
                 ],
             ),
             (
-                "tests/data/empty-process.ini",
-                "tests/data/empty-prompts.ini",
+                'tests/data/empty-process.ini',
+                'tests/data/empty-prompts.ini',
                 [
                     ValidationResult(
-                        rule="MissingSectionViolation",
+                        rule='MissingSectionViolation',
                         severity=Severity.WARNING,
-                        message='"CPM Parameters Validation" is a required section but this is missing, file: process.ini.',
+                        message='"CPM Parameters Validation" is a required section but has not been declared.',
+                        file='process.ini',
+                        section='CPM Parameters Validation',
                     ),
                     ValidationResult(
-                        rule="MissingSectionViolation",
+                        rule='MissingSectionViolation',
                         severity=Severity.CRITICAL,
-                        message='"states" is a required section but this is missing, file: process.ini.',
+                        message='"states" is a required section but has not been declared.',
+                        file='process.ini',
+                        section='states',
                     ),
                     ValidationResult(
-                        rule="MissingSectionViolation",
+                        rule='MissingSectionViolation',
                         severity=Severity.CRITICAL,
-                        message='"transitions" is a required section but this is missing, file: process.ini.',
+                        message='"transitions" is a required section but has not been declared.',
+                        file='process.ini',
+                        section='transitions',
                     ),
                 ],
             ),
@@ -91,7 +109,7 @@ class TestProcessFileRuleSet(object):
         :param prompts_file: Path to the prompts file to use for the test case.
         :param expected_results: List of expected ValidationResult
         """
-        with open(process_file, "r") as process_fh, open(prompts_file, "r") as prompts_fh:
+        with open(process_file, 'r') as process_fh, open(prompts_file, 'r') as prompts_fh:
             process_file_content = process_fh.read()
             prompts_file_content = prompts_fh.read()
 

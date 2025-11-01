@@ -10,11 +10,11 @@ class TestValidator(object):
     """Test the lexer."""
 
     @pytest.mark.parametrize(
-        "process_file,prompts_file,violations",
+        'process_file,prompts_file,violations',
         [
             (
-                "tests/data/valid-process.ini",
-                "tests/data/valid-prompts.ini",
+                'tests/data/valid-process.ini',
+                'tests/data/valid-prompts.ini',
                 [],
             )
         ],
@@ -27,10 +27,10 @@ class TestValidator(object):
         :param prompts_file: Path to the prompts file to test.
         :param violations: Expected violations.
         """
-        with open(process_file, "r") as process_fh:
+        with open(process_file, 'r') as process_fh:
             process_file_content = process_fh.read()
 
-        with open(prompts_file, "r") as prompts_fh:
+        with open(prompts_file, 'r') as prompts_fh:
             prompts_file_content = prompts_fh.read()
 
         validator = Validator(
@@ -40,11 +40,11 @@ class TestValidator(object):
         assert validator.get_violations() == violations
 
     @pytest.mark.parametrize(
-        "process_file,prompts_file,violations",
+        'process_file,prompts_file,violations',
         [
             (
-                "tests/data/valid-process.ini",
-                "tests/data/valid-prompts.ini",
+                'tests/data/valid-process.ini',
+                'tests/data/valid-prompts.ini',
                 [],
             )
         ],
@@ -65,22 +65,22 @@ class TestValidator(object):
         assert validator.get_violations() == violations
 
     @pytest.mark.parametrize(
-        "process_file,prompts_file,expected_message",
+        'process_file,prompts_file,expected_message',
         [
             (
-                "tests/data/doesnt_exist/process.ini",
-                "tests/data/doesnt_exist/prompts.ini",
-                "Process file not found: tests/data/doesnt_exist/process.ini",
+                'tests/data/doesnt_exist/process.ini',
+                'tests/data/doesnt_exist/prompts.ini',
+                'The process file was not found: tests/data/doesnt_exist/process.ini',
             ),
             (
-                "tests/data/doesnt_exist/process.ini",
-                "tests/data/valid-prompts.ini",
-                "Process file not found: tests/data/doesnt_exist/process.ini",
+                'tests/data/doesnt_exist/process.ini',
+                'tests/data/valid-prompts.ini',
+                'The process file was not found: tests/data/doesnt_exist/process.ini',
             ),
             (
-                "tests/data/valid-process.ini",
-                "tests/data/doesnt_exist/prompts.ini",
-                "Process file not found: tests/data/doesnt_exist/prompts.ini",
+                'tests/data/valid-process.ini',
+                'tests/data/doesnt_exist/prompts.ini',
+                'The prompts file was not found: tests/data/doesnt_exist/prompts.ini',
             ),
         ],
     )

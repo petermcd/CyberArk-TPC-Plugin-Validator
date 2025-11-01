@@ -123,7 +123,7 @@ wheels = [
 
 [[package]]
 name = "cyberark-tpc-plugin-validator"
-version = "0.6.2"
+version = "0.7.0"
 source = { virtual = "." }
 dependencies = [
     { name = "cyberark-tpc-plugin-parser" },
