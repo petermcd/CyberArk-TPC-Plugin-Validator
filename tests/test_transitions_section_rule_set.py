@@ -61,13 +61,23 @@ class TestTransitionsSectionRuleSet(object):
                         section="transitions",
                         line=24,
                     ),
+                    # Test to ensure that transitions that cannot be reached are caught.
+                    ValidationResult(
+                        rule="UnreachableTransitionViolation",
+                        severity=Severity.CRITICAL,
+                        message='The transition "IsWaiting,Waiting,END" is unreachable due to a previous transition from "IsWaiting" having a boolean condition.',
+                        file="process.ini",
+                        section="transitions",
+                        line=26,
+                    ),
+                    # Test to ensure states in transitions are in the same case as they are declared.
                     ValidationResult(
                         rule="NameCaseMismatchViolation",
                         severity=Severity.WARNING,
                         message='The condition "Failure" is declared but is used as "failure".',
                         file="process.ini",
                         section="transitions",
-                        line=27,
+                        line=28,
                     ),
                     # Test to ensure that states used in transitions have been declared.
                     ValidationResult(
@@ -76,7 +86,7 @@ class TestTransitionsSectionRuleSet(object):
                         message='The state "NoPrevious" used in the transition current state has not been declared.',
                         file="process.ini",
                         section="transitions",
-                        line=28,
+                        line=29,
                     ),
                     # Test to ensure that transitions can be reached.
                     ValidationResult(
@@ -85,7 +95,7 @@ class TestTransitionsSectionRuleSet(object):
                         message='The state "NoPrevious" does not have a valid transition leading to it.',
                         file="process.ini",
                         section="transitions",
-                        line=28,
+                        line=29,
                     ),
                     # Test to ensure that states in transitions have been declared.
                     ValidationResult(
@@ -94,7 +104,7 @@ class TestTransitionsSectionRuleSet(object):
                         message='The state "NoNext" used in the transition next state has not been declared.',
                         file="process.ini",
                         section="transitions",
-                        line=29,
+                        line=31,
                     ),
                     # Test to ensure that states in transitions have been declared.
                     ValidationResult(
@@ -103,7 +113,16 @@ class TestTransitionsSectionRuleSet(object):
                         message='The state "Wait" attempts to transition to "NoNext" but has not been declared.',
                         file="process.ini",
                         section="transitions",
-                        line=29,
+                        line=31,
+                    ),
+                    # Test to ensure that transitions that cannot be reached are caught.
+                    ValidationResult(
+                        rule="UnreachableTransitionViolation",
+                        severity=Severity.CRITICAL,
+                        message='The transition "Wait,Nothing,NoNext" is unreachable due to a previous transition from "Wait" having a boolean condition.',
+                        file="process.ini",
+                        section="transitions",
+                        line=31,
                     ),
                     # Test invalid token type in transitions section are caught.
                     ValidationResult(
@@ -112,7 +131,7 @@ class TestTransitionsSectionRuleSet(object):
                         message='The token type "Assignment" is not valid in the "transitions" section.',
                         file="process.ini",
                         section="transitions",
-                        line=31,
+                        line=33,
                     ),
                     # Test for ensuring parse errors are caught.
                     ValidationResult(
@@ -121,7 +140,7 @@ class TestTransitionsSectionRuleSet(object):
                         message="Line could not be parsed correctly.",
                         file="process.ini",
                         section="transitions",
-                        line=32,
+                        line=34,
                     ),
                 ],
             ),
