@@ -121,7 +121,7 @@ class TransitionsSectionRuleSet(SectionRuleSet):
         )
         state_transitions_joined: list[str] = []
         state_transitions_joined.extend(
-            f"{state_transition.current_state},{state_transition.condition},{state_transition.next_state}"
+            f"{state_transition.current_state},{state_transition.condition},{state_transition.next_state}".lower()
             for state_transition in state_transitions
         )
 
@@ -173,7 +173,7 @@ class TransitionsSectionRuleSet(SectionRuleSet):
         """
         Check the previous token is valid for the transition.
 
-        :param transition: The transitions token to check.
+        :param transition: The transition token to check.
         :param transitions: A list of all the transitions.
         """
         if transition.token_name != TokenName.TRANSITION.value:
