@@ -18,13 +18,12 @@ class ValidationResult(object):
 
     def __str__(self):
         """String representation of the validation result."""
-        output_message: str = f"{self.severity}: ({self.rule}) {self.message}"
+        file_details = ""
         if self.file is not None:
-            output_message += f", file: {self.file}"
+            file_details += f" {self.file}"
         if self.section is not None:
-            output_message += f", section: {self.section}"
+            file_details += f":{self.section}"
         if self.line is not None:
-            output_message += f", line: {self.line}"
-        if any([self.file, self.section, self.line]):
-            output_message += "."
+            file_details += f"({self.line})"
+        output_message: str = f"{self.severity.value} -{file_details} ({self.rule}) {self.message}"
         return output_message

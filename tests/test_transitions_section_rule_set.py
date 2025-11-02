@@ -21,7 +21,7 @@ class TestTransitionsSectionRuleSet(object):
                     ValidationResult(
                         rule="DuplicateTransitionViolation",
                         severity=Severity.CRITICAL,
-                        message='The transition "Wait,Failure,SomeFailure" has been declared 2 times, a transition triple must be unique.',
+                        message='The transition "wait,failure,somefailure" has been declared 2 times, a transition triple must be unique.',
                         file="process.ini",
                         section="transitions",
                     ),
@@ -60,6 +60,14 @@ class TestTransitionsSectionRuleSet(object):
                         file="process.ini",
                         section="transitions",
                         line=24,
+                    ),
+                    ValidationResult(
+                        rule="NameCaseMismatchViolation",
+                        severity=Severity.WARNING,
+                        message='The condition "Failure" is declared but is used as "failure".',
+                        file="process.ini",
+                        section="transitions",
+                        line=27,
                     ),
                     # Test to ensure that states used in transitions have been declared.
                     ValidationResult(
