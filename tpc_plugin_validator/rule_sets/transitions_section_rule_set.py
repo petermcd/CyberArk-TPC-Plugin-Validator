@@ -1,5 +1,6 @@
 """Handle validation of the transitions section in the process file."""
 
+import re
 from collections import Counter
 
 from tpc_plugin_parser.lexer.tokens.assignment import Assignment
@@ -60,6 +61,7 @@ class TransitionsSectionRuleSet(SectionRuleSet):
         self._validate_duplicates()
         self._validate_states()
         self._validate_state_paths()
+        self._validate_transition_reachable()
 
     def _get_fail_state(self, name: str) -> Assignment | None:
         """
@@ -208,6 +210,34 @@ class TransitionsSectionRuleSet(SectionRuleSet):
                 section=self._SECTION_NAME,
                 line=transition.line_number,
             )
+
+    def _validate_transition_reachable(self):
+        """Validate that all states are reachable."""
+        bool_conditions: list[str] = []
+        conditions = self._get_section(file=FileNames.prompts, section_name=SectionNames.conditions)
+        for condition in conditions:
+            # Identify and note and bool conditions declared in the conditions section.
+            if condition.token_name != TokenName.ASSIGNMENT.value:
+                continue
+            if re.match(r"\(\s*expression\s*\)\s*(true|false)", condition.assigned, re.IGNORECASE):
+                bool_conditions.append(condition.name.lower())
+        transition_had_bool: list[str] = []
+        for transition in self._get_section(file=self._FILE_TYPE, section_name=self._SECTION_NAME):
+            if transition.token_name != TokenName.TRANSITION.value:
+                continue
+            if transition.current_state.lower() in transition_had_bool:
+                # Identify a transitions that comes after a transition that used a boolean condition.
+                self._add_violation(
+                    name=Violations.unreachable_transition_violation,
+                    severity=Severity.CRITICAL,
+                    message=f'The transition "{transition.current_state},{transition.condition},{transition.next_state}" is unreachable due to a previous transition from "{transition.current_state}" having a boolean condition.',
+                    file=self._FILE_TYPE,
+                    section=self._SECTION_NAME,
+                    line=transition.line_number,
+                )
+            if transition.condition.lower() in bool_conditions:
+                # Add any found transitions that use a boolean condition to the list (must be after checking previous to stop false positives).
+                transition_had_bool.append(transition.current_state.lower())
 
     def _validate_states(self) -> None:
         """Validate that states exist for all transitions and are in the correct case."""
