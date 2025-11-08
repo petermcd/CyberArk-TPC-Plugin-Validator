@@ -114,11 +114,11 @@ toml = [
 
 [[package]]
 name = "cyberark-tpc-plugin-parser"
-version = "0.2.0"
+version = "0.3.0"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/7b/04/f2cb083c5e0e45e7da9c1a19953a101d369588b4118b3dd6da9ed4be4fec/cyberark_tpc_plugin_parser-0.2.0.tar.gz", hash = "sha256:31a6081e3d5c8a3d5809a625620ab9239704ce936beb4204082be10ddfcb9382", size = 7900, upload-time = "2025-10-05T13:18:17.977Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/be/8a/82cd791f946e85c9e54db58bbd3c3e9fb57a9298df310c1a881669dc2c99/cyberark_tpc_plugin_parser-0.3.0.tar.gz", hash = "sha256:89ffebcdf533574157dd29e0705703ee83eaa06e2cb2deb9b11aec806735a4cb", size = 7824, upload-time = "2025-11-08T15:21:25.147Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/c9/4f/2ca7f74ef6fd1b79f9bd35e0c0ec97a477d5f39a32a14335e8499bedd653/cyberark_tpc_plugin_parser-0.2.0-py3-none-any.whl", hash = "sha256:7b1c4beeea77d54b2ded963addd005d4c51b7acb12d1e6e604bd57d114b3ede4", size = 11972, upload-time = "2025-10-05T13:18:16.866Z" },
+    { url = "https://files.pythonhosted.org/packages/70/ad/0e89ad76eda207785612e9c10baa1285dfa6b53ef3c0b42e58afc34f1ee6/cyberark_tpc_plugin_parser-0.3.0-py3-none-any.whl", hash = "sha256:501f2c6aabae624bce68d56b8abd5bbcd755557ca0101bb5b477f804a26bda1b", size = 11867, upload-time = "2025-11-08T15:21:24.152Z" },
 ]
 
 [[package]]
@@ -140,7 +140,7 @@ dev = [
 ]
 
 [package.metadata]
-requires-dist = [{ name = "cyberark-tpc-plugin-parser", specifier = ">=0.2.0" }]
+requires-dist = [{ name = "cyberark-tpc-plugin-parser", specifier = ">=0.3.0" }]
 
 [package.metadata.requires-dev]
 dev = [

@@ -8,7 +8,7 @@ from tpc_plugin_parser.lexer.tokens.transition import Transition
 from tpc_plugin_parser.lexer.utilities.token_name import TokenName
 from tpc_plugin_validator.rule_sets.section_rule_set import SectionRuleSet
 from tpc_plugin_validator.utilities.severity import Severity
-from tpc_plugin_validator.utilities.types import CONFIG_TYPE, FileNames, SectionNames, Violations
+from tpc_plugin_validator.utilities.types import FileNames, SectionNames, Violations
 
 
 class TransitionsSectionRuleSet(SectionRuleSet):
@@ -30,18 +30,17 @@ class TransitionsSectionRuleSet(SectionRuleSet):
         TokenName.COMMENT.value,
     ]
 
-    def __init__(self, process_file, prompts_file, config: CONFIG_TYPE) -> None:
+    def __init__(self, process_file, prompts_file) -> None:
         """
         Initialize the transitions section rule set with prompts and process configurations.
 
         :param process_file: Parsed process file.
         :param prompts_file: Parsed prompts file.
-        :param config: Configuration.
         """
         self._default_initial_state: str = "Init"
         self._file_sections: str = "init"
         self._initial_state_warned: bool = False
-        super().__init__(prompts_file=prompts_file, process_file=process_file, config=config)
+        super().__init__(prompts_file=prompts_file, process_file=process_file)
 
     def validate(self) -> None:
         """Validate the transitions section of the process file."""

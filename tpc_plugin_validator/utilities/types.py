@@ -6,9 +6,6 @@ from typing import TypedDict
 from tpc_plugin_validator.utilities.severity import Severity
 
 
-CONFIG_TYPE = dict[str, dict[str, bool | int | str]]
-
-
 class FileNames(Enum):
     """Enum to hold the valid file names."""
 

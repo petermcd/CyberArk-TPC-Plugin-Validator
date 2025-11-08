@@ -35,7 +35,7 @@ class TestValidator(object):
             prompts_file_content = prompts_fh.read()
 
         validator = Validator(
-            process_file_content=process_file_content, prompts_file_content=prompts_file_content, config={}
+            process_file_content=process_file_content, prompts_file_content=prompts_file_content
         )
         validator.validate()
         assert validator.get_violations() == violations
@@ -70,7 +70,7 @@ class TestValidator(object):
         :param prompts_file: Path to the prompts file to test.
         :param expected_violations: Expected violations.
         """
-        validate = Validator.with_file(prompts_file_path=prompts_file, process_file_path=process_file, config={})
+        validate = Validator.with_file(prompts_file_path=prompts_file, process_file_path=process_file)
         validate.validate()
         results = validate.get_violations()
 
@@ -112,6 +112,6 @@ class TestValidator(object):
         :param expected_exception: Expected exception to be thrown.
         """
         with pytest.raises(FileNotFoundError) as excinfo:
-            Validator.with_file(process_file_path=process_file, prompts_file_path=prompts_file, config={})
+            Validator.with_file(process_file_path=process_file, prompts_file_path=prompts_file)
 
         assert excinfo.value.args[0] == expected_message

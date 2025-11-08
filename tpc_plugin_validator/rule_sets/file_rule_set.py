@@ -2,21 +2,20 @@
 
 from tpc_plugin_validator.rule_sets.rule_set import RuleSet
 from tpc_plugin_validator.utilities.severity import Severity
-from tpc_plugin_validator.utilities.types import ValidSectionConfig, CONFIG_TYPE, FileNames, Violations
+from tpc_plugin_validator.utilities.types import ValidSectionConfig, FileNames, Violations
 
 
 class FileRuleSet(RuleSet):
     _VALID_SECTIONS: dict[str, ValidSectionConfig] = {}
 
-    def __init__(self, process_file, prompts_file, config: CONFIG_TYPE) -> None:
+    def __init__(self, process_file, prompts_file) -> None:
         """
         Initialize the file rule set with prompts and process configurations.
 
         :param process_file: Parsed process file.
         :param prompts_file: Parsed prompts file.
-        :param config: Configuration.
         """
-        super().__init__(prompts_file=prompts_file, process_file=process_file, config=config)
+        super().__init__(prompts_file=prompts_file, process_file=process_file)
 
     def _validate_required_sections(self, file: FileNames) -> None:
         """

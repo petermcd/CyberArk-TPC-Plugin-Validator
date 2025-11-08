@@ -141,7 +141,7 @@ class TestDebugInformationSectionRuleSet(object):
         :param prompts_file: Path to the prompts file to use for the test case.
         :param expected_violations: List of expected ValidationResult
         """
-        validate = Validator.with_file(prompts_file_path=prompts_file, process_file_path=process_file, config={})
+        validate = Validator.with_file(prompts_file_path=prompts_file, process_file_path=process_file)
         validate.validate()
         results = validate.get_violations()
 
