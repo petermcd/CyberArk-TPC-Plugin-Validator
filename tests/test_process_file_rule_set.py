@@ -85,7 +85,10 @@ class TestProcessFileRuleSet(object):
                     ValidationResult(
                         rule="InformationOnly",
                         severity=Severity.INFO,
-                        message="The prompts file was not supplied, therefore, assumptions have been made of boolean conditions. Transitions that rely on boolean conditions may not validate correctly.",
+                        message=(
+                            "The prompts file was not supplied, therefore, assumptions have been made of boolean conditions. "
+                            "Transitions that rely on boolean conditions may not validate correctly."
+                        ),
                         file="process.ini",
                     ),
                     # Test to ensure invalid sections are caught.
@@ -163,7 +166,10 @@ class TestProcessFileRuleSet(object):
                     ValidationResult(
                         rule="InformationOnly",
                         severity=Severity.INFO,
-                        message="The prompts file was not supplied, therefore, assumptions have been made of boolean conditions. Transitions that rely on boolean conditions may not validate correctly.",
+                        message=(
+                            "The prompts file was not supplied, therefore, assumptions have been made of boolean conditions. "
+                            "Transitions that rely on boolean conditions may not validate correctly."
+                        ),
                         file="process.ini",
                     ),
                     ValidationResult(

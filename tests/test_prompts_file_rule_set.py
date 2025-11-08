@@ -122,7 +122,10 @@ class TestPromptsFileRuleSets(object):
                     ValidationResult(
                         rule="InformationOnly",
                         severity=Severity.INFO,
-                        message="The prompts file was not supplied, therefore, assumptions have been made of boolean conditions. Transitions that rely on boolean conditions may not validate correctly.",
+                        message=(
+                            "The prompts file was not supplied, therefore, assumptions have been made of boolean conditions. "
+                            "Transitions that rely on boolean conditions may not validate correctly."
+                        ),
                         file="process.ini",
                     ),
                     # Expected failure as no conditions section exists.
@@ -144,7 +147,10 @@ class TestPromptsFileRuleSets(object):
                     ValidationResult(
                         rule="InformationOnly",
                         severity=Severity.INFO,
-                        message="The prompts file was not supplied, therefore, assumptions have been made of boolean conditions. Transitions that rely on boolean conditions may not validate correctly.",
+                        message=(
+                            "The prompts file was not supplied, therefore, assumptions have been made of boolean conditions. "
+                            "Transitions that rely on boolean conditions may not validate correctly."
+                        ),
                         file="process.ini",
                     ),
                     ValidationResult(

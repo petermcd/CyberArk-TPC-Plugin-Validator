@@ -63,7 +63,10 @@ class TestCPMParametersValidationSectionRuleSet(object):
                     ValidationResult(
                         rule="InformationOnly",
                         severity=Severity.INFO,
-                        message="The prompts file was not supplied, therefore, assumptions have been made of boolean conditions. Transitions that rely on boolean conditions may not validate correctly.",
+                        message=(
+                            "The prompts file was not supplied, therefore, assumptions have been made of boolean conditions. "
+                            "Transitions that rely on boolean conditions may not validate correctly."
+                        ),
                         file="process.ini",
                     ),
                     ValidationResult(
@@ -110,7 +113,10 @@ class TestCPMParametersValidationSectionRuleSet(object):
                     ValidationResult(
                         rule="InformationOnly",
                         severity=Severity.INFO,
-                        message="The prompts file was not supplied, therefore, assumptions have been made of boolean conditions. Transitions that rely on boolean conditions may not validate correctly.",
+                        message=(
+                            "The prompts file was not supplied, therefore, assumptions have been made of boolean conditions. "
+                            "Transitions that rely on boolean conditions may not validate correctly."
+                        ),
                         file="process.ini",
                     ),
                     ValidationResult(  # Valid as the username is used in the prompts file which is missing in this test.

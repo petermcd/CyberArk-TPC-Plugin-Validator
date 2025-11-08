@@ -223,7 +223,10 @@ class TransitionsSectionRuleSet(SectionRuleSet):
             self._add_violation(
                 name=Violations.information_only,
                 severity=Severity.INFO,
-                message="The prompts file was not supplied, therefore, assumptions have been made of boolean conditions. Transitions that rely on boolean conditions may not validate correctly.",
+                message=(
+                    "The prompts file was not supplied, therefore, assumptions have been made of boolean conditions. "
+                    "Transitions that rely on boolean conditions may not validate correctly."
+                ),
                 file=self._FILE_TYPE,
             )
         else:
