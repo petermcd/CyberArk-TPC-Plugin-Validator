@@ -25,20 +25,20 @@ class TestTransitionsSectionRuleSet(object):
                         file="process.ini",
                         section="transitions",
                     ),
-                    # Test to ensure states in transitions are in the same case as they are declared.
-                    ValidationResult(
-                        rule="NameCaseMismatchViolation",
-                        severity=Severity.WARNING,
-                        message='The state "Wait" is declared but is used with different casing in the transition next state.',
-                        file="process.ini",
-                        section="transitions",
-                        line=21,
-                    ),
                     # Test to ensure that the init name is caught if anything other than Init.
                     ValidationResult(
                         rule="NameViolation",
                         severity=Severity.WARNING,
                         message='The start state "Begin", for clarity should be called "Init".',
+                        file="process.ini",
+                        section="transitions",
+                        line=21,
+                    ),
+                    # Test to ensure states in transitions are in the same case as they are declared.
+                    ValidationResult(
+                        rule="NameCaseMismatchViolation",
+                        severity=Severity.WARNING,
+                        message='The state "Wait" is declared but is used with different casing in the transition next state.',
                         file="process.ini",
                         section="transitions",
                         line=21,
@@ -79,20 +79,20 @@ class TestTransitionsSectionRuleSet(object):
                         section="transitions",
                         line=28,
                     ),
-                    # Test to ensure that states used in transitions have been declared.
-                    ValidationResult(
-                        rule="InvalidTransitionViolation",
-                        severity=Severity.CRITICAL,
-                        message='The state "NoPrevious" used in the transition current state has not been declared.',
-                        file="process.ini",
-                        section="transitions",
-                        line=29,
-                    ),
                     # Test to ensure that transitions can be reached.
                     ValidationResult(
                         rule="InvalidTransitionViolation",
                         severity=Severity.CRITICAL,
                         message='The state "NoPrevious" does not have a valid transition leading to it.',
+                        file="process.ini",
+                        section="transitions",
+                        line=29,
+                    ),
+                    # Test to ensure that states used in transitions have been declared.
+                    ValidationResult(
+                        rule="InvalidTransitionViolation",
+                        severity=Severity.CRITICAL,
+                        message='The state "NoPrevious" used in the transition current state has not been declared.',
                         file="process.ini",
                         section="transitions",
                         line=29,
@@ -171,20 +171,20 @@ class TestTransitionsSectionRuleSet(object):
                         file="process.ini",
                         section="transitions",
                     ),
-                    # Test to ensure states in transitions are in the same case as they are declared.
-                    ValidationResult(
-                        rule="NameCaseMismatchViolation",
-                        severity=Severity.WARNING,
-                        message='The state "Wait" is declared but is used with different casing in the transition next state.',
-                        file="process.ini",
-                        section="transitions",
-                        line=21,
-                    ),
                     # Test to ensure that the init name is caught if anything other than Init.
                     ValidationResult(
                         rule="NameViolation",
                         severity=Severity.WARNING,
                         message='The start state "Begin", for clarity should be called "Init".',
+                        file="process.ini",
+                        section="transitions",
+                        line=21,
+                    ),
+                    # Test to ensure states in transitions are in the same case as they are declared.
+                    ValidationResult(
+                        rule="NameCaseMismatchViolation",
+                        severity=Severity.WARNING,
+                        message='The state "Wait" is declared but is used with different casing in the transition next state.',
                         file="process.ini",
                         section="transitions",
                         line=21,
@@ -207,20 +207,20 @@ class TestTransitionsSectionRuleSet(object):
                         section="transitions",
                         line=26,
                     ),
-                    # Test to ensure that states used in transitions have been declared.
-                    ValidationResult(
-                        rule="InvalidTransitionViolation",
-                        severity=Severity.CRITICAL,
-                        message='The state "NoPrevious" used in the transition current state has not been declared.',
-                        file="process.ini",
-                        section="transitions",
-                        line=29,
-                    ),
                     # Test to ensure that transitions can be reached.
                     ValidationResult(
                         rule="InvalidTransitionViolation",
                         severity=Severity.CRITICAL,
                         message='The state "NoPrevious" does not have a valid transition leading to it.',
+                        file="process.ini",
+                        section="transitions",
+                        line=29,
+                    ),
+                    # Test to ensure that states used in transitions have been declared.
+                    ValidationResult(
+                        rule="InvalidTransitionViolation",
+                        severity=Severity.CRITICAL,
+                        message='The state "NoPrevious" used in the transition current state has not been declared.',
                         file="process.ini",
                         section="transitions",
                         line=29,

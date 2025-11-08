@@ -18,11 +18,11 @@ class TestStatesSectionRuleSet(object):
                 "tests/data/states-invalid-process.ini",
                 "tests/data/states-invalid-prompts.ini",
                 [
-                    # Test to ensure declared states are used in transitions.
+                    # Test for ensuring duplicate assignments are caught.
                     ValidationResult(
-                        rule="UnusedStateViolation",
-                        severity=Severity.WARNING,
-                        message='The state "Source" has been declared but is not utilised in the transitions section.',
+                        rule="DuplicateAssignmentViolation",
+                        severity=Severity.CRITICAL,
+                        message='The assignment "Wait" has been declared 2 times.',
                         file="process.ini",
                         section="states",
                     ),
@@ -34,11 +34,11 @@ class TestStatesSectionRuleSet(object):
                         file="process.ini",
                         section="states",
                     ),
-                    # Test for ensuring duplicate assignments are caught.
+                    # Test to ensure declared states are used in transitions.
                     ValidationResult(
-                        rule="DuplicateAssignmentViolation",
-                        severity=Severity.CRITICAL,
-                        message='The assignment "Wait" has been declared 2 times.',
+                        rule="UnusedStateViolation",
+                        severity=Severity.WARNING,
+                        message='The state "Source" has been declared but is not utilised in the transitions section.',
                         file="process.ini",
                         section="states",
                     ),
@@ -51,20 +51,20 @@ class TestStatesSectionRuleSet(object):
                         section="states",
                         line=16,
                     ),
-                    # Test for ensuring setting name case violation is caught.
-                    ValidationResult(
-                        rule="NameCaseViolation",
-                        severity=Severity.CRITICAL,
-                        message='The "END" state has been declared as "end", the "END" state should be in upper case.',
-                        file="process.ini",
-                        section="states",
-                        line=17,
-                    ),
                     # Test for ensuring invalid setting values are caught.
                     ValidationResult(
                         rule="ValueViolation",
                         severity=Severity.CRITICAL,
                         message='The "END" state has been assigned the value "123", the "END" state should not have a value.',
+                        file="process.ini",
+                        section="states",
+                        line=17,
+                    ),
+                    # Test for ensuring setting name case violation is caught.
+                    ValidationResult(
+                        rule="NameCaseViolation",
+                        severity=Severity.CRITICAL,
+                        message='The "END" state has been declared as "end", the "END" state should be in upper case.',
                         file="process.ini",
                         section="states",
                         line=17,

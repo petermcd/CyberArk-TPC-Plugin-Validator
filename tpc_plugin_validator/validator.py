@@ -45,7 +45,7 @@ class Validator(object):
         :param process_file_content: Content for the process file.
         :param prompts_file_content: Content for the prompts file.
         """
-        if not any([process_file_content, prompts_file_content]):
+        if process_file_content is None and prompts_file_content is None:
             raise ProgrammingError("At least one of process file or prompts file required to complete validation.")
 
         self._process: dict[str, list[ALL_TOKEN_TYPES]] | None = None
@@ -108,6 +108,7 @@ class Validator(object):
                 str(violation.file) if violation.file is not None else "",
                 str(violation.section) if violation.section is not None else "",
                 violation.line if violation.line is not None else -1,
+                str(violation.message) if violation.message is not None else "",
             ),
         )
 
