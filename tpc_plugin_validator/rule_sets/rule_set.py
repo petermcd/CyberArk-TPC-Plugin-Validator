@@ -3,6 +3,8 @@
 from abc import ABC
 
 from tpc_plugin_parser.lexer.utilities.token_name import TokenName
+from tpc_plugin_parser.lexer.utilities.types import ALL_TOKEN_TYPES
+
 from tpc_plugin_validator.utilities.exceptions import ProgrammingError
 from tpc_plugin_validator.utilities.invalid_words import INVALID_WORDS
 from tpc_plugin_validator.utilities.severity import Severity
@@ -24,7 +26,11 @@ class RuleSet(ABC):
     _SECTION_NAME: SectionNames = SectionNames.default
     _VALID_TOKENS: list[str] = []
 
-    def __init__(self, process_file, prompts_file) -> None:
+    def __init__(
+        self,
+        process_file: dict[str, list[ALL_TOKEN_TYPES]] | None,
+        prompts_file: dict[str, list[ALL_TOKEN_TYPES]] | None,
+    ) -> None:
         """
         Initialize the rule set with prompts and process configurations.
 
@@ -32,8 +38,8 @@ class RuleSet(ABC):
         :param prompts_file: Parsed prompts file.
         """
         self._file_sections: dict[str, dict[str, str]] = {}
-        self._process_file = process_file
-        self._prompts_file = prompts_file
+        self._process_file: dict[str, list[ALL_TOKEN_TYPES]] | None = process_file
+        self._prompts_file: dict[str, list[ALL_TOKEN_TYPES]] | None = prompts_file
         self._violations: list[ValidationResult] = []
 
         self._extract_sections()
@@ -63,9 +69,9 @@ class RuleSet(ABC):
         :param severity: The severity of the violation.
         """
         if isinstance(file, FileNames):
-            file = file.value
+            file: str = file.value
         if isinstance(section, SectionNames):
-            section = section.value
+            section: str = section.value
 
         self._violations.append(
             ValidationResult(
@@ -167,3 +173,21 @@ class RuleSet(ABC):
                     section=required_section,
                     line=token.line_number,
                 )
+
+    @property
+    def has_process_file(self) -> bool:
+        """
+        Property to check if the process file was provided.
+
+        :return: True if the process file was provided otherwise False.
+        """
+        return self._process_file is not None
+
+    @property
+    def has_prompts_file(self) -> bool:
+        """
+        Property to check if the prompts file was provided.
+
+        :return: True if the prompts file was provided otherwise False.
+        """
+        return self._prompts_file is not None

@@ -80,6 +80,10 @@ class TransitionsSectionRuleSet(SectionRuleSet):
 
     def _validate_conditions(self) -> None:
         """Validate the conditions used in transitions."""
+        if not self.has_prompts_file:
+            # Skip as we were not supplied the required process file.
+            return
+
         conditions = self._get_section(file=FileNames.prompts, section_name=SectionNames.conditions)
         for transition in self._get_section(file=self._FILE_TYPE, section_name=SectionNames.transitions):
             found = False
@@ -213,13 +217,23 @@ class TransitionsSectionRuleSet(SectionRuleSet):
     def _validate_transition_reachable(self):
         """Validate that all states are reachable."""
         bool_conditions: list[str] = []
-        conditions = self._get_section(file=FileNames.prompts, section_name=SectionNames.conditions)
-        for condition in conditions:
-            # Identify and note and bool conditions declared in the conditions section.
-            if condition.token_name != TokenName.ASSIGNMENT.value:
-                continue
-            if re.match(r"\(\s*expression\s*\)\s*(true|false)", condition.assigned, re.IGNORECASE):
-                bool_conditions.append(condition.name.lower())
+        if not self.has_prompts_file:
+            # Adding presumed bool condition names as we do not have the prompts file to fetch them from.
+            bool_conditions.extend(("true", "false"))
+            self._add_violation(
+                name=Violations.information_only,
+                severity=Severity.INFO,
+                message="The prompts file was not supplied, therefore, assumptions have been made of boolean conditions. Transitions that rely on boolean conditions may not validate correctly.",
+                file=self._FILE_TYPE,
+            )
+        else:
+            conditions = self._get_section(file=FileNames.prompts, section_name=SectionNames.conditions)
+            for condition in conditions:
+                # Identify and note and bool conditions declared in the conditions section.
+                if condition.token_name != TokenName.ASSIGNMENT.value:
+                    continue
+                if re.match(r"\(\s*expression\s*\)\s*(true|false)", condition.assigned, re.IGNORECASE):
+                    bool_conditions.append(condition.name.lower())
         transition_had_bool: list[str] = []
         for transition in self._get_section(file=self._FILE_TYPE, section_name=self._SECTION_NAME):
             if transition.token_name != TokenName.TRANSITION.value:

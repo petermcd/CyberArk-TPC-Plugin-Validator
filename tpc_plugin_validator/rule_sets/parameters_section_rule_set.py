@@ -22,15 +22,6 @@ class ParametersSectionRuleSet(SectionRuleSet):
         TokenName.COMMENT.value,
     ]
 
-    def __init__(self, process_file, prompts_file) -> None:
-        """
-        Initialize the parameters section rule set with prompts and process configurations.
-
-        :param process_file: Parsed process file.
-        :param prompts_file: Parsed prompts file.
-        """
-        super().__init__(prompts_file=prompts_file, process_file=process_file)
-
     def validate(self) -> None:
         """Validate the Parameters section of the process file."""
         section = self._get_section(file=self._FILE_TYPE, section_name=self._SECTION_NAME)

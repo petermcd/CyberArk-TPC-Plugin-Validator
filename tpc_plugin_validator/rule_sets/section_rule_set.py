@@ -10,18 +10,6 @@ from tpc_plugin_validator.utilities.types import Violations
 
 
 class SectionRuleSet(RuleSet):
-    def __init__(self, process_file, prompts_file) -> None:
-        """
-        Initialize the section rule set with prompts and process configurations.
-
-        :param process_file: Parsed process file.
-        :param prompts_file: Parsed prompts file.
-        """
-        super().__init__(
-            prompts_file=prompts_file,
-            process_file=process_file,
-        )
-
     def _validate_duplicates(self) -> None:
         """Validate that the section does not contain duplicate assignments."""
         section = self._get_section(file=self._FILE_TYPE, section_name=self._SECTION_NAME)

@@ -77,6 +77,111 @@ class TestProcessFileRuleSet(object):
                     ),
                 ],
             ),
+            (
+                # Test to ensure that validation continues with a missing prompts file.
+                "tests/data/process-file-invalid-process.ini",
+                None,
+                [
+                    ValidationResult(
+                        rule="InformationOnly",
+                        severity=Severity.INFO,
+                        message="The prompts file was not supplied, therefore, assumptions have been made of boolean conditions. Transitions that rely on boolean conditions may not validate correctly.",
+                        file="process.ini",
+                    ),
+                    # Test to ensure invalid sections are caught.
+                    ValidationResult(
+                        rule="InvalidSectionNameViolation",
+                        severity=Severity.WARNING,
+                        message='The section "Dummy Section" has been declared but is an invalid section name.',
+                        file="process.ini",
+                    ),
+                    # Test to ensure section name case issue is caught.
+                    ValidationResult(
+                        rule="SectionNameCaseViolation",
+                        severity=Severity.WARNING,
+                        message='The section "CPM Parameters Validation" has been declared as "cpm Parameters Validation".',
+                        file="process.ini",
+                        section="CPM Parameters Validation",
+                    ),
+                    ValidationResult(
+                        rule="UnusedParameterViolation",
+                        severity=Severity.WARNING,
+                        message='The parameter "username" has been validated but is not used.',
+                        file="process.ini",
+                        section="CPM Parameters Validation",
+                        line=34,
+                    ),
+                    # Test to ensure section name case issue is caught.
+                    ValidationResult(
+                        rule="SectionNameCaseViolation",
+                        severity=Severity.WARNING,
+                        message='The section "Debug Information" has been declared as "debug information".',
+                        file="process.ini",
+                        section="Debug Information",
+                    ),
+                    # Test invalid token type in process file default section is caught.
+                    ValidationResult(
+                        rule="InvalidTokenTypeViolation",
+                        severity=Severity.CRITICAL,
+                        message='The token type "Transition" is not valid in the "default" section.',
+                        file="process.ini",
+                        section="default",
+                        line=7,
+                    ),
+                    # Test for ensuring parse errors are caught.
+                    ValidationResult(
+                        rule="ParseErrorViolation",
+                        severity=Severity.CRITICAL,
+                        message="Line could not be parsed correctly.",
+                        file="process.ini",
+                        section="default",
+                        line=8,
+                    ),
+                    # Test to ensure section name case issue is caught.
+                    ValidationResult(
+                        rule="SectionNameCaseViolation",
+                        severity=Severity.WARNING,
+                        message='The section "parameters" has been declared as "Parameters".',
+                        file="process.ini",
+                        section="parameters",
+                    ),
+                    # Test to ensure section name case issue is caught.
+                    ValidationResult(
+                        rule="SectionNameCaseViolation",
+                        severity=Severity.WARNING,
+                        message='The section "transitions" has been declared as "Transitions".',
+                        file="process.ini",
+                        section="transitions",
+                    ),
+                ],
+            ),
+            (
+                # Test to ensure that validation continues with a missing prompts file.
+                "tests/data/valid-process.ini",
+                None,
+                [
+                    ValidationResult(
+                        rule="InformationOnly",
+                        severity=Severity.INFO,
+                        message="The prompts file was not supplied, therefore, assumptions have been made of boolean conditions. Transitions that rely on boolean conditions may not validate correctly.",
+                        file="process.ini",
+                    ),
+                    ValidationResult(
+                        rule="UnusedParameterViolation",
+                        severity=Severity.WARNING,
+                        message='The parameter "username" has been validated but is not used.',
+                        file="process.ini",
+                        section="CPM Parameters Validation",
+                        line=30,
+                    ),
+                ],
+            ),
+            (
+                # Test to ensure that validation continues with a missing prompts file.
+                None,
+                "tests/data/valid-prompts.ini",
+                [],
+            ),
         ],
     )
     def test_process_file_rule_set(

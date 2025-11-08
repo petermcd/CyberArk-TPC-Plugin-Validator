@@ -3,6 +3,7 @@
 import os
 from typing import Callable
 
+from tpc_plugin_parser.lexer.utilities.types import ALL_TOKEN_TYPES
 from tpc_plugin_parser.parser import Parser
 from tpc_plugin_validator.rule_sets.conditions_section_rule_set import (
     ConditionsSectionRuleSet,
@@ -45,15 +46,18 @@ class Validator(object):
         :param prompts_file_content: Content for the prompts file.
         """
         if not any([process_file_content, prompts_file_content]):
-            raise ProgrammingError('At least one of process file and prompts file required.')
+            raise ProgrammingError("At least one of process file or prompts file required to complete validation.")
+
+        self._process: dict[str, list[ALL_TOKEN_TYPES]] | None = None
+        self._prompts: dict[str, list[ALL_TOKEN_TYPES]] | None = None
 
         if process_file_content is not None:
-            self._process: Parser = Parser(
+            self._process = Parser(
                 file_contents=process_file_content,
             ).parsed_file
 
         if prompts_file_content is not None:
-            self._prompts: Parser = Parser(
+            self._prompts = Parser(
                 file_contents=prompts_file_content,
             ).parsed_file
 
@@ -85,7 +89,9 @@ class Validator(object):
                 prompts_file=self._prompts,
             )
             validator.validate()
-            self._violations = self.sort_violations(self._violations + validator.get_violations())
+            self._violations: list[ValidationResult] = self.sort_violations(
+                self._violations + validator.get_violations()
+            )
 
     @classmethod
     def sort_violations(cls, violations: list[ValidationResult]) -> list[ValidationResult]:
@@ -106,7 +112,7 @@ class Validator(object):
         )
 
     @classmethod
-    def with_file(cls, process_file_path: str | None, prompts_file_path: str | None) -> "Validator":
+    def with_file(cls, process_file_path: str | None = None, prompts_file_path: str | None = None) -> "Validator":
         """
         Set the file to be validated.
 
@@ -128,10 +134,8 @@ class Validator(object):
             with open(process_file_path, "r", encoding="utf-8") as process_file:
                 process_file_content: str = process_file.read()
 
-        if process_file_path:
+        if prompts_file_path:
             with open(prompts_file_path, "r", encoding="utf-8") as prompts_file:
                 prompts_file_content: str = prompts_file.read()
 
-        return Validator(
-            process_file_content=process_file_content, prompts_file_content=prompts_file_content
-        )
+        return Validator(process_file_content=process_file_content, prompts_file_content=prompts_file_content)

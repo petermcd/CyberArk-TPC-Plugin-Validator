@@ -90,6 +90,84 @@ class TestConditionsSectionRuleSet(object):
                     ),
                 ],
             ),
+            (
+                # Test to ensure that validation continues with a missing process file.
+                None,
+                "tests/data/conditions-invalid-prompts.ini",
+                [
+                    # Test for ensuring duplicate assignments are caught.
+                    ValidationResult(
+                        rule="DuplicateAssignmentViolation",
+                        severity=Severity.CRITICAL,
+                        message='The assignment "Goodbye" has been declared 3 times.',
+                        file="prompts.ini",
+                        section="conditions",
+                    ),
+                    # Test reserved words used as condition names are caught.
+                    ValidationResult(
+                        rule="InvalidWordViolation",
+                        severity=Severity.CRITICAL,
+                        message='"sQl" is a reserved word and cannot be used as a name in an assignment.',
+                        file="prompts.ini",
+                        section="conditions",
+                        line=11,
+                    ),
+                    # Test invalid token type in conditions section are caught.
+                    ValidationResult(
+                        rule="InvalidTokenTypeViolation",
+                        severity=Severity.CRITICAL,
+                        message='The token type "Transition" is not valid in the "conditions" section.',
+                        file="prompts.ini",
+                        section="conditions",
+                        line=20,
+                    ),
+                    # Test reserved words used as condition names are caught.
+                    ValidationResult(
+                        rule="InvalidWordViolation",
+                        severity=Severity.CRITICAL,
+                        message='"CD" is a reserved word and cannot be used as a name in an assignment.',
+                        file="prompts.ini",
+                        section="conditions",
+                        line=21,
+                    ),
+                    # Test for ensuring parse errors are caught.
+                    ValidationResult(
+                        rule="ParseErrorViolation",
+                        severity=Severity.CRITICAL,
+                        message="Line could not be parsed correctly.",
+                        file="prompts.ini",
+                        section="conditions",
+                        line=22,
+                    ),
+                ],
+            ),
+            (
+                # Test to ensure that validation continues with a missing prompts file.
+                "tests/data/valid-process.ini",
+                None,
+                [
+                    ValidationResult(
+                        rule="InformationOnly",
+                        severity=Severity.INFO,
+                        message="The prompts file was not supplied, therefore, assumptions have been made of boolean conditions. Transitions that rely on boolean conditions may not validate correctly.",
+                        file="process.ini",
+                    ),
+                    ValidationResult(  # Valid as the username is used in the prompts file which is missing in this test.
+                        rule="UnusedParameterViolation",
+                        severity=Severity.WARNING,
+                        message='The parameter "username" has been validated but is not used.',
+                        file="process.ini",
+                        section="CPM Parameters Validation",
+                        line=30,
+                    ),
+                ],
+            ),
+            (
+                # Test to ensure that validation continues with a missing process file.
+                None,
+                "tests/data/valid-prompts.ini",
+                [],
+            ),
         ],
     )
     def test_conditions_section_rule_set(

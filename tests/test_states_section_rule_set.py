@@ -98,6 +98,33 @@ class TestStatesSectionRuleSet(object):
                     ),
                 ],
             ),
+            (
+                # Test to ensure that validation continues with a missing prompts file.
+                "tests/data/valid-process.ini",
+                None,
+                [
+                    ValidationResult(
+                        rule="InformationOnly",
+                        severity=Severity.INFO,
+                        message="The prompts file was not supplied, therefore, assumptions have been made of boolean conditions. Transitions that rely on boolean conditions may not validate correctly.",
+                        file="process.ini",
+                    ),
+                    ValidationResult(  # Valid as the username is used in the prompts file which is missing in this test.
+                        rule="UnusedParameterViolation",
+                        severity=Severity.WARNING,
+                        message='The parameter "username" has been validated but is not used.',
+                        file="process.ini",
+                        section="CPM Parameters Validation",
+                        line=30,
+                    ),
+                ],
+            ),
+            (
+                # Test to ensure that validation continues with a missing process file.
+                None,
+                "tests/data/valid-prompts.ini",
+                [],
+            ),
         ],
     )
     def test_states_section_rule_set(

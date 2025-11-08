@@ -33,6 +33,9 @@ class ValidSectionConfig(TypedDict):
 class Violations(Enum):
     """Enum to hold the valid violation types."""
 
+    # Special case for information only.
+    information_only = "InformationOnly"
+
     duplicate_assignment_violation = "DuplicateAssignmentViolation"
     duplicate_transition_violation = "DuplicateTransitionViolation"
     invalid_condition_violation = "InvalidConditionViolation"

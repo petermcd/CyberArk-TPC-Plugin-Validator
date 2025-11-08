@@ -8,15 +8,6 @@ from tpc_plugin_validator.utilities.types import ValidSectionConfig, FileNames, 
 class FileRuleSet(RuleSet):
     _VALID_SECTIONS: dict[str, ValidSectionConfig] = {}
 
-    def __init__(self, process_file, prompts_file) -> None:
-        """
-        Initialize the file rule set with prompts and process configurations.
-
-        :param process_file: Parsed process file.
-        :param prompts_file: Parsed prompts file.
-        """
-        super().__init__(prompts_file=prompts_file, process_file=process_file)
-
     def _validate_required_sections(self, file: FileNames) -> None:
         """
         Validate the required sections within the supplied file exist.

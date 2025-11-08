@@ -50,6 +50,14 @@ class TestTransitionsSectionRuleSet(object):
                 ),
                 'INFO - (InvalidSectionNameViolation) The section "Dummy Section" has been declared but is an invalid section name.',
             ),
+            (
+                ValidationResult(
+                    rule="InformationOnly",
+                    severity=Severity.INFO,
+                    message="The prompts file was not provided therefore validation rules requiring this file will be skipped.",
+                ),
+                "INFO - (InformationOnly) The prompts file was not provided therefore validation rules requiring this file will be skipped.",
+            ),
         ],
     )
     def test_validation_result(self, validation_result: ValidationResult, expected_message: str) -> None:

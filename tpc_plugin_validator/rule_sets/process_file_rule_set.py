@@ -30,17 +30,12 @@ class ProcessFileRuleSet(FileRuleSet):
         TokenName.COMMENT.value,
     ]
 
-    def __init__(self, process_file, prompts_file) -> None:
-        """
-        Initialize the process file rule set with prompts and process configurations.
-
-        :param process_file: Parsed process file.
-        :param prompts_file: Parsed prompts file.
-        """
-        super().__init__(prompts_file=prompts_file, process_file=process_file)
-
     def validate(self) -> None:
         """Validate the process file."""
+        if not self.has_process_file:
+            # Skip as we were not supplied the required process file.
+            return
+
         self._validate_sections(file=self._FILE_TYPE)
         self._validate_required_sections(file=self._FILE_TYPE)
         self._validate_tokens(file=self._FILE_TYPE, section_override=SectionNames.default)
