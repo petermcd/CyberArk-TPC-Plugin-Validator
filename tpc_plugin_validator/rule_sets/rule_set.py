@@ -3,10 +3,12 @@
 from abc import ABC
 
 from tpc_plugin_parser.lexer.utilities.token_name import TokenName
+from tpc_plugin_parser.lexer.utilities.types import ALL_TOKEN_TYPES
+
 from tpc_plugin_validator.utilities.exceptions import ProgrammingError
 from tpc_plugin_validator.utilities.invalid_words import INVALID_WORDS
 from tpc_plugin_validator.utilities.severity import Severity
-from tpc_plugin_validator.utilities.types import CONFIG_TYPE, FileNames, SectionNames, Violations
+from tpc_plugin_validator.utilities.types import FileNames, SectionNames, Violations
 from tpc_plugin_validator.utilities.validation_result import ValidationResult
 
 
@@ -24,18 +26,20 @@ class RuleSet(ABC):
     _SECTION_NAME: SectionNames = SectionNames.default
     _VALID_TOKENS: list[str] = []
 
-    def __init__(self, process_file, prompts_file, config: CONFIG_TYPE) -> None:
+    def __init__(
+        self,
+        process_file: dict[str, list[ALL_TOKEN_TYPES]] | None,
+        prompts_file: dict[str, list[ALL_TOKEN_TYPES]] | None,
+    ) -> None:
         """
         Initialize the rule set with prompts and process configurations.
 
         :param process_file: Parsed process file.
         :param prompts_file: Parsed prompts file.
-        :param config: Configuration.
         """
-        self._config = config.get(self._CONFIG_KEY, {})
         self._file_sections: dict[str, dict[str, str]] = {}
-        self._process_file = process_file
-        self._prompts_file = prompts_file
+        self._process_file: dict[str, list[ALL_TOKEN_TYPES]] | None = process_file
+        self._prompts_file: dict[str, list[ALL_TOKEN_TYPES]] | None = prompts_file
         self._violations: list[ValidationResult] = []
 
         self._extract_sections()
@@ -65,9 +69,9 @@ class RuleSet(ABC):
         :param severity: The severity of the violation.
         """
         if isinstance(file, FileNames):
-            file = file.value
+            file: str = file.value
         if isinstance(section, SectionNames):
-            section = section.value
+            section: str = section.value
 
         self._violations.append(
             ValidationResult(
@@ -86,9 +90,9 @@ class RuleSet(ABC):
             str(FileNames.process.value): {},
             str(FileNames.prompts.value): {},
         }
-        for section in self._process_file.keys():
+        for section in self._process_file.keys() if self._process_file else []:
             self._file_sections[FileNames.process.value][section.lower()] = section
-        for section in self._prompts_file.keys():
+        for section in self._prompts_file.keys() if self._prompts_file else []:
             self._file_sections[FileNames.prompts.value][section.lower()] = section
 
     def _get_section(self, file: FileNames, section_name: SectionNames):
@@ -169,3 +173,21 @@ class RuleSet(ABC):
                     section=required_section,
                     line=token.line_number,
                 )
+
+    @property
+    def has_process_file(self) -> bool:
+        """
+        Property to check if the process file was provided.
+
+        :return: True if the process file was provided otherwise False.
+        """
+        return self._process_file is not None
+
+    @property
+    def has_prompts_file(self) -> bool:
+        """
+        Property to check if the prompts file was provided.
+
+        :return: True if the prompts file was provided otherwise False.
+        """
+        return self._prompts_file is not None

@@ -61,15 +61,6 @@ class TestPromptsFileRuleSets(object):
                     ),
                     # Expected failure as no conditions section exists.
                     ValidationResult(
-                        rule="UnusedParameterViolation",
-                        severity=Severity.WARNING,
-                        message='The parameter "password" has been validated but is not used.',
-                        file="process.ini",
-                        section="CPM Parameters Validation",
-                        line=31,
-                    ),
-                    # Expected failure as no conditions section exists.
-                    ValidationResult(
                         rule="InvalidConditionViolation",
                         severity=Severity.CRITICAL,
                         message='The condition "Hello" used in the transition from "Init" to "Wait" but has not been declared.',
@@ -123,6 +114,61 @@ class TestPromptsFileRuleSets(object):
                     ),
                 ],
             ),
+            (
+                # Test to ensure that validation continues with a missing prompts file.
+                "tests/data/valid-process.ini",
+                None,
+                [
+                    ValidationResult(
+                        rule="InformationOnly",
+                        severity=Severity.INFO,
+                        message=(
+                            "The prompts file was not supplied, therefore, assumptions have been made of boolean conditions. "
+                            "Transitions that rely on boolean conditions may not validate correctly."
+                        ),
+                        file="process.ini",
+                    ),
+                    # Expected failure as no conditions section exists.
+                    ValidationResult(
+                        rule="UnusedParameterViolation",
+                        severity=Severity.WARNING,
+                        message='The parameter "username" has been validated but is not used.',
+                        file="process.ini",
+                        section="CPM Parameters Validation",
+                        line=30,
+                    ),
+                ],
+            ),
+            (
+                # Test to ensure that validation continues with a missing prompts file.
+                "tests/data/valid-process.ini",
+                None,
+                [
+                    ValidationResult(
+                        rule="InformationOnly",
+                        severity=Severity.INFO,
+                        message=(
+                            "The prompts file was not supplied, therefore, assumptions have been made of boolean conditions. "
+                            "Transitions that rely on boolean conditions may not validate correctly."
+                        ),
+                        file="process.ini",
+                    ),
+                    ValidationResult(
+                        rule="UnusedParameterViolation",
+                        severity=Severity.WARNING,
+                        message='The parameter "username" has been validated but is not used.',
+                        file="process.ini",
+                        section="CPM Parameters Validation",
+                        line=30,
+                    ),
+                ],
+            ),
+            (
+                # Test to ensure that validation continues with a missing process file.
+                None,
+                "tests/data/valid-prompts.ini",
+                [],
+            ),
         ],
     )
     def test_prompts_file_rule_set(
@@ -138,7 +184,7 @@ class TestPromptsFileRuleSets(object):
         :param prompts_file: Path to the prompts file to use for the test case.
         :param expected_violations: List of expected ValidationResult
         """
-        validate = Validator.with_file(prompts_file_path=prompts_file, process_file_path=process_file, config={})
+        validate = Validator.with_file(prompts_file_path=prompts_file, process_file_path=process_file)
         validate.validate()
         results = validate.get_violations()
 

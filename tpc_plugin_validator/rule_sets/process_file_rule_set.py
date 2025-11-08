@@ -3,7 +3,7 @@
 from tpc_plugin_parser.lexer.utilities.token_name import TokenName
 from tpc_plugin_validator.rule_sets.file_rule_set import FileRuleSet
 from tpc_plugin_validator.utilities.severity import Severity
-from tpc_plugin_validator.utilities.types import ValidSectionConfig, CONFIG_TYPE, FileNames, SectionNames
+from tpc_plugin_validator.utilities.types import ValidSectionConfig, FileNames, SectionNames
 
 
 class ProcessFileRuleSet(FileRuleSet):
@@ -30,18 +30,12 @@ class ProcessFileRuleSet(FileRuleSet):
         TokenName.COMMENT.value,
     ]
 
-    def __init__(self, process_file, prompts_file, config: CONFIG_TYPE) -> None:
-        """
-        Initialize the process file rule set with prompts and process configurations.
-
-        :param process_file: Parsed process file.
-        :param prompts_file: Parsed prompts file.
-        :param config: Configuration.
-        """
-        super().__init__(prompts_file=prompts_file, process_file=process_file, config=config)
-
     def validate(self) -> None:
         """Validate the process file."""
+        if not self.has_process_file:
+            # Skip as we were not supplied the required process file.
+            return
+
         self._validate_sections(file=self._FILE_TYPE)
         self._validate_required_sections(file=self._FILE_TYPE)
         self._validate_tokens(file=self._FILE_TYPE, section_override=SectionNames.default)

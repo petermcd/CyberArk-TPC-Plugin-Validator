@@ -8,7 +8,7 @@ from tpc_plugin_parser.lexer.tokens.transition import Transition
 from tpc_plugin_parser.lexer.utilities.token_name import TokenName
 from tpc_plugin_validator.rule_sets.section_rule_set import SectionRuleSet
 from tpc_plugin_validator.utilities.severity import Severity
-from tpc_plugin_validator.utilities.types import CONFIG_TYPE, FileNames, SectionNames, Violations
+from tpc_plugin_validator.utilities.types import FileNames, SectionNames, Violations
 
 
 class TransitionsSectionRuleSet(SectionRuleSet):
@@ -30,18 +30,17 @@ class TransitionsSectionRuleSet(SectionRuleSet):
         TokenName.COMMENT.value,
     ]
 
-    def __init__(self, process_file, prompts_file, config: CONFIG_TYPE) -> None:
+    def __init__(self, process_file, prompts_file) -> None:
         """
         Initialize the transitions section rule set with prompts and process configurations.
 
         :param process_file: Parsed process file.
         :param prompts_file: Parsed prompts file.
-        :param config: Configuration.
         """
         self._default_initial_state: str = "Init"
         self._file_sections: str = "init"
         self._initial_state_warned: bool = False
-        super().__init__(prompts_file=prompts_file, process_file=process_file, config=config)
+        super().__init__(prompts_file=prompts_file, process_file=process_file)
 
     def validate(self) -> None:
         """Validate the transitions section of the process file."""
@@ -81,6 +80,10 @@ class TransitionsSectionRuleSet(SectionRuleSet):
 
     def _validate_conditions(self) -> None:
         """Validate the conditions used in transitions."""
+        if not self.has_prompts_file:
+            # Skip as we were not supplied the required process file.
+            return
+
         conditions = self._get_section(file=FileNames.prompts, section_name=SectionNames.conditions)
         for transition in self._get_section(file=self._FILE_TYPE, section_name=SectionNames.transitions):
             found = False
@@ -214,13 +217,26 @@ class TransitionsSectionRuleSet(SectionRuleSet):
     def _validate_transition_reachable(self):
         """Validate that all states are reachable."""
         bool_conditions: list[str] = []
-        conditions = self._get_section(file=FileNames.prompts, section_name=SectionNames.conditions)
-        for condition in conditions:
-            # Identify and note and bool conditions declared in the conditions section.
-            if condition.token_name != TokenName.ASSIGNMENT.value:
-                continue
-            if re.match(r"\(\s*expression\s*\)\s*(true|false)", condition.assigned, re.IGNORECASE):
-                bool_conditions.append(condition.name.lower())
+        if not self.has_prompts_file:
+            # Adding presumed bool condition names as we do not have the prompts file to fetch them from.
+            bool_conditions.extend(("true", "false"))
+            self._add_violation(
+                name=Violations.information_only,
+                severity=Severity.INFO,
+                message=(
+                    "The prompts file was not supplied, therefore, assumptions have been made of boolean conditions. "
+                    "Transitions that rely on boolean conditions may not validate correctly."
+                ),
+                file=self._FILE_TYPE,
+            )
+        else:
+            conditions = self._get_section(file=FileNames.prompts, section_name=SectionNames.conditions)
+            for condition in conditions:
+                # Identify and note and bool conditions declared in the conditions section.
+                if condition.token_name != TokenName.ASSIGNMENT.value:
+                    continue
+                if re.match(r"\(\s*expression\s*\)\s*(true|false)", condition.assigned, re.IGNORECASE):
+                    bool_conditions.append(condition.name.lower())
         transition_had_bool: list[str] = []
         for transition in self._get_section(file=self._FILE_TYPE, section_name=self._SECTION_NAME):
             if transition.token_name != TokenName.TRANSITION.value:

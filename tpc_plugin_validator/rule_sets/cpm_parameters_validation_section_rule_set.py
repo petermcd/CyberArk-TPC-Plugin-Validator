@@ -3,7 +3,7 @@
 from tpc_plugin_parser.lexer.utilities.token_name import TokenName
 from tpc_plugin_validator.rule_sets.section_rule_set import SectionRuleSet
 from tpc_plugin_validator.utilities.severity import Severity
-from tpc_plugin_validator.utilities.types import CONFIG_TYPE, FileNames, SectionNames, Violations
+from tpc_plugin_validator.utilities.types import FileNames, SectionNames, Violations
 
 
 class CPMParametersValidationSectionRuleSet(SectionRuleSet):
@@ -18,16 +18,6 @@ class CPMParametersValidationSectionRuleSet(SectionRuleSet):
         TokenName.CPM_PARAMETER_VALIDATION.value,
         TokenName.COMMENT.value,
     ]
-
-    def __init__(self, process_file, prompts_file, config: CONFIG_TYPE) -> None:
-        """
-        Initialize the CPM Parameters Validation section rule set with prompts and process configurations.
-
-        :param process_file: Parsed process file.
-        :param prompts_file: Parsed prompts file.
-        :param config: Configuration.
-        """
-        super().__init__(prompts_file=prompts_file, process_file=process_file, config=config)
 
     def validate(self) -> None:
         """Validate the CPM Parameters Validation section of the process file."""
@@ -76,9 +66,7 @@ class CPMParametersValidationSectionRuleSet(SectionRuleSet):
         :return: True if used, otherwise False.
         """
 
-        conditions = self._get_section(file=FileNames.prompts, section_name=SectionNames.conditions)
-        if not conditions:
-            return False
+        conditions = self._get_section(file=FileNames.prompts, section_name=SectionNames.conditions) or []
 
         for condition in conditions:
             if condition.token_name != TokenName.ASSIGNMENT.value:

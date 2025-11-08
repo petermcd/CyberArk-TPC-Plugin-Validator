@@ -4,7 +4,7 @@ from tpc_plugin_parser.lexer.tokens.assignment import Assignment
 from tpc_plugin_parser.lexer.utilities.token_name import TokenName
 from tpc_plugin_validator.rule_sets.section_rule_set import SectionRuleSet
 from tpc_plugin_validator.utilities.severity import Severity
-from tpc_plugin_validator.utilities.types import CONFIG_TYPE, FileNames, SectionNames, Violations
+from tpc_plugin_validator.utilities.types import FileNames, SectionNames, Violations
 
 
 class DebugInformationSectionRuleSet(SectionRuleSet):
@@ -19,16 +19,6 @@ class DebugInformationSectionRuleSet(SectionRuleSet):
         TokenName.ASSIGNMENT.value,
         TokenName.COMMENT.value,
     ]
-
-    def __init__(self, process_file, prompts_file, config: CONFIG_TYPE) -> None:
-        """
-        Initialize the Debug Information section rule set with prompts and process configurations.
-
-        :param process_file: Parsed process file.
-        :param prompts_file: Parsed prompts file.
-        :param config: Configuration.
-        """
-        super().__init__(prompts_file=prompts_file, process_file=process_file, config=config)
 
     def validate(self) -> None:
         """Validate the Debug Information section of the process file."""
@@ -129,7 +119,7 @@ class DebugInformationSectionRuleSet(SectionRuleSet):
         if token.assigned.lower() != "no":
             self._add_violation(
                 name=Violations.logging_enabled_violation,
-                severity=Severity.CRITICAL if self._config.get("enabled", True) else Severity.INFO,
+                severity=Severity.CRITICAL,
                 message=f'The value for "{token.name}" is set to "{token.assigned}". It is recommended to set all settings in this section to "no" for production environments.',
                 file=self._FILE_TYPE,
                 section=self._SECTION_NAME,
