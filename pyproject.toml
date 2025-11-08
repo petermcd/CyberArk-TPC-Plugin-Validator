@@ -1,6 +1,6 @@
 [project]
 name = "cyberark-tpc-plugin-validator"
-version = "0.9.0"
+version = "0.10.0"
 description = "A tool to help validate a custom TPC plugin."
 keywords = ["cyberark", "validate", "tpc"]
 authors = [{ name = "Peter McDonald", email = "git@petermcdonald.co.uk"}]
