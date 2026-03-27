@@ -252,8 +252,19 @@ class TransitionsSectionRuleSet(SectionRuleSet):
                     line=transition.line_number,
                 )
             if transition.condition.lower() in bool_conditions:
-                # Add any found transitions that use a boolean condition to the list (must be after checking previous to stop false positives).
-                transition_had_bool.append(transition.current_state.lower())
+                if transition.condition.lower() == "false":
+                    self._add_violation(
+                        name=Violations.unreachable_transition_violation,
+                        severity=Severity.WARNING,
+                        message=f'The transition "{transition.current_state},{transition.condition},{transition.next_state}" will never be matched.',
+                        file=self._FILE_TYPE,
+                        section=self._SECTION_NAME,
+                        line=transition.line_number,
+                    )
+                    continue
+                else:
+                    # Add any found transitions that use a boolean condition to the list (must be after checking previous to stop false positives).
+                    transition_had_bool.append(transition.current_state.lower())
 
     def _validate_states(self) -> None:
         """Validate that states exist for all transitions and are in the correct case."""
