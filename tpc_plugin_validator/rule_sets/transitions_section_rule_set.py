@@ -241,8 +241,9 @@ class TransitionsSectionRuleSet(SectionRuleSet):
         for transition in self._get_section(file=self._FILE_TYPE, section_name=self._SECTION_NAME):
             if transition.token_name != TokenName.TRANSITION.value:
                 continue
-            if transition.current_state.lower() in transition_had_bool:
-                # Identify a transitions that comes after a transition that used a boolean condition.
+            tran_cur_state_lower: str = transition.current_state.lower()
+            if tran_cur_state_lower in transition_had_bool:
+                # Identify transitions that come after a transition that used a boolean condition.
                 self._add_violation(
                     name=Violations.unreachable_transition_violation,
                     severity=Severity.CRITICAL,
@@ -251,9 +252,20 @@ class TransitionsSectionRuleSet(SectionRuleSet):
                     section=self._SECTION_NAME,
                     line=transition.line_number,
                 )
-            if transition.condition.lower() in bool_conditions:
-                # Add any found transitions that use a boolean condition to the list (must be after checking previous to stop false positives).
-                transition_had_bool.append(transition.current_state.lower())
+            transition_con_lower: str = transition.condition.lower()
+            if transition_con_lower in bool_conditions:
+                if transition_con_lower == "false":
+                    self._add_violation(
+                        name=Violations.unreachable_transition_violation,
+                        severity=Severity.WARNING,
+                        message=f'The transition "{transition.current_state},{transition.condition},{transition.next_state}" will never be matched.',
+                        file=self._FILE_TYPE,
+                        section=self._SECTION_NAME,
+                        line=transition.line_number,
+                    )
+                else:
+                    # Add any found transitions that use a boolean condition to the list (must be after checking previous to stop false positives).
+                    transition_had_bool.append(tran_cur_state_lower)
 
     def _validate_states(self) -> None:
         """Validate that states exist for all transitions and are in the correct case."""
