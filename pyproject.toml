@@ -1,6 +1,6 @@
 [project]
 name = "cyberark-tpc-plugin-validator"
-version = "0.11.0"
+version = "0.11.1"
 description = "A tool to help validate a custom TPC plugin."
 keywords = ["cyberark", "validate", "tpc"]
 authors = [{ name = "Peter McDonald", email = "git@petermcdonald.co.uk"}]
@@ -29,6 +29,7 @@ issues = "https://github.com/petermcd/CyberArk-TPC-Plugin-Validator/issues"
 
 [dependency-groups]
 dev = [
+    "pygments>=2.19.2", # Pinned to overcome security alert"
     "pytest>=8.4.2",
     "pytest-cov>=6.3.0",
     "pytest-mypy-plugins>=3.2.0",
