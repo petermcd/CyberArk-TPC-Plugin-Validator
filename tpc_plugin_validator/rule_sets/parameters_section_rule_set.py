@@ -70,14 +70,13 @@ class ParametersSectionRuleSet(SectionRuleSet):
         self._validate_int_parameter(name="SendHumanMin", parameter=human_min)
         self._validate_int_parameter(name="SendHumanMax", parameter=human_max)
 
-    def _validate_int_parameter(self, name: str, parameter: Assignment, min_value: float = 0) -> None:
+    def _validate_int_parameter(self, name: str, parameter: Assignment | None, min_value: float = 0.0) -> None:
         """
         Check that the given parameter is an integer.
 
-        Args:
-            name (str): The name of the parameter.
-            parameter (Assignment): The parameter to validate.
-            min_value (int, optional): The minimum allowed value for the parameter. Defaults to 0.
+        :param name (str): The name of the parameter.
+        :param parameter (Assignment): The parameter to validate.
+        :param min_value (float, optional): The minimum allowed value for the parameter. Defaults to 0.
         """
         if not parameter:
             return

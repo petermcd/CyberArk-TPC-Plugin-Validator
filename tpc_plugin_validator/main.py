@@ -7,7 +7,7 @@ from tpc_plugin_validator.validator import Validator
 
 
 def main() -> None:
-    """Main entry point for the TPC Plugin Validator module."""
+    """The main entry point for the TPC Plugin Validator module."""
     arg_parse = argparse.ArgumentParser(
         prog="CyberArk TPC Plugin Validator",
         description="Validate the provided TPC process and prompts file.",

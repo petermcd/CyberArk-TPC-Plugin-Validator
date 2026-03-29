@@ -18,22 +18,6 @@ class TestStatesSectionRuleSet(object):
                 "tests/data/states-invalid-process.ini",
                 "tests/data/states-invalid-prompts.ini",
                 [
-                    # Test for ensuring invalid setting values are caught.
-                    ValidationResult(
-                        rule="ValueViolation",
-                        severity=Severity.WARNING,
-                        message='The code "1234" has been assigned to 2 different failure states.',
-                        file="process.ini",
-                        section="states",
-                    ),
-                    # Test to ensure declared states are used in transitions.
-                    ValidationResult(
-                        rule="UnusedStateViolation",
-                        severity=Severity.WARNING,
-                        message='The state "Source" has been declared but is not utilised in the transitions section.',
-                        file="process.ini",
-                        section="states",
-                    ),
                     # Test for ensuring duplicate assignments are caught.
                     ValidationResult(
                         rule="DuplicateAssignmentViolation",
@@ -48,6 +32,15 @@ class TestStatesSectionRuleSet(object):
                         rule="InvalidWordViolation",
                         severity=Severity.CRITICAL,
                         message='"Source" is a reserved word and cannot be used as a name in an assignment.',
+                        file="process.ini",
+                        section="states",
+                        line=16,
+                    ),
+                    # Test to ensure declared states are used in transitions.
+                    ValidationResult(
+                        rule="UnusedStateViolation",
+                        severity=Severity.WARNING,
+                        message='The state "Source" has been declared but is not utilised in the transitions section.',
                         file="process.ini",
                         section="states",
                         line=16,
@@ -70,7 +63,7 @@ class TestStatesSectionRuleSet(object):
                         section="states",
                         line=17,
                     ),
-                    # Test invalid token type in states section are caught.
+                    # Test invalid token type in a states section is caught.
                     ValidationResult(
                         rule="InvalidTokenTypeViolation",
                         severity=Severity.CRITICAL,
@@ -87,6 +80,15 @@ class TestStatesSectionRuleSet(object):
                         file="process.ini",
                         section="states",
                         line=19,
+                    ),
+                    # Test for ensuring invalid setting values are caught.
+                    ValidationResult(
+                        rule="ValueViolation",
+                        severity=Severity.WARNING,
+                        message='The code "1234" has been assigned to 2 different failure states.',
+                        file="process.ini",
+                        section="states",
+                        line=21,
                     ),
                     # Test for ensuring invalid setting values are caught.
                     ValidationResult(
@@ -112,8 +114,11 @@ class TestStatesSectionRuleSet(object):
                             "Transitions that rely on boolean conditions may not validate correctly."
                         ),
                         file="process.ini",
+                        section=None,
+                        line=None,
                     ),
-                    ValidationResult(  # Valid as the username is used in the prompts file which is missing in this test.
+                    # Valid as the username is used in the prompts file, which is missing in this test.
+                    ValidationResult(
                         rule="UnusedParameterViolation",
                         severity=Severity.WARNING,
                         message='The parameter "username" has been validated but is not used.',

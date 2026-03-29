@@ -42,24 +42,27 @@ class FileRuleSet(RuleSet):
             valid_section_name.lower(): valid_section_name for valid_section_name in self._VALID_SECTIONS.keys()
         }
         for section_name in self._file_sections[file.value]:
-            section = self._get_section_name(file=file, section_name=section_name)
-            if section in self._VALID_SECTIONS.keys():
+            section_orig = self._get_section_name(file=file, section_name=section_name)
+
+            if section_orig in self._VALID_SECTIONS.keys():
                 continue
             elif section_name in valid_sections_dict:
                 # TODO - Update so that we can output the line number of the section
                 self._add_violation(
                     name=Violations.section_name_case_violation,
                     severity=Severity.WARNING,
-                    message=f'The section "{valid_sections_dict[section_name]}" has been declared as "{section}".',
+                    message=f'The section "{valid_sections_dict[section_name]}" has been declared as "{section_orig}".',
                     file=file,
                     section=valid_sections_dict[section_name],
+                    line=None,
                 )
             else:
                 # TODO - Update so that we can output the line number of the section
                 self._add_violation(
                     name=Violations.invalid_section_name_violation,
                     severity=Severity.WARNING,
-                    message=f'The section "{section}" has been declared but is an invalid section name.',
+                    message=f'The section "{section_orig}" has been declared but is an invalid section name.',
                     file=file,
+                    section=section_orig,
                     line=None,
                 )

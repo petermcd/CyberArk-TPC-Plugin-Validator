@@ -32,7 +32,7 @@ class TransitionsSectionRuleSet(SectionRuleSet):
 
     def __init__(self, process_file, prompts_file) -> None:
         """
-        Initialize the transitions section rule set with prompts and process configurations.
+        Initialise the transitions section rule set with prompts and process configurations.
 
         :param process_file: Parsed process file.
         :param prompts_file: Parsed prompts file.
@@ -119,36 +119,32 @@ class TransitionsSectionRuleSet(SectionRuleSet):
 
     def _validate_duplicates(self) -> None:
         """Check for duplicate state transitions."""
-        state_transitions: list[Transition] = []
-        state_transitions.extend(
-            state_transition
-            for state_transition in self._get_section(file=self._FILE_TYPE, section_name=self._SECTION_NAME)
-            if state_transition.token_name == TokenName.TRANSITION.value
-        )
-        state_transitions_joined: list[str] = []
-        state_transitions_joined.extend(
-            f"{state_transition.current_state},{state_transition.condition},{state_transition.next_state}".lower()
-            for state_transition in state_transitions
-        )
+        state_transitions: list[str] = []
+        first_states = {}
+        for state_transition in self._get_section(file=self._FILE_TYPE, section_name=self._SECTION_NAME):
+            if state_transition.token_name == TokenName.TRANSITION.value:
+                state = f"{state_transition.current_state},{state_transition.condition},{state_transition.next_state}".lower()
+                state_transitions.append(state)
+                if state not in first_states:
+                    first_states[state] = state_transition
 
-        state_transitions_counted = Counter(state_transitions_joined)
-        for state in state_transitions_counted:
-            if state_transitions_counted[state] > 1:
-                # TODO - Update so that we can output the line number of the transition
+        transitions_counted = Counter(state_transitions)
+        for state in transitions_counted:
+            if transitions_counted[state] > 1:
                 self._add_violation(
                     name=Violations.duplicate_transition_violation,
                     severity=Severity.CRITICAL,
-                    message=f'The transition "{state}" has been declared {state_transitions_counted[state]} times, a transition triple must be unique.',
+                    message=f'The transition "{state}" has been declared {transitions_counted[state]} times, a transition triple must be unique.',
                     file=self._FILE_TYPE,
                     section=self._SECTION_NAME,
-                    line=None,
+                    line=first_states[state].line_number,
                 )
 
     def _validate_next_transition(self, transition: Transition, transitions) -> None:
         """
         Check the to_state has a valid transition to start from.
 
-        :param transition: The transitions token to check.
+        :param transition: The transition token to check.
         :param transitions: A list of all the transitions.
         """
         if transition.token_name != TokenName.TRANSITION.value:
@@ -293,10 +289,11 @@ class TransitionsSectionRuleSet(SectionRuleSet):
                         line=transition.line_number,
                     )
                 else:
-                    state_name = self.get_first_assignment(
+                    state: Assignment | None = self.get_first_assignment(
                         token_list=states,
                         token_name=transition.current_state,
-                    ).name
+                    )
+                    state_name: str = state.name if state else "unknown state"
                     self._add_violation(
                         name=Violations.name_case_mismatch_violation,
                         severity=Severity.WARNING,
@@ -316,10 +313,11 @@ class TransitionsSectionRuleSet(SectionRuleSet):
                         line=transition.line_number,
                     )
                 else:
-                    state_name = self.get_first_assignment(
+                    state: Assignment | None = self.get_first_assignment(
                         token_list=states,
                         token_name=transition.next_state,
-                    ).name
+                    )
+                    state_name: str = state.name if state else "unknown state"
                     self._add_violation(
                         name=Violations.name_case_mismatch_violation,
                         severity=Severity.WARNING,

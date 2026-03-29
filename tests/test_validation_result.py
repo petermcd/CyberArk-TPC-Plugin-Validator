@@ -30,6 +30,7 @@ class TestTransitionsSectionRuleSet(object):
                     message='The section "conditions" has been declared as "Conditions".',
                     file="prompts.ini",
                     section="conditions",
+                    line=None,
                 ),
                 'WARNING - prompts.ini:conditions (SectionNameCaseViolation) The section "conditions" has been declared as "Conditions".',
             ),
@@ -39,22 +40,31 @@ class TestTransitionsSectionRuleSet(object):
                     severity=Severity.WARNING,
                     message='The section "Dummy Section" has been declared but is an invalid section name.',
                     file="process.ini",
+                    section="Dummy Section",
+                    line=None,
                 ),
-                'WARNING - process.ini (InvalidSectionNameViolation) The section "Dummy Section" has been declared but is an invalid section name.',
+                "WARNING - process.ini:Dummy Section (InvalidSectionNameViolation) "
+                'The section "Dummy Section" has been declared but is an invalid section name.',
             ),
             (
                 ValidationResult(
                     rule="InvalidSectionNameViolation",
                     severity=Severity.INFO,
                     message='The section "Dummy Section" has been declared but is an invalid section name.',
+                    file="process.ini",
+                    section="Dummy Section",
+                    line=None,
                 ),
-                'INFO - (InvalidSectionNameViolation) The section "Dummy Section" has been declared but is an invalid section name.',
+                'INFO - process.ini:Dummy Section (InvalidSectionNameViolation) The section "Dummy Section" has been declared but is an invalid section name.',
             ),
             (
                 ValidationResult(
                     rule="InformationOnly",
                     severity=Severity.INFO,
                     message="The prompts file was not provided therefore validation rules requiring this file will be skipped.",
+                    file=None,
+                    section=None,
+                    line=None,
                 ),
                 "INFO - (InformationOnly) The prompts file was not provided therefore validation rules requiring this file will be skipped.",
             ),
@@ -65,6 +75,6 @@ class TestTransitionsSectionRuleSet(object):
         Tests for the ValidationResult object.
 
         :param validation_result: Instance of ValidationResult object.
-        :param expected_message: Expected message.
+        :param expected_message: The expected message.
         """
         assert str(validation_result) == expected_message

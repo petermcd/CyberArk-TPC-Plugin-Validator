@@ -18,30 +18,34 @@ class TestProcessFileRuleSet(object):
                 "tests/data/process-file-invalid-process.ini",
                 "tests/data/valid-prompts.ini",
                 [
-                    # Test to ensure invalid sections are caught.
-                    ValidationResult(
-                        rule="InvalidSectionNameViolation",
-                        severity=Severity.WARNING,
-                        message='The section "Dummy Section" has been declared but is an invalid section name.',
-                        file="process.ini",
-                    ),
-                    # Test to ensure section name case issue is caught.
+                    # Test to ensure the section name case issue is caught.
                     ValidationResult(
                         rule="SectionNameCaseViolation",
                         severity=Severity.WARNING,
                         message='The section "CPM Parameters Validation" has been declared as "cpm Parameters Validation".',
                         file="process.ini",
                         section="CPM Parameters Validation",
+                        line=None,
                     ),
-                    # Test to ensure section name case issue is caught.
+                    # Test to ensure the section name case issue is caught.
                     ValidationResult(
                         rule="SectionNameCaseViolation",
                         severity=Severity.WARNING,
                         message='The section "Debug Information" has been declared as "debug information".',
                         file="process.ini",
                         section="Debug Information",
+                        line=None,
                     ),
-                    # Test invalid token type in process file default section is caught.
+                    # Test to ensure invalid sections are caught.
+                    ValidationResult(
+                        rule="InvalidSectionNameViolation",
+                        severity=Severity.WARNING,
+                        message='The section "Dummy Section" has been declared but is an invalid section name.',
+                        file="process.ini",
+                        section="Dummy Section",
+                        line=None,
+                    ),
+                    # Test invalid token type in the process file default section is caught.
                     ValidationResult(
                         rule="InvalidTokenTypeViolation",
                         severity=Severity.CRITICAL,
@@ -59,21 +63,23 @@ class TestProcessFileRuleSet(object):
                         section="default",
                         line=8,
                     ),
-                    # Test to ensure section name case issue is caught.
+                    # Test to ensure the section name case issue is caught.
                     ValidationResult(
                         rule="SectionNameCaseViolation",
                         severity=Severity.WARNING,
                         message='The section "parameters" has been declared as "Parameters".',
                         file="process.ini",
                         section="parameters",
+                        line=None,
                     ),
-                    # Test to ensure section name case issue is caught.
+                    # Test to ensure the section name case issue is caught.
                     ValidationResult(
                         rule="SectionNameCaseViolation",
                         severity=Severity.WARNING,
                         message='The section "transitions" has been declared as "Transitions".',
                         file="process.ini",
                         section="transitions",
+                        line=None,
                     ),
                 ],
             ),
@@ -90,21 +96,17 @@ class TestProcessFileRuleSet(object):
                             "Transitions that rely on boolean conditions may not validate correctly."
                         ),
                         file="process.ini",
+                        section=None,
+                        line=None,
                     ),
-                    # Test to ensure invalid sections are caught.
-                    ValidationResult(
-                        rule="InvalidSectionNameViolation",
-                        severity=Severity.WARNING,
-                        message='The section "Dummy Section" has been declared but is an invalid section name.',
-                        file="process.ini",
-                    ),
-                    # Test to ensure section name case issue is caught.
+                    # Test to ensure the section name case issue is caught.
                     ValidationResult(
                         rule="SectionNameCaseViolation",
                         severity=Severity.WARNING,
                         message='The section "CPM Parameters Validation" has been declared as "cpm Parameters Validation".',
                         file="process.ini",
                         section="CPM Parameters Validation",
+                        line=None,
                     ),
                     ValidationResult(
                         rule="UnusedParameterViolation",
@@ -114,15 +116,25 @@ class TestProcessFileRuleSet(object):
                         section="CPM Parameters Validation",
                         line=34,
                     ),
-                    # Test to ensure section name case issue is caught.
+                    # Test to ensure the section name case issue is caught.
                     ValidationResult(
                         rule="SectionNameCaseViolation",
                         severity=Severity.WARNING,
                         message='The section "Debug Information" has been declared as "debug information".',
                         file="process.ini",
                         section="Debug Information",
+                        line=None,
                     ),
-                    # Test invalid token type in process file default section is caught.
+                    # Test to ensure invalid sections are caught.
+                    ValidationResult(
+                        rule="InvalidSectionNameViolation",
+                        severity=Severity.WARNING,
+                        message='The section "Dummy Section" has been declared but is an invalid section name.',
+                        file="process.ini",
+                        section="Dummy Section",
+                        line=None,
+                    ),
+                    # Test invalid token type in the process file default section is caught.
                     ValidationResult(
                         rule="InvalidTokenTypeViolation",
                         severity=Severity.CRITICAL,
@@ -140,21 +152,23 @@ class TestProcessFileRuleSet(object):
                         section="default",
                         line=8,
                     ),
-                    # Test to ensure section name case issue is caught.
+                    # Test to ensure the section name case issue is caught.
                     ValidationResult(
                         rule="SectionNameCaseViolation",
                         severity=Severity.WARNING,
                         message='The section "parameters" has been declared as "Parameters".',
                         file="process.ini",
                         section="parameters",
+                        line=None,
                     ),
-                    # Test to ensure section name case issue is caught.
+                    # Test to ensure the section name case issue is caught.
                     ValidationResult(
                         rule="SectionNameCaseViolation",
                         severity=Severity.WARNING,
                         message='The section "transitions" has been declared as "Transitions".',
                         file="process.ini",
                         section="transitions",
+                        line=None,
                     ),
                 ],
             ),
@@ -171,6 +185,8 @@ class TestProcessFileRuleSet(object):
                             "Transitions that rely on boolean conditions may not validate correctly."
                         ),
                         file="process.ini",
+                        section=None,
+                        line=None,
                     ),
                     ValidationResult(
                         rule="UnusedParameterViolation",
