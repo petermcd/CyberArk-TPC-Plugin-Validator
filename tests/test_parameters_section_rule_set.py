@@ -72,6 +72,7 @@ class TestParametersSectionRuleSet(object):
                         message='The assignment "PromptTimeout" has been declared 2 times.',
                         file="process.ini",
                         section="parameters",
+                        line=37,
                     ),
                     # Test for ensuring invalid setting values are caught.
                     ValidationResult(
@@ -140,6 +141,7 @@ class TestParametersSectionRuleSet(object):
                         message='The assignment "PromptTimeout" has been declared 2 times.',
                         file="process.ini",
                         section="parameters",
+                        line=37,
                     ),
                     # Test for ensuring invalid setting values are caught.
                     ValidationResult(

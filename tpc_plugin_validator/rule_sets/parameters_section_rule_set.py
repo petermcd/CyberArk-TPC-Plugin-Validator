@@ -67,44 +67,34 @@ class ParametersSectionRuleSet(SectionRuleSet):
                     line=human_min.line_number,
                 )
 
-        try:
-            if human_min and human_min.assigned and float(human_min.assigned) < 0:
-                self._add_violation(
-                    name=Violations.value_violation,
-                    severity=Severity.CRITICAL,
-                    message=f'"SendHumanMin" is set to {float(human_min.assigned)} this cannot be less than 0.',
-                    file=self._FILE_TYPE,
-                    section=self._SECTION_NAME,
-                    line=human_min.line_number,
-                )
-        except ValueError:
-            if human_min:
-                self._add_violation(
-                    name=Violations.value_violation,
-                    severity=Severity.CRITICAL,
-                    message=f'"SendHumanMin" is set to "{human_min.assigned}", the value must be numerical.',
-                    file=self._FILE_TYPE,
-                    section=self._SECTION_NAME,
-                    line=human_min.line_number,
-                )
+        self._validate_int_parameter(name="SendHumanMin", parameter=human_min)
+        self._validate_int_parameter(name="SendHumanMax", parameter=human_max)
 
+    def _validate_int_parameter(self, name: str, parameter: Assignment, min_value: int = 0) -> None:
+        """
+        Check that the given parameter is an integer.
+
+        Args:
+            name (str): The name of the parameter.
+            parameter (Assignment): The parameter to validate.
+            min_value (int, optional): The minimum allowed value for the parameter. Defaults to 0.
+        """
         try:
-            if human_max and human_max.assigned and float(human_max.assigned) < 0:
+            if parameter and parameter.assigned and float(parameter.assigned) < min_value:
                 self._add_violation(
                     name=Violations.value_violation,
                     severity=Severity.CRITICAL,
-                    message=f'"SendHumanMax" is set to {float(human_max.assigned)} this cannot be less than 0.',
+                    message=f'"{name}" is set to {float(parameter.assigned)} this cannot be less than {min_value}.',
                     file=self._FILE_TYPE,
                     section=self._SECTION_NAME,
-                    line=human_max.line_number,
+                    line=parameter.line_number,
                 )
         except ValueError:
-            if human_max:
-                self._add_violation(
-                    name=Violations.value_violation,
-                    severity=Severity.CRITICAL,
-                    message=f'"SendHumanMax" is set to "{human_max.assigned}", the value must be numerical.',
-                    section=self._SECTION_NAME,
-                    file=self._FILE_TYPE,
-                    line=human_max.line_number,
-                )
+            self._add_violation(
+                name=Violations.value_violation,
+                severity=Severity.CRITICAL,
+                message=f'"{name}" is set to "{parameter.assigned}", the value must be numerical.',
+                section=self._SECTION_NAME,
+                file=self._FILE_TYPE,
+                line=parameter.line_number,
+            )
