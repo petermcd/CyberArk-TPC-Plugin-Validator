@@ -52,7 +52,7 @@ class TestTransitionsSectionRuleSet(object):
                         section="transitions",
                         line=22,
                     ),
-                    # Test to ensure that conditions used in transitions have been declard.
+                    # Test to ensure that conditions used in transitions have been declared.
                     ValidationResult(
                         rule="InvalidConditionViolation",
                         severity=Severity.CRITICAL,

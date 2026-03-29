@@ -144,9 +144,9 @@ class TestValidator(object):
 
         :param process_file: Path to the process file to test.
         :param prompts_file: Path to the prompts file to test.
-        :param expected_message: Expected message from the thrown exception.
+        :param expected_message: The expected message from the thrown exception.
         """
-        with pytest.raises(exception_type) as excinfo:
+        with pytest.raises(exception_type) as exc_info:
             Validator.with_file(process_file_path=process_file, prompts_file_path=prompts_file)
 
-        assert excinfo.value.args[0] == expected_message
+        assert exc_info.value.args[0] == expected_message

@@ -17,14 +17,6 @@ class TestConditionsSectionRuleSet(object):
                 "tests/data/conditions-invalid-process.ini",
                 "tests/data/conditions-invalid-prompts.ini",
                 [
-                    # Test for ensuring duplicate assignments are caught.
-                    ValidationResult(
-                        rule="DuplicateAssignmentViolation",
-                        severity=Severity.CRITICAL,
-                        message='The assignment "Goodbye" has been declared 3 times.',
-                        file="prompts.ini",
-                        section="conditions",
-                    ),
                     # Test reserved words used as condition names are caught.
                     ValidationResult(
                         rule="InvalidWordViolation",
@@ -42,6 +34,15 @@ class TestConditionsSectionRuleSet(object):
                         file="prompts.ini",
                         section="conditions",
                         line=11,
+                    ),
+                    # Test for ensuring duplicate assignments are caught.
+                    ValidationResult(
+                        rule="DuplicateAssignmentViolation",
+                        severity=Severity.CRITICAL,
+                        message='The assignment "Goodbye" has been declared 3 times.',
+                        file="prompts.ini",
+                        section="conditions",
+                        line=14,
                     ),
                     # Test for conditions declared but unused.
                     ValidationResult(
@@ -95,14 +96,6 @@ class TestConditionsSectionRuleSet(object):
                 None,
                 "tests/data/conditions-invalid-prompts.ini",
                 [
-                    # Test for ensuring duplicate assignments are caught.
-                    ValidationResult(
-                        rule="DuplicateAssignmentViolation",
-                        severity=Severity.CRITICAL,
-                        message='The assignment "Goodbye" has been declared 3 times.',
-                        file="prompts.ini",
-                        section="conditions",
-                    ),
                     # Test reserved words used as condition names are caught.
                     ValidationResult(
                         rule="InvalidWordViolation",
@@ -111,6 +104,15 @@ class TestConditionsSectionRuleSet(object):
                         file="prompts.ini",
                         section="conditions",
                         line=11,
+                    ),
+                    # Test for ensuring duplicate assignments are caught.
+                    ValidationResult(
+                        rule="DuplicateAssignmentViolation",
+                        severity=Severity.CRITICAL,
+                        message='The assignment "Goodbye" has been declared 3 times.',
+                        file="prompts.ini",
+                        section="conditions",
+                        line=14,
                     ),
                     # Test invalid token type in conditions section are caught.
                     ValidationResult(

@@ -18,14 +18,6 @@ class TestCPMParametersValidationSectionRuleSet(object):
                 "tests/data/cpm-parameters-validation-invalid-process.ini",
                 "tests/data/cpm-parameters-validation-invalid-prompts.ini",
                 [
-                    # Test for ensuring duplicate assignments are caught.
-                    ValidationResult(
-                        rule="DuplicateAssignmentViolation",
-                        severity=Severity.CRITICAL,
-                        message='The assignment "password" has been declared 2 times.',
-                        file="process.ini",
-                        section="CPM Parameters Validation",
-                    ),
                     # Test to catch parameters validated but not used.
                     ValidationResult(
                         rule="UnusedParameterViolation",
@@ -34,6 +26,15 @@ class TestCPMParametersValidationSectionRuleSet(object):
                         file="process.ini",
                         section="CPM Parameters Validation",
                         line=30,
+                    ),
+                    # Test for ensuring duplicate assignments are caught.
+                    ValidationResult(
+                        rule="DuplicateAssignmentViolation",
+                        severity=Severity.CRITICAL,
+                        message='The assignment "password" has been declared 2 times.',
+                        file="process.ini",
+                        section="CPM Parameters Validation",
+                        line=31,
                     ),
                     # Test invalid token type in cpm parameters validations section are caught.
                     ValidationResult(
@@ -69,13 +70,6 @@ class TestCPMParametersValidationSectionRuleSet(object):
                         ),
                         file="process.ini",
                     ),
-                    ValidationResult(
-                        rule="DuplicateAssignmentViolation",
-                        severity=Severity.CRITICAL,
-                        message='The assignment "password" has been declared 2 times.',
-                        file="process.ini",
-                        section="CPM Parameters Validation",
-                    ),
                     # Test to catch parameters validated but not used.
                     ValidationResult(
                         rule="UnusedParameterViolation",
@@ -84,6 +78,14 @@ class TestCPMParametersValidationSectionRuleSet(object):
                         file="process.ini",
                         section="CPM Parameters Validation",
                         line=30,
+                    ),
+                    ValidationResult(
+                        rule="DuplicateAssignmentViolation",
+                        severity=Severity.CRITICAL,
+                        message='The assignment "password" has been declared 2 times.',
+                        file="process.ini",
+                        section="CPM Parameters Validation",
+                        line=31,
                     ),
                     # Test invalid token type in cpm parameters validations section are caught.
                     ValidationResult(

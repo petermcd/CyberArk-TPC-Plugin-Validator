@@ -39,6 +39,7 @@ class TransitionsSectionRuleSet(SectionRuleSet):
         """
         self._default_initial_state: str = "Init"
         self._file_sections: str = "init"
+        self._initial_state: str = ""
         self._initial_state_warned: bool = False
         super().__init__(prompts_file=prompts_file, process_file=process_file)
 

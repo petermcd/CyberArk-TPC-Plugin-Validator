@@ -18,14 +18,6 @@ class TestStatesSectionRuleSet(object):
                 "tests/data/states-invalid-process.ini",
                 "tests/data/states-invalid-prompts.ini",
                 [
-                    # Test for ensuring duplicate assignments are caught.
-                    ValidationResult(
-                        rule="DuplicateAssignmentViolation",
-                        severity=Severity.CRITICAL,
-                        message='The assignment "Wait" has been declared 2 times.',
-                        file="process.ini",
-                        section="states",
-                    ),
                     # Test for ensuring invalid setting values are caught.
                     ValidationResult(
                         rule="ValueViolation",
@@ -41,6 +33,15 @@ class TestStatesSectionRuleSet(object):
                         message='The state "Source" has been declared but is not utilised in the transitions section.',
                         file="process.ini",
                         section="states",
+                    ),
+                    # Test for ensuring duplicate assignments are caught.
+                    ValidationResult(
+                        rule="DuplicateAssignmentViolation",
+                        severity=Severity.CRITICAL,
+                        message='The assignment "Wait" has been declared 2 times.',
+                        file="process.ini",
+                        section="states",
+                        line=12,
                     ),
                     # Test reserved words used as condition names are caught.
                     ValidationResult(

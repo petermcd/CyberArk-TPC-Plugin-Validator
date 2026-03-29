@@ -17,14 +17,6 @@ class TestDebugInformationSectionRuleSet(object):
                 "tests/data/debug-information-invalid-process.ini",
                 "tests/data/debug-information-invalid-prompts.ini",
                 [
-                    # Test for ensuring duplicate assignments are caught.
-                    ValidationResult(
-                        rule="DuplicateAssignmentViolation",
-                        severity=Severity.CRITICAL,
-                        message='The assignment "ExpectLog" has been declared 2 times.',
-                        file="process.ini",
-                        section="Debug Information",
-                    ),
                     # Test for ensuring blank values are caught when no = present
                     ValidationResult(
                         rule="ValueViolation",
@@ -42,6 +34,15 @@ class TestDebugInformationSectionRuleSet(object):
                         file="process.ini",
                         section="Debug Information",
                         line=45,
+                    ),
+                    # Test for ensuring duplicate assignments are caught.
+                    ValidationResult(
+                        rule="DuplicateAssignmentViolation",
+                        severity=Severity.CRITICAL,
+                        message='The assignment "ExpectLog" has been declared 2 times.',
+                        file="process.ini",
+                        section="Debug Information",
+                        line=47,
                     ),
                     # Test for ensuring setting name case violation is caught.
                     ValidationResult(
@@ -148,13 +149,6 @@ class TestDebugInformationSectionRuleSet(object):
                         section="CPM Parameters Validation",
                         line=30,
                     ),
-                    ValidationResult(
-                        rule="DuplicateAssignmentViolation",
-                        severity=Severity.CRITICAL,
-                        message='The assignment "ExpectLog" has been declared 2 times.',
-                        file="process.ini",
-                        section="Debug Information",
-                    ),
                     # Test for ensuring blank values are caught when no = present
                     ValidationResult(
                         rule="ValueViolation",
@@ -172,6 +166,14 @@ class TestDebugInformationSectionRuleSet(object):
                         file="process.ini",
                         section="Debug Information",
                         line=45,
+                    ),
+                    ValidationResult(
+                        rule="DuplicateAssignmentViolation",
+                        severity=Severity.CRITICAL,
+                        message='The assignment "ExpectLog" has been declared 2 times.',
+                        file="process.ini",
+                        section="Debug Information",
+                        line=47,
                     ),
                     # Test for ensuring setting name case violation is caught.
                     ValidationResult(
