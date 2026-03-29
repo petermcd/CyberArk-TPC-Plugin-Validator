@@ -1,4 +1,4 @@
-"""Handle validation of process file."""
+"""Handle validation of a process file."""
 
 from tpc_plugin_parser.lexer.utilities.token_name import TokenName
 from tpc_plugin_validator.rule_sets.file_rule_set import FileRuleSet

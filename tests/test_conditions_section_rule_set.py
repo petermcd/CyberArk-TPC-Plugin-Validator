@@ -26,7 +26,7 @@ class TestConditionsSectionRuleSet(object):
                         section="conditions",
                         line=11,
                     ),
-                    # Test reserved word used as condition name with differing case.
+                    # Test reserved word used as a condition name with a differing case.
                     ValidationResult(
                         rule="UnusedConditionViolation",
                         severity=Severity.WARNING,
@@ -53,7 +53,7 @@ class TestConditionsSectionRuleSet(object):
                         section="conditions",
                         line=17,
                     ),
-                    # Test invalid token type in conditions section are caught.
+                    # Test invalid token type in the conditions section are caught.
                     ValidationResult(
                         rule="InvalidTokenTypeViolation",
                         severity=Severity.CRITICAL,
@@ -114,7 +114,7 @@ class TestConditionsSectionRuleSet(object):
                         section="conditions",
                         line=14,
                     ),
-                    # Test invalid token type in conditions section are caught.
+                    # Test invalid token type in the conditions section are caught.
                     ValidationResult(
                         rule="InvalidTokenTypeViolation",
                         severity=Severity.CRITICAL,
@@ -156,8 +156,10 @@ class TestConditionsSectionRuleSet(object):
                             "Transitions that rely on boolean conditions may not validate correctly."
                         ),
                         file="process.ini",
+                        section=None,
+                        line=None,
                     ),
-                    ValidationResult(  # Valid as the username is used in the prompts file which is missing in this test.
+                    ValidationResult(  # Valid as the username is used in the prompts file, which is missing in this test.
                         rule="UnusedParameterViolation",
                         severity=Severity.WARNING,
                         message='The parameter "username" has been validated but is not used.',

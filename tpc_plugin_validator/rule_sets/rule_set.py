@@ -85,7 +85,7 @@ class RuleSet(ABC):
         )
 
     def _extract_sections(self) -> None:
-        """Create a dictionary of section names so that we can work regardless of case."""
+        """Create a dictionary of section names so that we can work regardless of the case."""
         self._file_sections = {
             str(FileNames.process.value): {},
             str(FileNames.prompts.value): {},
@@ -107,14 +107,14 @@ class RuleSet(ABC):
         :return: The section requested.
         """
         if file.value == FileNames.process.value:
-            fetch_from = self._process_file
+            fetch_from: dict[str, list[ALL_TOKEN_TYPES]] | None = self._process_file
         elif file.value == FileNames.prompts.value:
             fetch_from = self._prompts_file
         else:
             raise ProgrammingError(f"Invalid file name provided to _get_section in {type(self).__name__}.")
 
-        section_name_fetched = self._file_sections[file.value].get(section_name.value.lower(), None)
-        return fetch_from.get(section_name_fetched, []) if section_name_fetched else []
+        section_name_fetched: str | None = self._file_sections[file.value].get(section_name.value.lower(), None)
+        return fetch_from.get(section_name_fetched, []) if fetch_from and section_name_fetched else []
 
     def _get_section_name(self, file: FileNames, section_name: str) -> str | None:
         """
@@ -132,7 +132,7 @@ class RuleSet(ABC):
         Validate the token types against _VALID_TOKENS in the section.
 
         :param file: The name of the file from the Filenames enum.
-        :param section_override: The section to analyze if not self._SECTION_NAME.
+        :param section_override: The section to analyse if not self._SECTION_NAME.
         """
 
         required_section = section_override or self._SECTION_NAME

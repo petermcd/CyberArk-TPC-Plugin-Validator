@@ -72,11 +72,11 @@ class StatesSectionRuleSet(SectionRuleSet):
 
         :param fail_states: A list of found Fail States.
         """
-        codes: list[int] = []
+        codes: dict[int, int] = {}
         lower_limit: int = 1000
         upper_limit: int = 9999
         for fail_state in fail_states:
-            codes.append(fail_state.code)
+            codes[fail_state.line_number] = fail_state.code
             if fail_state.code < lower_limit or fail_state.code > upper_limit:
                 self._add_violation(
                     name=Violations.value_violation,
@@ -87,16 +87,20 @@ class StatesSectionRuleSet(SectionRuleSet):
                     line=fail_state.line_number,
                 )
 
-        counted_codes = Counter(codes)
-        for code in counted_codes:
-            if counted_codes[code] > 1:
-                # TODO - Update so that we can output the line number of the fail state
+        counted_codes = Counter(codes.values() if codes else [])
+        for code, value in counted_codes.items():
+            if value > 1:
+                line = next(
+                    (code_line for code_line, value_ in codes.items() if value_ == code),
+                    0,
+                )
                 self._add_violation(
                     name=Violations.value_violation,
                     severity=Severity.WARNING,
                     message=f'The code "{code}" has been assigned to {counted_codes[code]} different failure states.',
                     file=self._FILE_TYPE,
                     section=self._SECTION_NAME,
+                    line=line,
                 )
 
     def _validate_fail_states(self) -> None:
@@ -108,27 +112,23 @@ class StatesSectionRuleSet(SectionRuleSet):
 
     def _validate_state_utilisation(self):
         """Validate states are utilised."""
-        states = self._get_section(file=self._FILE_TYPE, section_name=self._SECTION_NAME)
+        states_section = self._get_section(file=self._FILE_TYPE, section_name=self._SECTION_NAME)
         transition_section = self._get_section(file=self._FILE_TYPE, section_name=SectionNames.transitions)
-        state_names = [state.name for state in states if state.token_name == TokenName.ASSIGNMENT.value]
+        states = [state for state in states_section if state.token_name == TokenName.ASSIGNMENT.value]
         transitions = [
             transition for transition in transition_section if transition.token_name == TokenName.TRANSITION.value
         ]
-        for state_name in state_names:
-            if state_name.lower() == "end":
+        for state in states:
+            if state.name.lower() == "end":
                 # END state is validated elsewhere.
                 continue
-            found = False
-            for transition in transitions:
-                if state_name in [transition.current_state, transition.next_state]:
-                    found = True
-                    break
+            found = any(state.name in [transition.current_state, transition.next_state] for transition in transitions)
             if not found:
-                # TODO - Update so that we can output the line number of the state declaration
                 self._add_violation(
                     name=Violations.unused_state_violation,
                     severity=Severity.WARNING,
-                    message=f'The state "{state_name}" has been declared but is not utilised in the transitions section.',
+                    message=f'The state "{state.name}" has been declared but is not utilised in the transitions section.',
                     file=self._FILE_TYPE,
                     section=self._SECTION_NAME,
+                    line=state.line_number,
                 )

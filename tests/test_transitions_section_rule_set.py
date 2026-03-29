@@ -17,14 +17,6 @@ class TestTransitionsSectionRuleSet(object):
                 "tests/data/transitions-invalid-process.ini",
                 "tests/data/transitions-invalid-prompts.ini",
                 [
-                    # Test to ensure duplicate transitions are caught.
-                    ValidationResult(
-                        rule="DuplicateTransitionViolation",
-                        severity=Severity.CRITICAL,
-                        message='The transition "wait,failure,somefailure" has been declared 2 times, a transition triple must be unique.',
-                        file="process.ini",
-                        section="transitions",
-                    ),
                     # Test to ensure that the init name is caught if anything other than Init.
                     ValidationResult(
                         rule="NameViolation",
@@ -69,6 +61,15 @@ class TestTransitionsSectionRuleSet(object):
                         file="process.ini",
                         section="transitions",
                         line=26,
+                    ),
+                    # Test to ensure duplicate transitions are caught.
+                    ValidationResult(
+                        rule="DuplicateTransitionViolation",
+                        severity=Severity.CRITICAL,
+                        message='The transition "wait,failure,somefailure" has been declared 2 times, a transition triple must be unique.',
+                        file="process.ini",
+                        section="transitions",
+                        line=27,
                     ),
                     # Test to ensure states in transitions are in the same case as they are declared.
                     ValidationResult(
@@ -142,7 +143,7 @@ class TestTransitionsSectionRuleSet(object):
                         section="transitions",
                         line=32,
                     ),
-                    # Test invalid token type in transitions section are caught.
+                    # Test invalid token type in the transitions section is caught.
                     ValidationResult(
                         rule="InvalidTokenTypeViolation",
                         severity=Severity.CRITICAL,
@@ -175,6 +176,8 @@ class TestTransitionsSectionRuleSet(object):
                             "Transitions that rely on boolean conditions may not validate correctly."
                         ),
                         file="process.ini",
+                        section=None,
+                        line=None,
                     ),
                     ValidationResult(
                         rule="UnusedParameterViolation",
@@ -183,14 +186,6 @@ class TestTransitionsSectionRuleSet(object):
                         file="process.ini",
                         section="CPM Parameters Validation",
                         line=40,
-                    ),
-                    # Test to ensure duplicate transitions are caught.
-                    ValidationResult(
-                        rule="DuplicateTransitionViolation",
-                        severity=Severity.CRITICAL,
-                        message='The transition "wait,failure,somefailure" has been declared 2 times, a transition triple must be unique.',
-                        file="process.ini",
-                        section="transitions",
                     ),
                     # Test to ensure that the init name is caught if anything other than Init.
                     ValidationResult(
@@ -227,6 +222,15 @@ class TestTransitionsSectionRuleSet(object):
                         file="process.ini",
                         section="transitions",
                         line=26,
+                    ),
+                    # Test to ensure duplicate transitions are caught.
+                    ValidationResult(
+                        rule="DuplicateTransitionViolation",
+                        severity=Severity.CRITICAL,
+                        message='The transition "wait,failure,somefailure" has been declared 2 times, a transition triple must be unique.',
+                        file="process.ini",
+                        section="transitions",
+                        line=27,
                     ),
                     # Test to ensure that transitions can be reached.
                     ValidationResult(
@@ -273,7 +277,7 @@ class TestTransitionsSectionRuleSet(object):
                         section="transitions",
                         line=32,
                     ),
-                    # Test invalid token type in transitions section are caught.
+                    # Test invalid token type in the transitions section is caught.
                     ValidationResult(
                         rule="InvalidTokenTypeViolation",
                         severity=Severity.CRITICAL,
@@ -306,8 +310,11 @@ class TestTransitionsSectionRuleSet(object):
                             "Transitions that rely on boolean conditions may not validate correctly."
                         ),
                         file="process.ini",
+                        section=None,
+                        line=None,
                     ),
-                    ValidationResult(  # Valid as the username is used in the prompts file which is missing in this test.
+                    # Valid as the username is used in the prompts file, which is missing in this test.
+                    ValidationResult(
                         rule="UnusedParameterViolation",
                         severity=Severity.WARNING,
                         message='The parameter "username" has been validated but is not used.',

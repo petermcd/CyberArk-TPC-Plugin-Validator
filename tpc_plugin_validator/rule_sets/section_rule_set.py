@@ -26,15 +26,18 @@ class SectionRuleSet(RuleSet):
         counted_keys = Counter(token_keys)
         for token_lower in counted_keys:
             if counted_keys[token_lower] > 1:
-                first_assignment: Assignment = self.get_first_assignment(token_list=section, token_name=token_lower)
-                self._add_violation(
-                    name=Violations.duplicate_assignment_violation,
-                    severity=Severity.CRITICAL,
-                    message=f'The assignment "{first_assignment.name}" has been declared {counted_keys[token_lower]} times.',
-                    file=self._FILE_TYPE,
-                    section=self._SECTION_NAME,
-                    line=first_assignment.line_number,
+                first_assignment: Assignment | None = self.get_first_assignment(
+                    token_list=section, token_name=token_lower
                 )
+                if first_assignment:
+                    self._add_violation(
+                        name=Violations.duplicate_assignment_violation,
+                        severity=Severity.CRITICAL,
+                        message=f'The assignment "{first_assignment.name}" has been declared {counted_keys[token_lower]} times.',
+                        file=self._FILE_TYPE,
+                        section=self._SECTION_NAME,
+                        line=first_assignment.line_number,
+                    )
 
     @classmethod
     def get_first_assignment(cls, token_list: list, token_name: str) -> Assignment | None:

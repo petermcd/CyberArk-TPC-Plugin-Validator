@@ -80,7 +80,7 @@ class TestDebugInformationSectionRuleSet(object):
                         section="Debug Information",
                         line=49,
                     ),
-                    # Test invalid token type in debug information section are caught.
+                    # Test invalid token type in the debug information section is caught.
                     ValidationResult(
                         rule="InvalidTokenTypeViolation",
                         severity=Severity.CRITICAL,
@@ -140,6 +140,8 @@ class TestDebugInformationSectionRuleSet(object):
                             "Transitions that rely on boolean conditions may not validate correctly."
                         ),
                         file="process.ini",
+                        section=None,
+                        line=None,
                     ),
                     ValidationResult(
                         rule="UnusedParameterViolation",
@@ -211,7 +213,7 @@ class TestDebugInformationSectionRuleSet(object):
                         section="Debug Information",
                         line=49,
                     ),
-                    # Test invalid token type in debug information section are caught.
+                    # Test invalid token type in the debug information section is caught.
                     ValidationResult(
                         rule="InvalidTokenTypeViolation",
                         severity=Severity.CRITICAL,
@@ -271,8 +273,10 @@ class TestDebugInformationSectionRuleSet(object):
                             "Transitions that rely on boolean conditions may not validate correctly."
                         ),
                         file="process.ini",
+                        section=None,
+                        line=None,
                     ),
-                    ValidationResult(  # Valid as the username is used in the prompts file which is missing in this test.
+                    ValidationResult(  # Valid as the username is used in the prompts file, which is missing in this test.
                         rule="UnusedParameterViolation",
                         severity=Severity.WARNING,
                         message='The parameter "username" has been validated but is not used.',

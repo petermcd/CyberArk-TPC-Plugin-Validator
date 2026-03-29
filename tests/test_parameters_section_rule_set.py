@@ -45,7 +45,7 @@ class TestParametersSectionRuleSet(object):
                     ValidationResult(
                         rule="ValueViolation",
                         severity=Severity.CRITICAL,
-                        message='"SendHumanMin" is set to -1.0 this cannot be less than 0.',
+                        message='"SendHumanMin" is set to -1.0 this cannot be less than 0.0.',
                         file="process.ini",
                         section="parameters",
                         line=38,
@@ -54,7 +54,7 @@ class TestParametersSectionRuleSet(object):
                     ValidationResult(
                         rule="ValueViolation",
                         severity=Severity.CRITICAL,
-                        message='"SendHumanMax" is set to -1.0 this cannot be less than 0.',
+                        message='"SendHumanMax" is set to -1.0 this cannot be less than 0.0.',
                         file="process.ini",
                         section="parameters",
                         line=39,
@@ -83,7 +83,7 @@ class TestParametersSectionRuleSet(object):
                         section="parameters",
                         line=39,
                     ),
-                    # Test invalid token type in parameters section are caught.
+                    # Test invalid token type in the parameters section is caught.
                     ValidationResult(
                         rule="InvalidTokenTypeViolation",
                         severity=Severity.CRITICAL,
@@ -92,7 +92,7 @@ class TestParametersSectionRuleSet(object):
                         section="parameters",
                         line=41,
                     ),
-                    # Test reserved words used as condition names with differing case are caught.
+                    # Test reserved words used as condition names with a differing case are caught.
                     ValidationResult(
                         rule="InvalidWordViolation",
                         severity=Severity.CRITICAL,
@@ -125,6 +125,8 @@ class TestParametersSectionRuleSet(object):
                             "Transitions that rely on boolean conditions may not validate correctly."
                         ),
                         file="process.ini",
+                        section=None,
+                        line=None,
                     ),
                     ValidationResult(
                         rule="UnusedParameterViolation",
@@ -152,7 +154,7 @@ class TestParametersSectionRuleSet(object):
                         section="parameters",
                         line=39,
                     ),
-                    # Test invalid token type in parameters section are caught.
+                    # Test invalid token type in the parameters section is caught.
                     ValidationResult(
                         rule="InvalidTokenTypeViolation",
                         severity=Severity.CRITICAL,
@@ -161,7 +163,7 @@ class TestParametersSectionRuleSet(object):
                         section="parameters",
                         line=41,
                     ),
-                    # Test reserved words used as condition names with differing case are caught.
+                    # Test reserved words used as condition names with a differing case are caught.
                     ValidationResult(
                         rule="InvalidWordViolation",
                         severity=Severity.CRITICAL,
@@ -194,8 +196,10 @@ class TestParametersSectionRuleSet(object):
                             "Transitions that rely on boolean conditions may not validate correctly."
                         ),
                         file="process.ini",
+                        section=None,
+                        line=None,
                     ),
-                    ValidationResult(  # Valid as the username is used in the prompts file which is missing in this test.
+                    ValidationResult(  # Valid as the username is used in the prompts file, which is missing in this test.
                         rule="UnusedParameterViolation",
                         severity=Severity.WARNING,
                         message='The parameter "username" has been validated but is not used.',

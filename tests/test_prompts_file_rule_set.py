@@ -18,15 +18,16 @@ class TestPromptsFileRuleSets(object):
                 "tests/data/prompts-file-invalid-process.ini",
                 "tests/data/prompts-file-invalid-prompts.ini",
                 [
-                    # Test to ensure section name case issue is caught.
+                    # Test to ensure the section name case issue is caught.
                     ValidationResult(
                         rule="SectionNameCaseViolation",
                         severity=Severity.WARNING,
                         message='The section "conditions" has been declared as "Conditions".',
                         file="prompts.ini",
                         section="conditions",
+                        line=None,
                     ),
-                    # Test invalid token type in prompts file default section are caught.
+                    # Test invalid token type in prompts a file default section is caught.
                     ValidationResult(
                         rule="InvalidTokenTypeViolation",
                         severity=Severity.CRITICAL,
@@ -104,13 +105,14 @@ class TestPromptsFileRuleSets(object):
                         section="transitions",
                         line=25,
                     ),
-                    # Test to ensure missing section is captured.
+                    # Test to ensure a missing section is captured.
                     ValidationResult(
                         rule="MissingSectionViolation",
                         severity=Severity.CRITICAL,
                         message='"conditions" is a required section but has not been declared.',
                         file="prompts.ini",
                         section="conditions",
+                        line=None,
                     ),
                 ],
             ),
@@ -127,6 +129,8 @@ class TestPromptsFileRuleSets(object):
                             "Transitions that rely on boolean conditions may not validate correctly."
                         ),
                         file="process.ini",
+                        section=None,
+                        line=None,
                     ),
                     # Expected failure as no conditions section exists.
                     ValidationResult(
@@ -152,6 +156,8 @@ class TestPromptsFileRuleSets(object):
                             "Transitions that rely on boolean conditions may not validate correctly."
                         ),
                         file="process.ini",
+                        section=None,
+                        line=None,
                     ),
                     ValidationResult(
                         rule="UnusedParameterViolation",
