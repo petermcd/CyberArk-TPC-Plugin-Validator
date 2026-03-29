@@ -70,7 +70,7 @@ class ParametersSectionRuleSet(SectionRuleSet):
         self._validate_int_parameter(name="SendHumanMin", parameter=human_min)
         self._validate_int_parameter(name="SendHumanMax", parameter=human_max)
 
-    def _validate_int_parameter(self, name: str, parameter: Assignment, min_value: int = 0) -> None:
+    def _validate_int_parameter(self, name: str, parameter: Assignment, min_value: float = 0) -> None:
         """
         Check that the given parameter is an integer.
 
@@ -79,6 +79,8 @@ class ParametersSectionRuleSet(SectionRuleSet):
             parameter (Assignment): The parameter to validate.
             min_value (int, optional): The minimum allowed value for the parameter. Defaults to 0.
         """
+        if not parameter:
+            return
         try:
             if parameter and parameter.assigned and float(parameter.assigned) < min_value:
                 self._add_violation(
