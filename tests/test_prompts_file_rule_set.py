@@ -25,7 +25,7 @@ class TestPromptsFileRuleSets(object):
                         message='The section "conditions" has been declared as "Conditions".',
                         file="prompts.ini",
                         section="conditions",
-                        line=None,
+                        line=0,
                     ),
                     # Test invalid token type in prompts a file default section is caught.
                     ValidationResult(
@@ -51,86 +51,16 @@ class TestPromptsFileRuleSets(object):
                 "tests/data/valid-process.ini",
                 "tests/data/empty-prompts.ini",
                 [
-                    # Expected failure as no conditions section exists.
-                    ValidationResult(
-                        rule="UnusedParameterViolation",
-                        severity=Severity.WARNING,
-                        message='The parameter "username" has been validated but is not used.',
-                        file="process.ini",
-                        section="CPM Parameters Validation",
-                        line=30,
-                    ),
-                    # Expected failure as no conditions section exists.
-                    ValidationResult(
-                        rule="InvalidConditionViolation",
-                        severity=Severity.CRITICAL,
-                        message='The condition "Hello" used in the transition from "Init" to "Wait" but has not been declared.',
-                        file="process.ini",
-                        section="transitions",
-                        line=21,
-                    ),
-                    # Expected failure as no conditions section exists.
-                    ValidationResult(
-                        rule="InvalidConditionViolation",
-                        severity=Severity.CRITICAL,
-                        message='The condition "Waiting" used in the transition from "Wait" to "IsWaiting" but has not been declared.',
-                        file="process.ini",
-                        section="transitions",
-                        line=22,
-                    ),
-                    # Expected failure as no conditions section exists.
-                    ValidationResult(
-                        rule="InvalidConditionViolation",
-                        severity=Severity.CRITICAL,
-                        message='The condition "TRUE" used in the transition from "IsWaiting" to "SetPassword" but has not been declared.',
-                        file="process.ini",
-                        section="transitions",
-                        line=23,
-                    ),
-                    # Expected failure as no conditions section exists.
-                    ValidationResult(
-                        rule="InvalidConditionViolation",
-                        severity=Severity.CRITICAL,
-                        message='The condition "Failure" used in the transition from "Wait" to "SomeFailure" but has not been declared.',
-                        file="process.ini",
-                        section="transitions",
-                        line=24,
-                    ),
-                    # Expected failure as no conditions section exists.
-                    ValidationResult(
-                        rule="InvalidConditionViolation",
-                        severity=Severity.CRITICAL,
-                        message='The condition "Goodbye" used in the transition from "SetPassword" to "END" but has not been declared.',
-                        file="process.ini",
-                        section="transitions",
-                        line=25,
-                    ),
-                    # Test to ensure a missing section is captured.
-                    ValidationResult(
-                        rule="MissingSectionViolation",
-                        severity=Severity.CRITICAL,
-                        message='"conditions" is a required section but has not been declared.',
-                        file="prompts.ini",
-                        section="conditions",
-                        line=None,
-                    ),
-                ],
-            ),
-            (
-                # Test to ensure that validation continues with a missing prompts file.
-                "tests/data/valid-process.ini",
-                None,
-                [
                     ValidationResult(
                         rule="InformationOnly",
                         severity=Severity.INFO,
                         message=(
-                            "The prompts file was not supplied, therefore, assumptions have been made of boolean conditions. "
+                            "The prompts file was empty or not supplied, therefore, assumptions have been made for boolean conditions. "
                             "Transitions that rely on boolean conditions may not validate correctly."
                         ),
                         file="process.ini",
-                        section=None,
-                        line=None,
+                        section="",
+                        line=0,
                     ),
                     # Expected failure as no conditions section exists.
                     ValidationResult(
@@ -152,12 +82,39 @@ class TestPromptsFileRuleSets(object):
                         rule="InformationOnly",
                         severity=Severity.INFO,
                         message=(
-                            "The prompts file was not supplied, therefore, assumptions have been made of boolean conditions. "
+                            "The prompts file was empty or not supplied, therefore, assumptions have been made for boolean conditions. "
                             "Transitions that rely on boolean conditions may not validate correctly."
                         ),
                         file="process.ini",
-                        section=None,
-                        line=None,
+                        section="",
+                        line=0,
+                    ),
+                    # Expected failure as no conditions section exists.
+                    ValidationResult(
+                        rule="UnusedParameterViolation",
+                        severity=Severity.WARNING,
+                        message='The parameter "username" has been validated but is not used.',
+                        file="process.ini",
+                        section="CPM Parameters Validation",
+                        line=30,
+                    ),
+                ],
+            ),
+            (
+                # Test to ensure that validation continues with a missing prompts file.
+                "tests/data/valid-process.ini",
+                None,
+                [
+                    ValidationResult(
+                        rule="InformationOnly",
+                        severity=Severity.INFO,
+                        message=(
+                            "The prompts file was empty or not supplied, therefore, assumptions have been made for boolean conditions. "
+                            "Transitions that rely on boolean conditions may not validate correctly."
+                        ),
+                        file="process.ini",
+                        section="",
+                        line=0,
                     ),
                     ValidationResult(
                         rule="UnusedParameterViolation",
@@ -190,13 +147,13 @@ class TestPromptsFileRuleSets(object):
         :param prompts_file: Path to the prompts file to use for the test case.
         :param expected_violations: List of expected ValidationResult
         """
-        validate = Validator.with_file(prompts_file_path=prompts_file, process_file_path=process_file)
+        validate: Validator = Validator.with_file(prompts_file_path=prompts_file, process_file_path=process_file)
         validate.validate()
-        results = validate.get_violations()
+        results: list[ValidationResult] = validate.violations
 
         assert len(results) == len(expected_violations)
 
         for result in results:
             assert result in expected_violations
 
-        assert validate.get_violations() == expected_violations
+        assert validate.violations == expected_violations

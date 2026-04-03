@@ -152,12 +152,12 @@ class TestConditionsSectionRuleSet(object):
                         rule="InformationOnly",
                         severity=Severity.INFO,
                         message=(
-                            "The prompts file was not supplied, therefore, assumptions have been made of boolean conditions. "
+                            "The prompts file was empty or not supplied, therefore, assumptions have been made for boolean conditions. "
                             "Transitions that rely on boolean conditions may not validate correctly."
                         ),
                         file="process.ini",
-                        section=None,
-                        line=None,
+                        section="",
+                        line=0,
                     ),
                     ValidationResult(  # Valid as the username is used in the prompts file, which is missing in this test.
                         rule="UnusedParameterViolation",
@@ -190,13 +190,13 @@ class TestConditionsSectionRuleSet(object):
         :param prompts_file: Path to the prompts file to use for the test case.
         :param expected_violations: List of expected ValidationResult
         """
-        validate = Validator.with_file(prompts_file_path=prompts_file, process_file_path=process_file)
+        validate: Validator = Validator.with_file(prompts_file_path=prompts_file, process_file_path=process_file)
         validate.validate()
-        results = validate.get_violations()
+        results: list[ValidationResult] = validate.violations
 
         assert len(results) == len(expected_violations)
 
         for result in results:
             assert result in expected_violations
 
-        assert validate.get_violations() == expected_violations
+        assert validate.violations == expected_violations

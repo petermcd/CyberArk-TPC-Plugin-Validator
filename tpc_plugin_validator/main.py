@@ -1,5 +1,7 @@
 """Entry point for the TPC Plugin Validator module."""
 
+from tpc_plugin_validator.utilities.validation_result import ValidationResult
+
 import argparse
 import sys
 
@@ -23,7 +25,7 @@ def main() -> None:
         sys.exit(1)
 
     validator.validate()
-    violations = validator.get_violations()
+    violations: list[ValidationResult] = validator.violations
 
     if not violations:
         print("No violations found. The files are valid.")
@@ -37,4 +39,4 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    main()

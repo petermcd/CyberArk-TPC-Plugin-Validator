@@ -28,8 +28,8 @@ class RuleSet(ABC):
 
     def __init__(
         self,
-        process_file: dict[str, list[ALL_TOKEN_TYPES]] | None,
-        prompts_file: dict[str, list[ALL_TOKEN_TYPES]] | None,
+        process_file: dict[str, list[ALL_TOKEN_TYPES]],
+        prompts_file: dict[str, list[ALL_TOKEN_TYPES]],
     ) -> None:
         """
         Initialize the rule set with prompts and process configurations.
@@ -38,13 +38,14 @@ class RuleSet(ABC):
         :param prompts_file: Parsed prompts file.
         """
         self._file_sections: dict[str, dict[str, str]] = {}
-        self._process_file: dict[str, list[ALL_TOKEN_TYPES]] | None = process_file
-        self._prompts_file: dict[str, list[ALL_TOKEN_TYPES]] | None = prompts_file
+        self._process_file: dict[str, list[ALL_TOKEN_TYPES]] = process_file
+        self._prompts_file: dict[str, list[ALL_TOKEN_TYPES]] = prompts_file
         self._violations: list[ValidationResult] = []
 
         self._extract_sections()
 
-    def get_violations(self) -> list[ValidationResult]:
+    @property
+    def violations(self) -> list[ValidationResult]:
         """
         Getter for the violations.
 
@@ -57,9 +58,9 @@ class RuleSet(ABC):
         name: Violations,
         severity: Severity,
         message: str,
-        file: FileNames | str | None = None,
-        section: SectionNames | str | None = None,
-        line: int | None = None,
+        file: FileNames | str = "",
+        section: SectionNames | str = "",
+        line: int = 0,
     ) -> None:
         """
         Add a new violation.
@@ -78,8 +79,8 @@ class RuleSet(ABC):
                 rule=name.value,
                 severity=severity,
                 message=message,
-                file=str(file) if file else None,
-                section=str(section) if section else None,
+                file=str(file) if file else "",
+                section=str(section) if section else "",
                 line=line,
             )
         )
@@ -107,16 +108,16 @@ class RuleSet(ABC):
         :return: The section requested.
         """
         if file.value == FileNames.process.value:
-            fetch_from: dict[str, list[ALL_TOKEN_TYPES]] | None = self._process_file
+            fetch_from: dict[str, list[ALL_TOKEN_TYPES]] = self._process_file
         elif file.value == FileNames.prompts.value:
             fetch_from = self._prompts_file
         else:
             raise ProgrammingError(f"Invalid file name provided to _get_section in {type(self).__name__}.")
 
-        section_name_fetched: str | None = self._file_sections[file.value].get(section_name.value.lower(), None)
+        section_name_fetched: str = self._file_sections[file.value].get(section_name.value.lower(), "")
         return fetch_from.get(section_name_fetched, []) if fetch_from and section_name_fetched else []
 
-    def _get_section_name(self, file: FileNames, section_name: str) -> str | None:
+    def _get_section_name(self, file: FileNames, section_name: str) -> str:
         """
         Fetch the section name as it was specified in the given file.
 
@@ -125,7 +126,7 @@ class RuleSet(ABC):
 
         :return: The section name as it was provided in the file.
         """
-        return self._file_sections[file.value].get(section_name.lower(), None)
+        return self._file_sections[file.value].get(section_name.lower(), "")
 
     def _validate_tokens(self, file: FileNames, section_override: SectionNames | None = None) -> None:
         """
@@ -181,13 +182,13 @@ class RuleSet(ABC):
 
         :return: True if the process file was provided otherwise False.
         """
-        return self._process_file is not None
+        return len(self._process_file) > 0
 
     @property
     def has_prompts_file(self) -> bool:
         """
-        Property to check if the prompts file was provided.
+        Property to check if the prompt file was provided.
 
-        :return: True if the prompts file was provided otherwise False.
+        :return: True if the prompt file was provided otherwise False.
         """
-        return self._prompts_file is not None
+        return len(self._prompts_file) > 0

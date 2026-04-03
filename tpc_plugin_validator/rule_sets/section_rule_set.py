@@ -26,10 +26,7 @@ class SectionRuleSet(RuleSet):
         counted_keys = Counter(token_keys)
         for token_lower in counted_keys:
             if counted_keys[token_lower] > 1:
-                first_assignment: Assignment | None = self.get_first_assignment(
-                    token_list=section, token_name=token_lower
-                )
-                if first_assignment:
+                if first_assignment := self.get_first_assignment(token_list=section, token_name=token_lower):
                     self._add_violation(
                         name=Violations.duplicate_assignment_violation,
                         severity=Severity.CRITICAL,

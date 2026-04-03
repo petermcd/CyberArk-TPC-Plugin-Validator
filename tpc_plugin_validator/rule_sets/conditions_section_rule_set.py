@@ -1,4 +1,4 @@
-"""Handle validation of the conditions section in the prompts file."""
+"""Handle validation of the conditions section in the prompt file."""
 
 from tpc_plugin_parser.lexer.tokens.assignment import Assignment
 from tpc_plugin_parser.lexer.utilities.token_name import TokenName
@@ -9,7 +9,7 @@ from tpc_plugin_validator.utilities.types import FileNames, SectionNames, Violat
 
 class ConditionsSectionRuleSet(SectionRuleSet):
     """
-    Handle validation of the conditions section in the prompts file.
+    Handle validation of the conditions section in the prompt file.
     """
 
     _CONFIG_KEY: str = "conditions"
@@ -21,7 +21,7 @@ class ConditionsSectionRuleSet(SectionRuleSet):
     ]
 
     def validate(self) -> None:
-        """Validate the conditions section of the prompts file."""
+        """Validate the conditions section of the prompt file."""
         section = self._get_section(file=self._FILE_TYPE, section_name=self._SECTION_NAME)
         if not section:
             # Missing sections are handled at the file level.
