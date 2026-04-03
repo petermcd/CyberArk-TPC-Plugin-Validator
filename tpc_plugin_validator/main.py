@@ -1,10 +1,9 @@
 """Entry point for the TPC Plugin Validator module."""
 
-from tpc_plugin_validator.utilities.validation_result import ValidationResult
-
 import argparse
 import sys
 
+from tpc_plugin_validator.utilities.validation_result import ValidationResult
 from tpc_plugin_validator.validator import Validator
 
 
