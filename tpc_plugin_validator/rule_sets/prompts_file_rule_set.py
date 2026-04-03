@@ -1,4 +1,4 @@
-"""Handle validation of the prompts file."""
+"""Handle validation of the prompt file."""
 
 from tpc_plugin_parser.lexer.utilities.token_name import TokenName
 from tpc_plugin_validator.rule_sets.file_rule_set import FileRuleSet
@@ -8,7 +8,7 @@ from tpc_plugin_validator.utilities.types import ValidSectionConfig, FileNames, 
 
 class PromptsFileRuleSet(FileRuleSet):
     """
-    Handle validation of the prompts file.
+    Handle validation of the prompt file.
 
     Validation of individual section content is handled in their own rulesets.
     """
@@ -24,7 +24,7 @@ class PromptsFileRuleSet(FileRuleSet):
     ]
 
     def validate(self) -> None:
-        """Validate the prompts file."""
+        """Validate the prompt file."""
         if not self.has_prompts_file:
             # Skip as we were not supplied the required process file.
             return

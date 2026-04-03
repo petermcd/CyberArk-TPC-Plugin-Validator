@@ -3,6 +3,7 @@
 import argparse
 import sys
 
+from tpc_plugin_validator.utilities.validation_result import ValidationResult
 from tpc_plugin_validator.validator import Validator
 
 
@@ -23,7 +24,7 @@ def main() -> None:
         sys.exit(1)
 
     validator.validate()
-    violations = validator.get_violations()
+    violations: list[ValidationResult] = validator.violations
 
     if not violations:
         print("No violations found. The files are valid.")
@@ -37,4 +38,4 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    main()

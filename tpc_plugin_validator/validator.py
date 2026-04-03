@@ -5,6 +5,7 @@ from typing import Callable
 
 from tpc_plugin_parser.lexer.utilities.types import ALL_TOKEN_TYPES
 from tpc_plugin_parser.parser import Parser
+
 from tpc_plugin_validator.rule_sets.conditions_section_rule_set import (
     ConditionsSectionRuleSet,
 )
@@ -38,25 +39,25 @@ class Validator(object):
         "_violations",
     )
 
-    def __init__(self, process_file_content: str | None = None, prompts_file_content: str | None = None) -> None:
+    def __init__(self, process_file_content: str = "", prompts_file_content: str = "") -> None:
         """
         Standard init for the Validator class.
 
         :param process_file_content: Content for the process file.
-        :param prompts_file_content: Content for the prompts file.
+        :param prompts_file_content: Content for the prompt file.
         """
-        if process_file_content is None and prompts_file_content is None:
-            raise ProgrammingError("At least one of process file or prompts file required to complete validation.")
+        if not process_file_content and not prompts_file_content:
+            raise ProgrammingError("At least one of process file or prompts file is required to complete validation.")
 
-        self._process: dict[str, list[ALL_TOKEN_TYPES]] | None = None
-        self._prompts: dict[str, list[ALL_TOKEN_TYPES]] | None = None
+        self._process: dict[str, list[ALL_TOKEN_TYPES]] = {}
+        self._prompts: dict[str, list[ALL_TOKEN_TYPES]] = {}
 
-        if process_file_content is not None:
+        if process_file_content:
             self._process = Parser(
                 file_contents=process_file_content,
             ).parsed_file
 
-        if prompts_file_content is not None:
+        if prompts_file_content:
             self._prompts = Parser(
                 file_contents=prompts_file_content,
             ).parsed_file
@@ -73,14 +74,6 @@ class Validator(object):
             TransitionsSectionRuleSet,
         }
 
-    def get_violations(self) -> list[ValidationResult]:
-        """
-        Fetch a list of violations.
-
-        :return: List of ValidationResult
-        """
-        return self._violations
-
     def validate(self) -> None:
         """Execute validations."""
         for rule_set in self._rule_sets:
@@ -89,9 +82,34 @@ class Validator(object):
                 prompts_file=self._prompts,
             )
             validator.validate()
-            self._violations: list[ValidationResult] = self.sort_violations(
-                self._violations + validator.get_violations()
-            )
+            self._violations: list[ValidationResult] = self.sort_violations(self._violations + validator.violations)
+
+    @property
+    def process_file(self) -> dict[str, list[ALL_TOKEN_TYPES]]:
+        """
+        Property to fetch the process file.
+
+        :return: Process file as a dict
+        """
+        return self._process or {}
+
+    @property
+    def prompts_file(self) -> dict[str, list[ALL_TOKEN_TYPES]]:
+        """
+        Property to fetch the prompt file.
+
+        :return: Prompts file as a dict
+        """
+        return self._prompts or {}
+
+    @property
+    def violations(self) -> list[ValidationResult]:
+        """
+        Property to fetch violations.
+
+        :return: List of ValidationResult
+        """
+        return self._violations
 
     @classmethod
     def sort_violations(cls, violations: list[ValidationResult]) -> list[ValidationResult]:
@@ -105,20 +123,20 @@ class Validator(object):
         return sorted(
             violations,
             key=lambda violation: (
-                str(violation.file) if violation.file is not None else "",
-                str(violation.section) if violation.section is not None else "",
-                violation.line if violation.line is not None else -1,
-                str(violation.message) if violation.message is not None else "",
+                str(violation.file) if violation.file else "",
+                str(violation.section) if violation.section else "",
+                violation.line or -1,
+                str(violation.message) if violation.message else "",
             ),
         )
 
     @classmethod
-    def with_file(cls, process_file_path: str | None = None, prompts_file_path: str | None = None) -> "Validator":
+    def with_file(cls, process_file_path: str = "", prompts_file_path: str = "") -> "Validator":
         """
         Set the file to be validated.
 
         :param process_file_path: Path to the process file.
-        :param prompts_file_path: Path to the prompts file.
+        :param prompts_file_path: Path to the prompt file.
 
         :return: Self
         """
@@ -128,8 +146,8 @@ class Validator(object):
         if prompts_file_path and not os.path.isfile(prompts_file_path):
             raise FileNotFoundError(f"The prompts file was not found: {prompts_file_path}")
 
-        process_file_content: str | None = None
-        prompts_file_content: str | None = None
+        process_file_content: str = ""
+        prompts_file_content: str = ""
 
         if process_file_path:
             with open(process_file_path, "r", encoding="utf-8") as process_file:

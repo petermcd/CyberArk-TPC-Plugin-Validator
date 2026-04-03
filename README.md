@@ -24,8 +24,8 @@ Alternatively you can run it using Python directly:
 
 ```python
 from tpc_plugin_validator.validator import Validator
-validator = Validator.with_file(r'\path\to\plugin\directory\process.ini', r'\path\to\plugin\directory\prompts.ini', {})
+validator = Validator.with_file(r'\path\to\plugin\directory\process.ini', r'\path\to\plugin\directory\prompts.ini')
 validator.validate()
-print(validator.get_violations())
+print(validator.violations)
 ```
 

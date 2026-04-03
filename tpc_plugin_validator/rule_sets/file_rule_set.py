@@ -54,7 +54,7 @@ class FileRuleSet(RuleSet):
                     message=f'The section "{valid_sections_dict[section_name]}" has been declared as "{section_orig}".',
                     file=file,
                     section=valid_sections_dict[section_name],
-                    line=None,
+                    line=0,
                 )
             else:
                 # TODO - Update so that we can output the line number of the section
@@ -64,5 +64,5 @@ class FileRuleSet(RuleSet):
                     message=f'The section "{section_orig}" has been declared but is an invalid section name.',
                     file=file,
                     section=section_orig,
-                    line=None,
+                    line=0,
                 )
