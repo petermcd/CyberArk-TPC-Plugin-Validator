@@ -114,16 +114,16 @@ toml = [
 
 [[package]]
 name = "cyberark-tpc-plugin-parser"
-version = "0.3.1"
+version = "0.4.0"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/fe/1b/e328b750bf2287178dcce52d0bb00bd6673f87861247324b7550c29fb325/cyberark_tpc_plugin_parser-0.3.1.tar.gz", hash = "sha256:95874b4d8b89bf70c34f771cac6d916c38dbc2590393cc5b89b98a0bc9af7574", size = 7829, upload-time = "2025-11-08T16:48:08.602Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/6c/75/84dfc2001fb3e6459338a1578b19f789e65dc978669fc26548db2e654b9c/cyberark_tpc_plugin_parser-0.4.0.tar.gz", hash = "sha256:03f38ed750a449eb70514d4e1afda706201b112871c0e2ac79cef82575bd0000", size = 8298, upload-time = "2026-05-27T20:14:54.526Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/e5/e9/733a29992bbe22e50423d8fa0eca909089f89b4eb34deff545324709f6fc/cyberark_tpc_plugin_parser-0.3.1-py3-none-any.whl", hash = "sha256:f8c465cc813e3181f3d5546c551f3b243d7fba143cd2751d6ba2c30174afa046", size = 11893, upload-time = "2025-11-08T16:48:07.32Z" },
+    { url = "https://files.pythonhosted.org/packages/75/5e/ab0dce24c9e5618fcafbea691598fcbc6af6011d73b1a02e634849463314/cyberark_tpc_plugin_parser-0.4.0-py3-none-any.whl", hash = "sha256:6eb628e730185d9102e365658e0b466d47606500310395c3b6aa83f39e2152c7", size = 12152, upload-time = "2026-05-27T20:14:53.403Z" },
 ]
 
 [[package]]
 name = "cyberark-tpc-plugin-validator"
-version = "1.0.1"
+version = "1.2.0"
 source = { virtual = "." }
 dependencies = [
     { name = "cyberark-tpc-plugin-parser" },
@@ -132,6 +132,7 @@ dependencies = [
 [package.dev-dependencies]
 dev = [
     { name = "pygments" },
+    { name = "pyright" },
     { name = "pytest" },
     { name = "pytest-cov" },
     { name = "pytest-mypy-plugins" },
@@ -141,11 +142,12 @@ dev = [
 ]
 
 [package.metadata]
-requires-dist = [{ name = "cyberark-tpc-plugin-parser", specifier = ">=0.3.1" }]
+requires-dist = [{ name = "cyberark-tpc-plugin-parser", specifier = ">=0.4.0" }]
 
 [package.metadata.requires-dev]
 dev = [
     { name = "pygments", specifier = ">=2.20.0" },
+    { name = "pyright", specifier = ">=1.1.408" },
     { name = "pytest", specifier = ">=9.0.2" },
     { name = "pytest-cov", specifier = ">=7.1.0" },
     { name = "pytest-mypy-plugins", specifier = ">=4.0.0" },
@@ -328,6 +330,15 @@ wheels = [
 ]
 
 [[package]]
+name = "nodeenv"
+version = "1.10.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/24/bf/d1bda4f6168e0b2e9e5958945e01910052158313224ada5ce1fb2e1113b8/nodeenv-1.10.0.tar.gz", hash = "sha256:996c191ad80897d076bdfba80a41994c2b47c68e224c542b48feba42ba00f8bb", size = 55611, upload-time = "2025-12-20T14:08:54.006Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/88/b2/d0896bdcdc8d28a7fc5717c305f1a861c26e18c05047949fb371034d98bd/nodeenv-1.10.0-py2.py3-none-any.whl", hash = "sha256:5bb13e3eed2923615535339b3c620e76779af4cb4c6a90deccc9e36b274d3827", size = 23438, upload-time = "2025-12-20T14:08:52.782Z" },
+]
+
+[[package]]
 name = "packaging"
 version = "25.0"
 source = { registry = "https://pypi.org/simple" }
@@ -361,6 +372,19 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/c3/b2/bc9c9196916376152d655522fdcebac55e66de6603a76a02bca1b6414f6c/pygments-2.20.0.tar.gz", hash = "sha256:6757cd03768053ff99f3039c1a36d6c0aa0b263438fcab17520b30a303a82b5f", size = 4955991, upload-time = "2026-03-29T13:29:33.898Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/f4/7e/a72dd26f3b0f4f2bf1dd8923c85f7ceb43172af56d63c7383eb62b332364/pygments-2.20.0-py3-none-any.whl", hash = "sha256:81a9e26dd42fd28a23a2d169d86d7ac03b46e2f8b59ed4698fb4785f946d0176", size = 1231151, upload-time = "2026-03-29T13:29:30.038Z" },
+]
+
+[[package]]
+name = "pyright"
+version = "1.1.409"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "nodeenv" },
+    { name = "typing-extensions" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/51/4e/3aa27f74211522dba7e9cbc3e74de779c6d4b654c54e50a4840623be8014/pyright-1.1.409.tar.gz", hash = "sha256:986ee05beca9e077c165758ad123667c679e050059a2546aa02473930394bc93", size = 4430434, upload-time = "2026-04-23T11:02:03.799Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/16/6b/330d8ebae582b30c2959a1ef4c3bc344ebde48c2ff0c3f113c4710735e11/pyright-1.1.409-py3-none-any.whl", hash = "sha256:aa3ea228cab90c845c7a60d28db7a844c04315356392aa09fafcee98c8c22fb3", size = 6438161, upload-time = "2026-04-23T11:02:01.309Z" },
 ]
 
 [[package]]
