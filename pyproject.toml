@@ -8,7 +8,7 @@ readme = "README.md"
 license = { file = "LICENSE" }
 requires-python = ">=3.11"
 dependencies = [
-    "cyberark-tpc-plugin-parser>=0.3.1",
+    "cyberark-tpc-plugin-parser>=0.4.0",
 ]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
@@ -32,12 +32,12 @@ issues = "https://github.com/petermcd/CyberArk-TPC-Plugin-Validator/issues"
 [dependency-groups]
 dev = [
     "pygments>=2.20.0", # Pinned to resolve security issue
-    "pytest>=9.0.2",
+    "pytest>=9.0.3",
     "pytest-cov>=7.1.0",
-    "pytest-mypy-plugins>=4.0.0",
-    "ruff>=0.15.8",
+    "pytest-mypy-plugins>=4.0.3",
+    "ruff>=0.15.14",
     "troml>=0.4.1",
-    "ty>=0.0.26",
+    "ty>=0.0.40",
 ]
 
 [project.scripts]
