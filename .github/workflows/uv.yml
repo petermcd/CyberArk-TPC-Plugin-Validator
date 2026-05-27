@@ -39,7 +39,7 @@ jobs:
       - name: Troml
         run: uv run troml check
       - name: pip-audit
-        run: uvx pip-audit
+        run: uv run pip-audit
       - name: Run SonarQube
         uses: sonarsource/sonarqube-scan-action@299e4b793aaa83bf2aba7c9c14bedbb485688ec4
         env:
