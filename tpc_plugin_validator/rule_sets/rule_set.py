@@ -1,5 +1,6 @@
 """Abstract class for all rule sets."""
 
+import unicodedata
 from abc import ABC
 
 from tpc_plugin_parser.lexer.utilities.token_name import TokenName
@@ -174,6 +175,13 @@ class RuleSet(ABC):
                     section=required_section,
                     line=token.line_number,
                 )
+
+    @staticmethod
+    def _sanitize_value(value: str | None) -> str:
+        """Replace terminal control characters in untrusted file values before including in output."""
+        if value is None:
+            return ""
+        return "".join(ch if unicodedata.category(ch)[0] != "C" else f"\\x{ord(ch):02x}" for ch in value)
 
     @property
     def has_process_file(self) -> bool:

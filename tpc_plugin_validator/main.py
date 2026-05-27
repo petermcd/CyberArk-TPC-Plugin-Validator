@@ -22,6 +22,15 @@ def main() -> None:
     except FileNotFoundError:
         print("One or both of the specified files do not exist.")
         sys.exit(1)
+    except PermissionError:
+        print("Permission denied reading one of the specified files.")
+        sys.exit(1)
+    except UnicodeDecodeError:
+        print("One of the specified files is not valid UTF-8.")
+        sys.exit(1)
+    except ValueError as exc:
+        print(f"Invalid input: {exc}")
+        sys.exit(1)
 
     validator.validate()
     violations: list[ValidationResult] = validator.violations
