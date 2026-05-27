@@ -60,7 +60,7 @@ class StatesSectionRuleSet(SectionRuleSet):
             self._add_violation(
                 name=Violations.value_violation,
                 severity=Severity.CRITICAL,
-                message=f'The "END" state has been assigned the value "{end_state.assigned}", the "END" state should not have a value.',
+                message=f'The "END" state has been assigned the value "{self._sanitize_value(end_state.assigned)}", the "END" state should not have a value.',
                 file=self._FILE_TYPE,
                 section=self._SECTION_NAME,
                 line=end_state.line_number,

@@ -99,7 +99,7 @@ class DebugInformationSectionRuleSet(SectionRuleSet):
             self._add_violation(
                 name=Violations.value_violation,
                 severity=Severity.CRITICAL,
-                message=f'The value for "{token.name}" is set to "{token.assigned}" and is invalid. Valid values are "no" and "yes".',
+                message=f'The value for "{token.name}" is set to "{self._sanitize_value(token.assigned)}" and is invalid. Valid values are "no" and "yes".',
                 file=self._FILE_TYPE,
                 section=self._SECTION_NAME,
                 line=token.line_number,
@@ -110,7 +110,7 @@ class DebugInformationSectionRuleSet(SectionRuleSet):
             self._add_violation(
                 name=Violations.value_case_violation,
                 severity=Severity.WARNING,
-                message=f'The value for "{token.name}" is set to "{token.assigned}" this should be in lower case.',
+                message=f'The value for "{token.name}" is set to "{self._sanitize_value(token.assigned)}" this should be in lower case.',
                 file=self._FILE_TYPE,
                 section=self._SECTION_NAME,
                 line=token.line_number,
@@ -120,7 +120,7 @@ class DebugInformationSectionRuleSet(SectionRuleSet):
             self._add_violation(
                 name=Violations.logging_enabled_violation,
                 severity=Severity.CRITICAL,
-                message=f'The value for "{token.name}" is set to "{token.assigned}". It is recommended to set all settings in this section to "no" for production environments.',
+                message=f'The value for "{token.name}" is set to "{self._sanitize_value(token.assigned)}". It is recommended to set all settings in this section to "no" for production environments.',
                 file=self._FILE_TYPE,
                 section=self._SECTION_NAME,
                 line=token.line_number,

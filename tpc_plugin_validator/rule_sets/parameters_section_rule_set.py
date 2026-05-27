@@ -94,7 +94,7 @@ class ParametersSectionRuleSet(SectionRuleSet):
             self._add_violation(
                 name=Violations.value_violation,
                 severity=Severity.CRITICAL,
-                message=f'"{name}" is set to "{parameter.assigned}", the value must be numerical.',
+                message=f'"{name}" is set to "{self._sanitize_value(parameter.assigned)}", the value must be numerical.',
                 section=self._SECTION_NAME,
                 file=self._FILE_TYPE,
                 line=parameter.line_number,
