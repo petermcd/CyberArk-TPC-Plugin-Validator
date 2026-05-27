@@ -215,13 +215,13 @@ class TransitionsSectionRuleSet(SectionRuleSet):
         """Validate that all states are reachable."""
         bool_conditions: list[str] = []
         if not self.has_prompts_file:
-            # Adding presumed bool condition names as we do not have the prompts file to fetch them from.
+            # Adding presumed bool condition names as we do not have the prompt file to fetch them from.
             bool_conditions.extend(("true", "false"))
             self._add_violation(
                 name=Violations.information_only,
                 severity=Severity.INFO,
                 message=(
-                    "The prompts file was not supplied, therefore, assumptions have been made of boolean conditions. "
+                    "The prompts file was empty or not supplied, therefore, assumptions have been made for boolean conditions. "
                     "Transitions that rely on boolean conditions may not validate correctly."
                 ),
                 file=self._FILE_TYPE,

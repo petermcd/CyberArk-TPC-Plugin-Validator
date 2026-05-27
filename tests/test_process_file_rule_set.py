@@ -25,7 +25,7 @@ class TestProcessFileRuleSet(object):
                         message='The section "CPM Parameters Validation" has been declared as "cpm Parameters Validation".',
                         file="process.ini",
                         section="CPM Parameters Validation",
-                        line=None,
+                        line=0,
                     ),
                     # Test to ensure the section name case issue is caught.
                     ValidationResult(
@@ -34,7 +34,7 @@ class TestProcessFileRuleSet(object):
                         message='The section "Debug Information" has been declared as "debug information".',
                         file="process.ini",
                         section="Debug Information",
-                        line=None,
+                        line=0,
                     ),
                     # Test to ensure invalid sections are caught.
                     ValidationResult(
@@ -43,7 +43,7 @@ class TestProcessFileRuleSet(object):
                         message='The section "Dummy Section" has been declared but is an invalid section name.',
                         file="process.ini",
                         section="Dummy Section",
-                        line=None,
+                        line=0,
                     ),
                     # Test invalid token type in the process file default section is caught.
                     ValidationResult(
@@ -70,7 +70,7 @@ class TestProcessFileRuleSet(object):
                         message='The section "parameters" has been declared as "Parameters".',
                         file="process.ini",
                         section="parameters",
-                        line=None,
+                        line=0,
                     ),
                     # Test to ensure the section name case issue is caught.
                     ValidationResult(
@@ -79,7 +79,7 @@ class TestProcessFileRuleSet(object):
                         message='The section "transitions" has been declared as "Transitions".',
                         file="process.ini",
                         section="transitions",
-                        line=None,
+                        line=0,
                     ),
                 ],
             ),
@@ -92,12 +92,12 @@ class TestProcessFileRuleSet(object):
                         rule="InformationOnly",
                         severity=Severity.INFO,
                         message=(
-                            "The prompts file was not supplied, therefore, assumptions have been made of boolean conditions. "
+                            "The prompts file was empty or not supplied, therefore, assumptions have been made for boolean conditions. "
                             "Transitions that rely on boolean conditions may not validate correctly."
                         ),
                         file="process.ini",
-                        section=None,
-                        line=None,
+                        section="",
+                        line=0,
                     ),
                     # Test to ensure the section name case issue is caught.
                     ValidationResult(
@@ -106,7 +106,7 @@ class TestProcessFileRuleSet(object):
                         message='The section "CPM Parameters Validation" has been declared as "cpm Parameters Validation".',
                         file="process.ini",
                         section="CPM Parameters Validation",
-                        line=None,
+                        line=0,
                     ),
                     ValidationResult(
                         rule="UnusedParameterViolation",
@@ -123,7 +123,7 @@ class TestProcessFileRuleSet(object):
                         message='The section "Debug Information" has been declared as "debug information".',
                         file="process.ini",
                         section="Debug Information",
-                        line=None,
+                        line=0,
                     ),
                     # Test to ensure invalid sections are caught.
                     ValidationResult(
@@ -132,7 +132,7 @@ class TestProcessFileRuleSet(object):
                         message='The section "Dummy Section" has been declared but is an invalid section name.',
                         file="process.ini",
                         section="Dummy Section",
-                        line=None,
+                        line=0,
                     ),
                     # Test invalid token type in the process file default section is caught.
                     ValidationResult(
@@ -159,7 +159,7 @@ class TestProcessFileRuleSet(object):
                         message='The section "parameters" has been declared as "Parameters".',
                         file="process.ini",
                         section="parameters",
-                        line=None,
+                        line=0,
                     ),
                     # Test to ensure the section name case issue is caught.
                     ValidationResult(
@@ -168,7 +168,7 @@ class TestProcessFileRuleSet(object):
                         message='The section "transitions" has been declared as "Transitions".',
                         file="process.ini",
                         section="transitions",
-                        line=None,
+                        line=0,
                     ),
                 ],
             ),
@@ -181,12 +181,12 @@ class TestProcessFileRuleSet(object):
                         rule="InformationOnly",
                         severity=Severity.INFO,
                         message=(
-                            "The prompts file was not supplied, therefore, assumptions have been made of boolean conditions. "
+                            "The prompts file was empty or not supplied, therefore, assumptions have been made for boolean conditions. "
                             "Transitions that rely on boolean conditions may not validate correctly."
                         ),
                         file="process.ini",
-                        section=None,
-                        line=None,
+                        section="",
+                        line=0,
                     ),
                     ValidationResult(
                         rule="UnusedParameterViolation",
@@ -219,13 +219,13 @@ class TestProcessFileRuleSet(object):
         :param prompts_file: Path to the prompts file to use for the test case.
         :param expected_violations: List of expected ValidationResult
         """
-        validate = Validator.with_file(prompts_file_path=prompts_file, process_file_path=process_file)
+        validate: Validator = Validator.with_file(prompts_file_path=prompts_file, process_file_path=process_file)
         validate.validate()
-        results = validate.get_violations()
+        results: list[ValidationResult] = validate.violations
 
         assert len(results) == len(expected_violations)
 
         for result in results:
             assert result in expected_violations
 
-        assert validate.get_violations() == expected_violations
+        assert validate.violations == expected_violations

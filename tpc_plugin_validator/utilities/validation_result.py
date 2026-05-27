@@ -12,18 +12,18 @@ class ValidationResult(object):
     rule: str
     severity: Severity
     message: str
-    file: str | None = None
-    section: str | None = None
-    line: int | None = None
+    file: str = ""
+    section: str = ""
+    line: int = 0
 
     def __str__(self):
         """String representation of the validation result."""
         file_details = ""
-        if self.file is not None:
+        if self.file:
             file_details += f" {self.file}"
-        if self.section is not None:
+        if self.section:
             file_details += f":{self.section}"
-        if self.line is not None:
+        if self.line:
             file_details += f"({self.line})"
         output_message: str = f"{self.severity.value} -{file_details} ({self.rule}) {self.message}"
         return output_message

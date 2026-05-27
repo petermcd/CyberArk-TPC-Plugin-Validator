@@ -28,12 +28,12 @@ class TestValidator(object):
                         rule="InformationOnly",
                         severity=Severity.INFO,
                         message=(
-                            "The prompts file was not supplied, therefore, assumptions have been made of boolean conditions. "
+                            "The prompts file was empty or not supplied, therefore, assumptions have been made for boolean conditions. "
                             "Transitions that rely on boolean conditions may not validate correctly."
                         ),
                         file="process.ini",
-                        section=None,
-                        line=None,
+                        section="",
+                        line=0,
                     ),
                     ValidationResult(
                         rule="UnusedParameterViolation",
@@ -62,9 +62,11 @@ class TestValidator(object):
         :param prompts_file_path: Path to the prompts file to test.
         :param violations: Expected violations.
         """
-        validator = Validator.with_file(process_file_path=process_file_path, prompts_file_path=prompts_file_path)
+        validator: Validator = Validator.with_file(
+            process_file_path=process_file_path, prompts_file_path=prompts_file_path
+        )
         validator.validate()
-        assert validator.get_violations() == violations
+        assert validator.violations == violations
 
     @pytest.mark.parametrize(
         "process_file,prompts_file,expected_violations",
@@ -96,16 +98,16 @@ class TestValidator(object):
         :param prompts_file: Path to the prompts file to test.
         :param expected_violations: Expected violations.
         """
-        validate = Validator.with_file(prompts_file_path=prompts_file, process_file_path=process_file)
+        validate: Validator = Validator.with_file(prompts_file_path=prompts_file, process_file_path=process_file)
         validate.validate()
-        results = validate.get_violations()
+        results: list[ValidationResult] = validate.violations
 
         assert len(results) == len(expected_violations)
 
         for result in results:
             assert result in expected_violations
 
-        assert validate.get_violations() == expected_violations
+        assert validate.violations == expected_violations
 
     @pytest.mark.parametrize(
         "process_file,prompts_file,exception_type,expected_message",
@@ -132,7 +134,7 @@ class TestValidator(object):
                 None,
                 None,
                 ProgrammingError,
-                "At least one of process file or prompts file required to complete validation.",
+                "At least one of process file or prompts file is required to complete validation.",
             ),
         ],
     )
