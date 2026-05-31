@@ -31,6 +31,7 @@ issues = "https://github.com/petermcd/CyberArk-TPC-Plugin-Validator/issues"
 
 [dependency-groups]
 dev = [
+    "cosmic-ray>=8.4.6",
     "pip-audit>=2.10.0",
     "pygments>=2.20.0", # Pinned to resolve security issue
     "pyright>=1.1.409",
@@ -50,3 +51,12 @@ addopts = "--cov=tpc_plugin_validator --cov-report term-missing --cov-report xml
 
 [tool.ruff]
 line-length = 120
+
+[cosmic-ray]
+module-path = "tpc_plugin_validator"
+timeout = 10.0
+excluded-modules = []
+test-command = "uv run pytest"
+
+[cosmic-ray.distributor]
+name = "local"
