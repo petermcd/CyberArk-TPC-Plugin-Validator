@@ -29,10 +29,8 @@ class DebugInformationSectionRuleSet(SectionRuleSet):
 
         self._validate_tokens(file=self._FILE_TYPE)
 
-        section = self._get_section(file=self._FILE_TYPE, section_name=self._SECTION_NAME)
-
         for token in section:
-            if token.token_name == TokenName.ASSIGNMENT.value and self._check_setting_name(token=token):
+            if isinstance(token, Assignment) and self._check_setting_name(token=token):
                 self._check_setting_value(token=token)
 
         self._validate_duplicates()

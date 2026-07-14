@@ -1,5 +1,9 @@
 """Handle validation of the CPM Parameters Validation section in the process file."""
 
+from tpc_plugin_parser.lexer.tokens.assignment import Assignment
+from tpc_plugin_parser.lexer.tokens.cpm_parameter_validation import (
+    CPMParameterValidation,
+)
 from tpc_plugin_parser.lexer.utilities.token_name import TokenName
 from tpc_plugin_validator.rule_sets.section_rule_set import SectionRuleSet
 from tpc_plugin_validator.utilities.severity import Severity
@@ -39,7 +43,7 @@ class CPMParametersValidationSectionRuleSet(SectionRuleSet):
 
         section = self._get_section(file=self._FILE_TYPE, section_name=self._SECTION_NAME)
         for token in section:
-            if token.token_name != TokenName.CPM_PARAMETER_VALIDATION.value:
+            if not isinstance(token, CPMParameterValidation):
                 continue
 
             if token.name in allowed_missing_parameters:
@@ -57,7 +61,7 @@ class CPMParametersValidationSectionRuleSet(SectionRuleSet):
                 line=token.line_number,
             )
 
-    def _validate_token_utilised(self, token) -> bool:
+    def _validate_token_utilised(self, token: CPMParameterValidation) -> bool:
         """
         Validate that the given token is used.
 
@@ -69,14 +73,14 @@ class CPMParametersValidationSectionRuleSet(SectionRuleSet):
         conditions = self._get_section(file=FileNames.prompts, section_name=SectionNames.conditions) or []
 
         for condition in conditions:
-            if condition.token_name != TokenName.ASSIGNMENT.value:
+            if not isinstance(condition, Assignment):
                 continue
             if condition.assigned and f"<{token.name}>" in condition.assigned:
                 return True
 
         states = self._get_section(file=FileNames.process, section_name=SectionNames.states)
         for state in states:
-            if state.token_name != TokenName.ASSIGNMENT.value:
+            if not isinstance(state, Assignment):
                 continue
             if state.assigned and f"<{token.name}>" in state.assigned:
                 return True

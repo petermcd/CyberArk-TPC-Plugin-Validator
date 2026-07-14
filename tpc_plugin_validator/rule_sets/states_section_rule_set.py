@@ -4,6 +4,7 @@ from collections import Counter
 
 from tpc_plugin_parser.lexer.tokens.assignment import Assignment
 from tpc_plugin_parser.lexer.tokens.fail_state import FailState
+from tpc_plugin_parser.lexer.tokens.transition import Transition
 from tpc_plugin_parser.lexer.utilities.token_name import TokenName
 from tpc_plugin_validator.rule_sets.section_rule_set import SectionRuleSet
 from tpc_plugin_validator.utilities.severity import Severity
@@ -42,10 +43,10 @@ class StatesSectionRuleSet(SectionRuleSet):
         section = self._get_section(file=self._FILE_TYPE, section_name=self._SECTION_NAME)
         end_state: Assignment | None = None
         for token in section:
-            if token.token_name == TokenName.ASSIGNMENT.value and token.name == "END":
+            if isinstance(token, Assignment) and token.name == "END":
                 end_state = token
                 break
-            elif token.token_name == "Assignment" and token.name.lower() == "end":
+            elif isinstance(token, Assignment) and token.name.lower() == "end":
                 end_state = token
                 self._add_violation(
                     name=Violations.name_case_violation,
@@ -107,17 +108,15 @@ class StatesSectionRuleSet(SectionRuleSet):
         """Check fail states."""
         section = self._get_section(file=self._FILE_TYPE, section_name=self._SECTION_NAME)
         fail_states: list[FailState] = []
-        fail_states.extend(token for token in section if token.token_name == TokenName.FAIL_STATE.value)
+        fail_states.extend(token for token in section if isinstance(token, FailState))
         self._validate_fail_state_codes(fail_states=fail_states)
 
     def _validate_state_utilisation(self):
         """Validate states are utilised."""
         states_section = self._get_section(file=self._FILE_TYPE, section_name=self._SECTION_NAME)
         transition_section = self._get_section(file=self._FILE_TYPE, section_name=SectionNames.transitions)
-        states = [state for state in states_section if state.token_name == TokenName.ASSIGNMENT.value]
-        transitions = [
-            transition for transition in transition_section if transition.token_name == TokenName.TRANSITION.value
-        ]
+        states = [state for state in states_section if isinstance(state, Assignment)]
+        transitions = [transition for transition in transition_section if isinstance(transition, Transition)]
         for state in states:
             if state.name.lower() == "end":
                 # END state is validated elsewhere.
