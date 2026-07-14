@@ -3,7 +3,8 @@
 import unicodedata
 from abc import ABC
 
-from tpc_plugin_parser.lexer.utilities.token_name import TokenName
+from tpc_plugin_parser.lexer.tokens.assignment import Assignment
+from tpc_plugin_parser.lexer.tokens.parse_error import ParseError
 from tpc_plugin_parser.lexer.utilities.types import ALL_TOKEN_TYPES
 
 from tpc_plugin_validator.utilities.exceptions import ProgrammingError
@@ -70,18 +71,16 @@ class RuleSet(ABC):
         :param message: The text describing the violation.
         :param severity: The severity of the violation.
         """
-        if isinstance(file, FileNames):
-            file: str = file.value
-        if isinstance(section, SectionNames):
-            section: str = section.value
+        file_value: str = file.value if isinstance(file, FileNames) else file
+        section_value: str = section.value if isinstance(section, SectionNames) else section
 
         self._violations.append(
             ValidationResult(
                 rule=name.value,
                 severity=severity,
                 message=message,
-                file=str(file) if file else "",
-                section=str(section) if section else "",
+                file=file_value,
+                section=section_value,
                 line=line,
             )
         )
@@ -145,7 +144,7 @@ class RuleSet(ABC):
             return
 
         for token in section:
-            if token.token_name == TokenName.PARSE_ERROR.value:
+            if isinstance(token, ParseError):
                 self._add_violation(
                     name=Violations.parse_error_violation,
                     severity=Severity.CRITICAL,
@@ -156,7 +155,7 @@ class RuleSet(ABC):
                 )
                 continue
 
-            if token.token_name == TokenName.ASSIGNMENT.value and token.name.lower() in INVALID_WORDS:
+            if isinstance(token, Assignment) and token.name.lower() in INVALID_WORDS:
                 self._add_violation(
                     name=Violations.invalid_word_violation,
                     severity=Severity.CRITICAL,

@@ -1,6 +1,7 @@
 """Handle validation of the conditions section in the prompt file."""
 
 from tpc_plugin_parser.lexer.tokens.assignment import Assignment
+from tpc_plugin_parser.lexer.tokens.transition import Transition
 from tpc_plugin_parser.lexer.utilities.token_name import TokenName
 from tpc_plugin_validator.rule_sets.section_rule_set import SectionRuleSet
 from tpc_plugin_validator.utilities.severity import Severity
@@ -41,17 +42,18 @@ class ConditionsSectionRuleSet(SectionRuleSet):
         required_tokens.extend(
             token
             for token in self._get_section(file=self._FILE_TYPE, section_name=self._SECTION_NAME)
-            if token.token_name == TokenName.ASSIGNMENT.value
+            if isinstance(token, Assignment)
         )
         transitions = self._get_section(file=FileNames.process, section_name=SectionNames.transitions)
 
         for token in required_tokens:
             found = False
             for transition in transitions:
-                if transition.token_name != TokenName.TRANSITION.value:
+                if not isinstance(transition, Transition):
                     continue
                 if token.name.lower() == transition.condition.lower():
                     found = True
+                    break
 
             if not found:
                 self._add_violation(

@@ -82,7 +82,7 @@ class Validator(object):
                 prompts_file=self._prompts,
             )
             validator.validate()
-            self._violations: list[ValidationResult] = self.sort_violations(self._violations + validator.violations)
+            self._violations = self.sort_violations(self._violations + validator.violations)
 
     @property
     def process_file(self) -> dict[str, list[ALL_TOKEN_TYPES]]:
@@ -151,10 +151,10 @@ class Validator(object):
 
         if process_file_path:
             with open(process_file_path, "r", encoding="utf-8") as process_file:
-                process_file_content: str = process_file.read()
+                process_file_content = process_file.read()
 
         if prompts_file_path:
             with open(prompts_file_path, "r", encoding="utf-8") as prompts_file:
-                prompts_file_content: str = prompts_file.read()
+                prompts_file_content = prompts_file.read()
 
         return Validator(process_file_content=process_file_content, prompts_file_content=prompts_file_content)

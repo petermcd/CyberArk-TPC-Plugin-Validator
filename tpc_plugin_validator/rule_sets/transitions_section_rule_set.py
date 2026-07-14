@@ -4,8 +4,13 @@ import re
 from collections import Counter
 
 from tpc_plugin_parser.lexer.tokens.assignment import Assignment
+from tpc_plugin_parser.lexer.tokens.cpm_parameter_validation import (
+    CPMParameterValidation,
+)
+from tpc_plugin_parser.lexer.tokens.fail_state import FailState
 from tpc_plugin_parser.lexer.tokens.transition import Transition
 from tpc_plugin_parser.lexer.utilities.token_name import TokenName
+from tpc_plugin_parser.lexer.utilities.types import ALL_TOKEN_TYPES
 from tpc_plugin_validator.rule_sets.section_rule_set import SectionRuleSet
 from tpc_plugin_validator.utilities.severity import Severity
 from tpc_plugin_validator.utilities.types import FileNames, SectionNames, Violations
@@ -38,7 +43,6 @@ class TransitionsSectionRuleSet(SectionRuleSet):
         :param prompts_file: Parsed prompts file.
         """
         self._default_initial_state: str = "Init"
-        self._file_sections: str = "init"
         self._initial_state: str = ""
         self._initial_state_warned: bool = False
         super().__init__(prompts_file=prompts_file, process_file=process_file)
@@ -52,7 +56,7 @@ class TransitionsSectionRuleSet(SectionRuleSet):
 
         for transition in section:
             # Set the initial state from the first transition.
-            if transition.token_name == TokenName.TRANSITION.value:
+            if isinstance(transition, Transition):
                 self._initial_state = transition.current_state.lower()
                 break
 
@@ -63,7 +67,7 @@ class TransitionsSectionRuleSet(SectionRuleSet):
         self._validate_state_paths()
         self._validate_transition_reachable()
 
-    def _get_fail_state(self, name: str) -> Assignment | None:
+    def _get_fail_state(self, name: str) -> FailState | None:
         """
         Fetch a fail state with the given name.
 
@@ -74,7 +78,7 @@ class TransitionsSectionRuleSet(SectionRuleSet):
             (
                 state
                 for state in self._get_section(file=self._FILE_TYPE, section_name=SectionNames.states)
-                if state.token_name == TokenName.FAIL_STATE.value and state.name.lower() == name.lower()
+                if isinstance(state, FailState) and state.name.lower() == name.lower()
             ),
             None,
         )
@@ -88,10 +92,10 @@ class TransitionsSectionRuleSet(SectionRuleSet):
         conditions = self._get_section(file=FileNames.prompts, section_name=SectionNames.conditions)
         for transition in self._get_section(file=self._FILE_TYPE, section_name=SectionNames.transitions):
             found = False
-            if transition.token_name != TokenName.TRANSITION.value:
+            if not isinstance(transition, Transition):
                 continue
             for condition in conditions:
-                if condition.token_name != TokenName.ASSIGNMENT.value:
+                if not isinstance(condition, Assignment):
                     continue
                 if transition.condition == condition.name:
                     found = True
@@ -122,7 +126,7 @@ class TransitionsSectionRuleSet(SectionRuleSet):
         state_transitions: list[str] = []
         first_states = {}
         for state_transition in self._get_section(file=self._FILE_TYPE, section_name=self._SECTION_NAME):
-            if state_transition.token_name == TokenName.TRANSITION.value:
+            if isinstance(state_transition, Transition):
                 state = f"{state_transition.current_state},{state_transition.condition},{state_transition.next_state}".lower()
                 state_transitions.append(state)
                 if state not in first_states:
@@ -140,25 +144,23 @@ class TransitionsSectionRuleSet(SectionRuleSet):
                     line=first_states[state].line_number,
                 )
 
-    def _validate_next_transition(self, transition: Transition, transitions) -> None:
+    def _validate_next_transition(self, transition: ALL_TOKEN_TYPES, transitions) -> None:
         """
         Check the to_state has a valid transition to start from.
 
         :param transition: The transition token to check.
         :param transitions: A list of all the transitions.
         """
-        if transition.token_name != TokenName.TRANSITION.value:
+        if not isinstance(transition, Transition):
             return
         if transition.next_state.lower() == "end":
             return
         from_states: list[str] = []
-        from_states.extend(
-            value.current_state for value in transitions if value.token_name == TokenName.TRANSITION.value
-        )
+        from_states.extend(value.current_state for value in transitions if isinstance(value, Transition))
 
         if transition.next_state not in from_states:
-            fail_state_token: Assignment | None = self._get_fail_state(transition.next_state)
-            if fail_state_token and fail_state_token.token_name == TokenName.FAIL_STATE.value:
+            fail_state_token: FailState | None = self._get_fail_state(transition.next_state)
+            if fail_state_token:
                 # failure condition, nothing follows this.
                 return
 
@@ -171,14 +173,14 @@ class TransitionsSectionRuleSet(SectionRuleSet):
                 line=transition.line_number,
             )
 
-    def _validate_previous_transition(self, transition: Transition, transitions) -> None:
+    def _validate_previous_transition(self, transition: ALL_TOKEN_TYPES, transitions) -> None:
         """
         Check the previous token is valid for the transition.
 
         :param transition: The transition token to check.
         :param transitions: A list of all the transitions.
         """
-        if transition.token_name != TokenName.TRANSITION.value:
+        if not isinstance(transition, Transition):
             return
         if transition.current_state.lower() == self._default_initial_state.lower():
             return
@@ -197,9 +199,7 @@ class TransitionsSectionRuleSet(SectionRuleSet):
             self._initial_state_warned = True
             return
         to_states: list[str] = []
-        to_states.extend(
-            value.next_state.lower() for value in transitions if value.token_name == TokenName.TRANSITION.value
-        )
+        to_states.extend(value.next_state.lower() for value in transitions if isinstance(value, Transition))
         to_states_set = set(to_states)
         if transition.current_state.lower() not in to_states_set:
             self._add_violation(
@@ -230,13 +230,15 @@ class TransitionsSectionRuleSet(SectionRuleSet):
             conditions = self._get_section(file=FileNames.prompts, section_name=SectionNames.conditions)
             for condition in conditions:
                 # Identify and note and bool conditions declared in the conditions section.
-                if condition.token_name != TokenName.ASSIGNMENT.value:
+                if not isinstance(condition, Assignment):
                     continue
-                if re.match(r"\(\s*expression\s*\)\s*(true|false)", condition.assigned, re.IGNORECASE):
+                if condition.assigned and re.match(
+                    r"\(\s*expression\s*\)\s*(true|false)", condition.assigned, re.IGNORECASE
+                ):
                     bool_conditions.append(condition.name.lower())
         transition_had_bool: list[str] = []
         for transition in self._get_section(file=self._FILE_TYPE, section_name=self._SECTION_NAME):
-            if transition.token_name != TokenName.TRANSITION.value:
+            if not isinstance(transition, Transition):
                 continue
             tran_cur_state_lower: str = transition.current_state.lower()
             if tran_cur_state_lower in transition_had_bool:
@@ -268,14 +270,10 @@ class TransitionsSectionRuleSet(SectionRuleSet):
         """Validate that states exist for all transitions and are in the correct case."""
         transitions = self._get_section(file=self._FILE_TYPE, section_name=self._SECTION_NAME)
         states = self._get_section(file=self._FILE_TYPE, section_name=SectionNames.states)
-        state_names = [
-            state.name
-            for state in states
-            if state.token_name in [TokenName.ASSIGNMENT.value, TokenName.FAIL_STATE.value]
-        ]
-        state_names_lower = [state.name.lower() for state in states if state.token_name == TokenName.ASSIGNMENT.value]
+        state_names = [state.name for state in states if isinstance(state, (Assignment, FailState))]
+        state_names_lower = [state.name.lower() for state in states if isinstance(state, Assignment)]
         for transition in transitions:
-            if transition.token_name != TokenName.TRANSITION.value:
+            if not isinstance(transition, Transition):
                 continue
 
             if transition.current_state not in state_names:
@@ -289,7 +287,7 @@ class TransitionsSectionRuleSet(SectionRuleSet):
                         line=transition.line_number,
                     )
                 else:
-                    state: Assignment | None = self.get_first_assignment(
+                    state: Assignment | CPMParameterValidation | None = self.get_first_assignment(
                         token_list=states,
                         token_name=transition.current_state,
                     )
@@ -313,7 +311,7 @@ class TransitionsSectionRuleSet(SectionRuleSet):
                         line=transition.line_number,
                     )
                 else:
-                    state: Assignment | None = self.get_first_assignment(
+                    state: Assignment | CPMParameterValidation | None = self.get_first_assignment(
                         token_list=states,
                         token_name=transition.next_state,
                     )

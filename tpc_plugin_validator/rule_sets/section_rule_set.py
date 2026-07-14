@@ -3,7 +3,9 @@
 from collections import Counter
 
 from tpc_plugin_parser.lexer.tokens.assignment import Assignment
-from tpc_plugin_parser.lexer.utilities.token_name import TokenName
+from tpc_plugin_parser.lexer.tokens.cpm_parameter_validation import (
+    CPMParameterValidation,
+)
 from tpc_plugin_validator.rule_sets.rule_set import RuleSet
 from tpc_plugin_validator.utilities.severity import Severity
 from tpc_plugin_validator.utilities.types import Violations
@@ -15,13 +17,7 @@ class SectionRuleSet(RuleSet):
         section = self._get_section(file=self._FILE_TYPE, section_name=self._SECTION_NAME)
         token_keys: list[str] = []
         token_keys.extend(
-            token.name.lower()
-            for token in section
-            if token.token_name
-            in (
-                TokenName.ASSIGNMENT.value,
-                TokenName.CPM_PARAMETER_VALIDATION.value,
-            )
+            token.name.lower() for token in section if isinstance(token, (Assignment, CPMParameterValidation))
         )
         counted_keys = Counter(token_keys)
         for token_lower in counted_keys:
@@ -37,7 +33,7 @@ class SectionRuleSet(RuleSet):
                     )
 
     @classmethod
-    def get_first_assignment(cls, token_list: list, token_name: str) -> Assignment | None:
+    def get_first_assignment(cls, token_list: list, token_name: str) -> Assignment | CPMParameterValidation | None:
         """
         Get the first token in a list with the specified token name.
 
@@ -48,7 +44,7 @@ class SectionRuleSet(RuleSet):
         token_name = token_name.lower()
 
         for token in token_list:
-            if token.token_name not in [TokenName.ASSIGNMENT.value, TokenName.CPM_PARAMETER_VALIDATION.value]:
+            if not isinstance(token, (Assignment, CPMParameterValidation)):
                 continue
 
             if token.name.lower() == token_name:

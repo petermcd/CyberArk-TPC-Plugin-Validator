@@ -42,9 +42,9 @@ class ParametersSectionRuleSet(SectionRuleSet):
         human_max: Assignment | None = None
 
         for token in section:
-            if token.token_name == TokenName.ASSIGNMENT.value and token.name == "SendHumanMin":
+            if isinstance(token, Assignment) and token.name == "SendHumanMin":
                 human_min = token
-            elif token.token_name == TokenName.ASSIGNMENT.value and token.name == "SendHumanMax":
+            elif isinstance(token, Assignment) and token.name == "SendHumanMax":
                 human_max = token
 
         if not human_min and not human_max:
@@ -81,7 +81,7 @@ class ParametersSectionRuleSet(SectionRuleSet):
         if not parameter:
             return
         try:
-            if parameter and parameter.assigned and float(parameter.assigned) < min_value:
+            if parameter.assigned and float(parameter.assigned) < min_value:
                 self._add_violation(
                     name=Violations.value_violation,
                     severity=Severity.CRITICAL,
