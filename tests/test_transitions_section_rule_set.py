@@ -7,7 +7,7 @@ from tpc_plugin_validator.utilities.validation_result import ValidationResult
 from tpc_plugin_validator.validator import Validator
 
 
-class TestTransitionsSectionRuleSet(object):
+class TestTransitionsSectionRuleSet:
     """Tests for the transitions section rule set."""
 
     @pytest.mark.parametrize(

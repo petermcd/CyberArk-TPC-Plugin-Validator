@@ -7,7 +7,7 @@ from tpc_plugin_validator.utilities.validation_result import ValidationResult
 from tpc_plugin_validator.validator import Validator
 
 
-class TestStatesSectionRuleSet(object):
+class TestStatesSectionRuleSet:
     """Tests for the states section rule set."""
 
     @pytest.mark.parametrize(

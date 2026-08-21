@@ -7,7 +7,7 @@ from tpc_plugin_validator.utilities.validation_result import ValidationResult
 from tpc_plugin_validator.validator import Validator
 
 
-class TestCPMParametersValidationSectionRuleSet(object):
+class TestCPMParametersValidationSectionRuleSet:
     """Tests for the CPM Parameters Validation section rule set."""
 
     @pytest.mark.parametrize(

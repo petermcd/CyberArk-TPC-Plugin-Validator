@@ -1,9 +1,12 @@
 """Handle validation of the prompt file."""
 
+from typing import ClassVar
+
 from tpc_plugin_parser.lexer.utilities.token_name import TokenName
+
 from tpc_plugin_validator.rule_sets.file_rule_set import FileRuleSet
 from tpc_plugin_validator.utilities.severity import Severity
-from tpc_plugin_validator.utilities.types import ValidSectionConfig, FileNames, SectionNames
+from tpc_plugin_validator.utilities.types import FileNames, SectionNames, ValidSectionConfig
 
 
 class PromptsFileRuleSet(FileRuleSet):
@@ -13,13 +16,13 @@ class PromptsFileRuleSet(FileRuleSet):
     Validation of individual section content is handled in their own rulesets.
     """
 
-    _CONFIG_KEY: str = "prompts"
-    _FILE_TYPE: FileNames = FileNames.prompts
-    _VALID_SECTIONS: dict[str, ValidSectionConfig] = {
+    _CONFIG_KEY: ClassVar[str] = "prompts"
+    _FILE_TYPE: ClassVar[FileNames] = FileNames.prompts
+    _VALID_SECTIONS: ClassVar[dict[str, ValidSectionConfig]] = {
         SectionNames.conditions.value: {"required": True, "severity_level": Severity.CRITICAL},
         SectionNames.default.value: {"required": True, "severity_level": Severity.CRITICAL},
     }
-    _VALID_TOKENS: list[str] = [
+    _VALID_TOKENS: ClassVar[list[str]] = [
         TokenName.COMMENT.value,
     ]
 

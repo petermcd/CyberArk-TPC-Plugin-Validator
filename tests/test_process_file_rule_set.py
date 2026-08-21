@@ -7,7 +7,7 @@ from tpc_plugin_validator.utilities.validation_result import ValidationResult
 from tpc_plugin_validator.validator import Validator
 
 
-class TestProcessFileRuleSet(object):
+class TestProcessFileRuleSet:
     """Tests for the process file rule set."""
 
     @pytest.mark.parametrize(

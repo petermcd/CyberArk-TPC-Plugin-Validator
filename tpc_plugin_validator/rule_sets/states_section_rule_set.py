@@ -1,11 +1,13 @@
 """Handle validation of the states section in the process file."""
 
 from collections import Counter
+from typing import ClassVar
 
 from tpc_plugin_parser.lexer.tokens.assignment import Assignment
 from tpc_plugin_parser.lexer.tokens.fail_state import FailState
 from tpc_plugin_parser.lexer.tokens.transition import Transition
 from tpc_plugin_parser.lexer.utilities.token_name import TokenName
+
 from tpc_plugin_validator.rule_sets.section_rule_set import SectionRuleSet
 from tpc_plugin_validator.utilities.severity import Severity
 from tpc_plugin_validator.utilities.types import FileNames, SectionNames, Violations
@@ -16,10 +18,10 @@ class StatesSectionRuleSet(SectionRuleSet):
     Handle validation of the states section in the process file.
     """
 
-    _CONFIG_KEY: str = "states"
-    _FILE_TYPE: FileNames = FileNames.process
-    _SECTION_NAME: SectionNames = SectionNames.states
-    _VALID_TOKENS: list[str] = [
+    _CONFIG_KEY: ClassVar[str] = "states"
+    _FILE_TYPE: ClassVar[FileNames] = FileNames.process
+    _SECTION_NAME: ClassVar[SectionNames] = SectionNames.states
+    _VALID_TOKENS: ClassVar[list[str]] = [
         TokenName.ASSIGNMENT.value,
         TokenName.COMMENT.value,
         TokenName.FAIL_STATE.value,
@@ -98,7 +100,7 @@ class StatesSectionRuleSet(SectionRuleSet):
                 self._add_violation(
                     name=Violations.value_violation,
                     severity=Severity.WARNING,
-                    message=f'The code "{code}" has been assigned to {counted_codes[code]} different failure states.',
+                    message=f'The code "{code}" has been assigned to {value} different failure states.',
                     file=self._FILE_TYPE,
                     section=self._SECTION_NAME,
                     line=line,

@@ -6,7 +6,7 @@ from tpc_plugin_validator.utilities.severity import Severity
 from tpc_plugin_validator.utilities.validation_result import ValidationResult
 
 
-class TestTransitionsSectionRuleSet(object):
+class TestTransitionsSectionRuleSet:
     """Tests for the ValidationResult object."""
 
     @pytest.mark.parametrize(
@@ -43,8 +43,7 @@ class TestTransitionsSectionRuleSet(object):
                     section="Dummy Section",
                     line=0,
                 ),
-                "WARNING - process.ini:Dummy Section (InvalidSectionNameViolation) "
-                'The section "Dummy Section" has been declared but is an invalid section name.',
+                'WARNING - process.ini:Dummy Section (InvalidSectionNameViolation) The section "Dummy Section" has been declared but is an invalid section name.',
             ),
             (
                 ValidationResult(

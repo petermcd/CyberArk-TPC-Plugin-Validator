@@ -8,7 +8,7 @@ readme = "README.md"
 license = { file = "LICENSE" }
 requires-python = ">=3.12"
 dependencies = [
-    "cyberark-tpc-plugin-parser>=0.4.1",
+    "cyberark-tpc-plugin-parser>=0.4.3",
 ]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
@@ -19,6 +19,7 @@ classifiers = [
     "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: 3.14",
     "Programming Language :: Python :: 3.15",
+    "Programming Language :: Python :: 3.16",
     "Topic :: Security",
     "Topic :: Software Development :: Testing",
     "Typing :: Typed",
@@ -31,20 +32,9 @@ issues = "https://github.com/petermcd/CyberArk-TPC-Plugin-Validator/issues"
 
 [dependency-groups]
 dev = [
-    "aiohttp>=3.14.1", # Minimum version to resolve security issue
-    "click>=8.3.3", # Minimum version to resolve security issue
-    "cosmic-ray>=8.4.6",
-    "msgpack>=1.2.1", # Minimum version to resolve security issue
-    "pip>=26.1.2", # Minimum version to resolve security issue
-    "pip-audit>=2.10.0",
-    "pygments>=2.20.0", # Minimum version to resolve security issue
-    "pyright>=1.1.409",
-    "pytest>=9.0.3",
+    "pygments>=2.21.0", # Minimum version to resolve security issue
+    "pytest>=9.1.1",
     "pytest-cov>=7.1.0",
-    "pytest-mypy-plugins>=4.0.3",
-    "ruff>=0.15.14",
-    "troml>=0.4.1",
-    "ty>=0.0.40",
 ]
 
 [project.scripts]

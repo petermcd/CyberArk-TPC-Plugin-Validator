@@ -35,7 +35,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Install uv
-        uses: astral-sh/setup-uv@fac544c07dec837d0ccb6301d7b5580bf5edae39
+        uses: astral-sh/setup-uv@11f9893b081a58869d3b5fccaea48c9e9e46f990
         with:
           python-version: ${{ matrix.python-version }}
       - name: Set PYTHON_GIL
@@ -46,15 +46,15 @@ jobs:
       - name: pyTest
         run: uv run pytest tests
       - name: Ruff (check)
-        run: uv run ruff check
+        run: uvx ruff check
       - name: Ruff (format)
-        run: uv run ruff format --diff --check
+        run: uvx ruff format --diff --check
       - name: Ty
-        run: uv run ty check
+        run: uvx ty check
       - name: Troml
-        run: uv run troml check
+        run: uvx troml check
       - name: pip-audit
-        run: uv run pip-audit
+        run: uv audit
   sonarqube:
     name: sonarqube
     runs-on: ${{ matrix.os }}
@@ -71,7 +71,7 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
       - name: Run SonarQube
-        uses: sonarsource/sonarqube-scan-action@59db25f34e16620e48ab4bb9e4a5dce155cb5432
+        uses: sonarsource/sonarqube-scan-action@22918119ff8e1ca75a623e15c8296b6ea4fbe28f
         env:
           SONAR_TOKEN: ${{ env.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ env.SONAR_HOST_URL }}

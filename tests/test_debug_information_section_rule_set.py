@@ -2,12 +2,12 @@
 
 import pytest
 
-from tpc_plugin_validator.validator import Validator
 from tpc_plugin_validator.utilities.severity import Severity
 from tpc_plugin_validator.utilities.validation_result import ValidationResult
+from tpc_plugin_validator.validator import Validator
 
 
-class TestDebugInformationSectionRuleSet(object):
+class TestDebugInformationSectionRuleSet:
     """Tests for the debug information rule set."""
 
     @pytest.mark.parametrize(
