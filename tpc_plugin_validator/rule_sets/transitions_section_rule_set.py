@@ -2,6 +2,7 @@
 
 import re
 from collections import Counter
+from typing import ClassVar
 
 from tpc_plugin_parser.lexer.tokens.assignment import Assignment
 from tpc_plugin_parser.lexer.tokens.cpm_parameter_validation import (
@@ -11,6 +12,7 @@ from tpc_plugin_parser.lexer.tokens.fail_state import FailState
 from tpc_plugin_parser.lexer.tokens.transition import Transition
 from tpc_plugin_parser.lexer.utilities.token_name import TokenName
 from tpc_plugin_parser.lexer.utilities.types import ALL_TOKEN_TYPES
+
 from tpc_plugin_validator.rule_sets.section_rule_set import SectionRuleSet
 from tpc_plugin_validator.utilities.severity import Severity
 from tpc_plugin_validator.utilities.types import FileNames, SectionNames, Violations
@@ -27,10 +29,10 @@ class TransitionsSectionRuleSet(SectionRuleSet):
         "_initial_state_warned",
     )
 
-    _CONFIG_KEY: str = "transitions"
-    _FILE_TYPE: FileNames = FileNames.process
-    _SECTION_NAME: SectionNames = SectionNames.transitions
-    _VALID_TOKENS: list[str] = [
+    _CONFIG_KEY: ClassVar[str] = "transitions"
+    _FILE_TYPE: ClassVar[FileNames] = FileNames.process
+    _SECTION_NAME: ClassVar[SectionNames] = SectionNames.transitions
+    _VALID_TOKENS: ClassVar[list[str]] = [
         TokenName.TRANSITION.value,
         TokenName.COMMENT.value,
     ]

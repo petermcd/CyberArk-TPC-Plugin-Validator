@@ -1,12 +1,14 @@
 """Base class for all file rule sets."""
 
+from typing import ClassVar
+
 from tpc_plugin_validator.rule_sets.rule_set import RuleSet
 from tpc_plugin_validator.utilities.severity import Severity
-from tpc_plugin_validator.utilities.types import ValidSectionConfig, FileNames, Violations
+from tpc_plugin_validator.utilities.types import FileNames, ValidSectionConfig, Violations
 
 
 class FileRuleSet(RuleSet):
-    _VALID_SECTIONS: dict[str, ValidSectionConfig] = {}
+    _VALID_SECTIONS: ClassVar[dict[str, ValidSectionConfig]] = {}
 
     def _validate_required_sections(self, file: FileNames) -> None:
         """
@@ -39,12 +41,12 @@ class FileRuleSet(RuleSet):
         """
 
         valid_sections_dict: dict[str, str] = {
-            valid_section_name.lower(): valid_section_name for valid_section_name in self._VALID_SECTIONS.keys()
+            valid_section_name.lower(): valid_section_name for valid_section_name in self._VALID_SECTIONS
         }
         for section_name in self._file_sections[file.value]:
             section_orig = self._get_section_name(file=file, section_name=section_name)
 
-            if section_orig in self._VALID_SECTIONS.keys():
+            if section_orig in self._VALID_SECTIONS:
                 continue
             elif section_name in valid_sections_dict:
                 # TODO - Update so that we can output the line number of the section

@@ -1,9 +1,12 @@
 """Handle validation of a process file."""
 
+from typing import ClassVar
+
 from tpc_plugin_parser.lexer.utilities.token_name import TokenName
+
 from tpc_plugin_validator.rule_sets.file_rule_set import FileRuleSet
 from tpc_plugin_validator.utilities.severity import Severity
-from tpc_plugin_validator.utilities.types import ValidSectionConfig, FileNames, SectionNames
+from tpc_plugin_validator.utilities.types import FileNames, SectionNames, ValidSectionConfig
 
 
 class ProcessFileRuleSet(FileRuleSet):
@@ -13,9 +16,9 @@ class ProcessFileRuleSet(FileRuleSet):
     Validation of individual section content is handled in their own rulesets.
     """
 
-    _CONFIG_KEY: str = "process"
-    _FILE_TYPE: FileNames = FileNames.process
-    _VALID_SECTIONS: dict[str, ValidSectionConfig] = {
+    _CONFIG_KEY: ClassVar[str] = "process"
+    _FILE_TYPE: ClassVar[FileNames] = FileNames.process
+    _VALID_SECTIONS: ClassVar[dict[str, ValidSectionConfig]] = {
         SectionNames.cpm_parameters_validation.value: {
             "required": True,
             "severity_level": Severity.WARNING,
@@ -26,7 +29,7 @@ class ProcessFileRuleSet(FileRuleSet):
         SectionNames.states.value: {"required": True, "severity_level": Severity.CRITICAL},
         SectionNames.transitions.value: {"required": True, "severity_level": Severity.CRITICAL},
     }
-    _VALID_TOKENS: list[str] = [
+    _VALID_TOKENS: ClassVar[list[str]] = [
         TokenName.COMMENT.value,
     ]
 

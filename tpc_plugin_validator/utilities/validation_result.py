@@ -6,7 +6,7 @@ from tpc_plugin_validator.utilities.severity import Severity
 
 
 @dataclass
-class ValidationResult(object):
+class ValidationResult:
     """Class to hold the result of a validation check."""
 
     rule: str

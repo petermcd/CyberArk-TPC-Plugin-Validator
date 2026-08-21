@@ -1,10 +1,13 @@
 """Handle validation of the CPM Parameters Validation section in the process file."""
 
+from typing import ClassVar
+
 from tpc_plugin_parser.lexer.tokens.assignment import Assignment
 from tpc_plugin_parser.lexer.tokens.cpm_parameter_validation import (
     CPMParameterValidation,
 )
 from tpc_plugin_parser.lexer.utilities.token_name import TokenName
+
 from tpc_plugin_validator.rule_sets.section_rule_set import SectionRuleSet
 from tpc_plugin_validator.utilities.severity import Severity
 from tpc_plugin_validator.utilities.types import FileNames, SectionNames, Violations
@@ -15,10 +18,10 @@ class CPMParametersValidationSectionRuleSet(SectionRuleSet):
     Handle validation of the CPM Parameters Validation section in the process file.
     """
 
-    _CONFIG_KEY: str = "cpm_parameters_validation"
-    _FILE_TYPE: FileNames = FileNames.process
-    _SECTION_NAME: SectionNames = SectionNames.cpm_parameters_validation
-    _VALID_TOKENS: list[str] = [
+    _CONFIG_KEY: ClassVar[str] = "cpm_parameters_validation"
+    _FILE_TYPE: ClassVar[FileNames] = FileNames.process
+    _SECTION_NAME: ClassVar[SectionNames] = SectionNames.cpm_parameters_validation
+    _VALID_TOKENS: ClassVar[list[str]] = [
         TokenName.CPM_PARAMETER_VALIDATION.value,
         TokenName.COMMENT.value,
     ]

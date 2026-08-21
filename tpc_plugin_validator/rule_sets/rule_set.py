@@ -2,6 +2,7 @@
 
 import unicodedata
 from abc import ABC
+from typing import ClassVar
 
 from tpc_plugin_parser.lexer.tokens.assignment import Assignment
 from tpc_plugin_parser.lexer.tokens.parse_error import ParseError
@@ -23,10 +24,10 @@ class RuleSet(ABC):
         "_violations",
     )
 
-    _CONFIG_KEY: str = ""
-    _FILE_TYPE: FileNames = FileNames.prompts
-    _SECTION_NAME: SectionNames = SectionNames.default
-    _VALID_TOKENS: list[str] = []
+    _CONFIG_KEY: ClassVar[str] = ""
+    _FILE_TYPE: ClassVar[FileNames] = FileNames.prompts
+    _SECTION_NAME: ClassVar[SectionNames] = SectionNames.default
+    _VALID_TOKENS: ClassVar[list[str]] = []
 
     def __init__(
         self,

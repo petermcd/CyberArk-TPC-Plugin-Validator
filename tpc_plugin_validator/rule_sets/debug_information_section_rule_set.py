@@ -1,7 +1,10 @@
 """Handle validation of the Debug Information section in the process file."""
 
+from typing import ClassVar
+
 from tpc_plugin_parser.lexer.tokens.assignment import Assignment
 from tpc_plugin_parser.lexer.utilities.token_name import TokenName
+
 from tpc_plugin_validator.rule_sets.section_rule_set import SectionRuleSet
 from tpc_plugin_validator.utilities.severity import Severity
 from tpc_plugin_validator.utilities.types import FileNames, SectionNames, Violations
@@ -12,10 +15,10 @@ class DebugInformationSectionRuleSet(SectionRuleSet):
     Handle validation of the Debug Information section in the process file.
     """
 
-    _CONFIG_KEY: str = "debug_information"
-    _FILE_TYPE: FileNames = FileNames.process
-    _SECTION_NAME: SectionNames = SectionNames.debug_information
-    _VALID_TOKENS: list[str] = [
+    _CONFIG_KEY: ClassVar[str] = "debug_information"
+    _FILE_TYPE: ClassVar[FileNames] = FileNames.process
+    _SECTION_NAME: ClassVar[SectionNames] = SectionNames.debug_information
+    _VALID_TOKENS: ClassVar[list[str]] = [
         TokenName.ASSIGNMENT.value,
         TokenName.COMMENT.value,
     ]

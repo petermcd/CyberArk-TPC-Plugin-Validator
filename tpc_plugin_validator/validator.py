@@ -1,7 +1,7 @@
 """Class to manage validations."""
 
 import os
-from typing import Callable
+from collections.abc import Callable
 
 from tpc_plugin_parser.lexer.utilities.types import ALL_TOKEN_TYPES
 from tpc_plugin_parser.parser import Parser
@@ -28,7 +28,7 @@ from tpc_plugin_validator.utilities.exceptions import ProgrammingError
 from tpc_plugin_validator.utilities.validation_result import ValidationResult
 
 
-class Validator(object):
+class Validator:
     """Class to manage validations."""
 
     __slots__ = (
