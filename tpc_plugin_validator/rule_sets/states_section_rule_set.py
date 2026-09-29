@@ -18,7 +18,6 @@ class StatesSectionRuleSet(SectionRuleSet):
     Handle validation of the states section in the process file.
     """
 
-    _CONFIG_KEY: ClassVar[str] = "states"
     _FILE_TYPE: ClassVar[FileNames] = FileNames.process
     _SECTION_NAME: ClassVar[SectionNames] = SectionNames.states
     _VALID_TOKENS: ClassVar[list[str]] = [

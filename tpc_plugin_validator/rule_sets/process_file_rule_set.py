@@ -16,7 +16,6 @@ class ProcessFileRuleSet(FileRuleSet):
     Validation of individual section content is handled in their own rulesets.
     """
 
-    _CONFIG_KEY: ClassVar[str] = "process"
     _FILE_TYPE: ClassVar[FileNames] = FileNames.process
     _VALID_SECTIONS: ClassVar[dict[str, ValidSectionConfig]] = {
         SectionNames.cpm_parameters_validation.value: {

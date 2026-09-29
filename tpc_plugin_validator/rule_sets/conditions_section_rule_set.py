@@ -16,7 +16,6 @@ class ConditionsSectionRuleSet(SectionRuleSet):
     Handle validation of the conditions section in the prompt file.
     """
 
-    _CONFIG_KEY: ClassVar[str] = "conditions"
     _FILE_TYPE: ClassVar[FileNames] = FileNames.prompts
     _SECTION_NAME: ClassVar[SectionNames] = SectionNames.conditions
     _VALID_TOKENS: ClassVar[list[str]] = [

@@ -25,11 +25,12 @@ class TransitionsSectionRuleSet(SectionRuleSet):
 
     __slots__ = (
         "_default_initial_state",
+        "_from_states",
         "_initial_state",
         "_initial_state_warned",
+        "_to_states",
     )
 
-    _CONFIG_KEY: ClassVar[str] = "transitions"
     _FILE_TYPE: ClassVar[FileNames] = FileNames.process
     _SECTION_NAME: ClassVar[SectionNames] = SectionNames.transitions
     _VALID_TOKENS: ClassVar[list[str]] = [
@@ -45,8 +46,10 @@ class TransitionsSectionRuleSet(SectionRuleSet):
         :param prompts_file: Parsed prompts file.
         """
         self._default_initial_state: str = "Init"
+        self._from_states: set[str] = set()
         self._initial_state: str = ""
         self._initial_state_warned: bool = False
+        self._to_states: set[str] = set()
         super().__init__(prompts_file=prompts_file, process_file=process_file)
 
     def validate(self) -> None:
@@ -157,11 +160,11 @@ class TransitionsSectionRuleSet(SectionRuleSet):
             return
         if transition.next_state.lower() == "end":
             return
-        from_states: list[str] = []
-        from_states.extend(value.current_state for value in transitions if isinstance(value, Transition))
+        if not self._from_states:
+            self._from_states = {v.current_state for v in transitions if isinstance(v, Transition)}
 
-        if transition.next_state not in from_states:
-            fail_state_token: FailState | None = self._get_fail_state(transition.next_state)
+        if transition.next_state not in self._from_states:
+            fail_state_token: FailState | None = self._get_fail_state(name=transition.next_state)
             if fail_state_token:
                 # failure condition, nothing follows this.
                 return
@@ -200,10 +203,9 @@ class TransitionsSectionRuleSet(SectionRuleSet):
             )
             self._initial_state_warned = True
             return
-        to_states: list[str] = []
-        to_states.extend(value.next_state.lower() for value in transitions if isinstance(value, Transition))
-        to_states_set = set(to_states)
-        if transition.current_state.lower() not in to_states_set:
+        if not self._to_states:
+            self._to_states = {v.next_state.lower() for v in transitions if isinstance(v, Transition)}
+        if transition.current_state.lower() not in self._to_states:
             self._add_violation(
                 name=Violations.invalid_transition_violation,
                 severity=Severity.CRITICAL,

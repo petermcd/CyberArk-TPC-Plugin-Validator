@@ -3,6 +3,7 @@
 import argparse
 import sys
 
+from tpc_plugin_validator.utilities.exceptions import ProgrammingError
 from tpc_plugin_validator.utilities.validation_result import ValidationResult
 from tpc_plugin_validator.validator import Validator
 
@@ -25,6 +26,9 @@ def main() -> None:
     except PermissionError:
         print("Permission denied reading one of the specified files.")
         sys.exit(1)
+    except ProgrammingError:
+        print("Both files are empty; nothing to validate.")
+        sys.exit(1)
     except UnicodeDecodeError:
         print("One of the specified files is not valid UTF-8.")
         sys.exit(1)
@@ -41,7 +45,7 @@ def main() -> None:
 
     print(f"{len(violations)} violations found:")
     for violation in violations:
-        print(f"{violation.severity} - {violation.rule} - {violation.message}")
+        print(violation)
 
     sys.exit(1)
 

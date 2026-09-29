@@ -1,7 +1,7 @@
 """Abstract class for all rule sets."""
 
 import unicodedata
-from abc import ABC
+from abc import ABC, abstractmethod
 from typing import ClassVar
 
 from tpc_plugin_parser.lexer.tokens.assignment import Assignment
@@ -17,14 +17,12 @@ from tpc_plugin_validator.utilities.validation_result import ValidationResult
 
 class RuleSet(ABC):
     __slots__ = (
-        "_config",
         "_file_sections",
         "_process_file",
         "_prompts_file",
         "_violations",
     )
 
-    _CONFIG_KEY: ClassVar[str] = ""
     _FILE_TYPE: ClassVar[FileNames] = FileNames.prompts
     _SECTION_NAME: ClassVar[SectionNames] = SectionNames.default
     _VALID_TOKENS: ClassVar[list[str]] = []
@@ -46,6 +44,10 @@ class RuleSet(ABC):
         self._violations: list[ValidationResult] = []
 
         self._extract_sections()
+
+    @abstractmethod
+    def validate(self) -> None:
+        """Validate the rule set."""
 
     @property
     def violations(self) -> list[ValidationResult]:
@@ -97,7 +99,7 @@ class RuleSet(ABC):
         for section in self._prompts_file.keys() if self._prompts_file else []:
             self._file_sections[FileNames.prompts.value][section.lower()] = section
 
-    def _get_section(self, file: FileNames, section_name: SectionNames):
+    def _get_section(self, file: FileNames, section_name: SectionNames) -> list[ALL_TOKEN_TYPES]:
         """
         Fetch the specified section from the specified file.
 
