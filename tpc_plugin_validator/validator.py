@@ -32,7 +32,6 @@ class Validator:
     """Class to manage validations."""
 
     __slots__ = (
-        "_config",
         "_process",
         "_prompts",
         "_rule_sets",
@@ -82,7 +81,8 @@ class Validator:
                 prompts_file=self._prompts,
             )
             validator.validate()
-            self._violations = self.sort_violations(self._violations + validator.violations)
+            self._violations += validator.violations
+        self._violations = self.sort_violations(self._violations)
 
     @property
     def process_file(self) -> dict[str, list[ALL_TOKEN_TYPES]]:

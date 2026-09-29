@@ -1,6 +1,6 @@
 [project]
 name = "cyberark-tpc-plugin-validator"
-version = "1.2.2"
+version = "1.2.3"
 description = "A tool to help validate a custom CyberArk TPC plugin."
 keywords = ["cyberark", "validate", "tpc"]
 authors = [{ name = "Peter McDonald", email = "git@petermcdonald.co.uk"}]
@@ -14,7 +14,6 @@ classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",
     "Programming Language :: Python",
-    "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: 3.14",
@@ -24,6 +23,10 @@ classifiers = [
     "Topic :: Software Development :: Testing",
     "Typing :: Typed",
 ]
+
+[build-system]
+requires = ["setuptools>=84", "wheel"]
+build-backend = "setuptools.build_meta"
 
 [project.urls]
 homepage = "https://github.com/petermcd/CyberArk-TPC-Plugin-Validator"
@@ -35,6 +38,11 @@ dev = [
     "pygments>=2.21.0", # Minimum version to resolve security issue
     "pytest>=9.1.1",
     "pytest-cov>=7.1.0",
+]
+lint = [
+    "ruff>=0.16.8",
+    "troml>=0.4.1",
+    "ty>=0.0.82",
 ]
 
 [project.scripts]

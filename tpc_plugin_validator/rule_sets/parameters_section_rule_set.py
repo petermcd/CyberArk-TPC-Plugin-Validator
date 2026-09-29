@@ -16,7 +16,6 @@ class ParametersSectionRuleSet(SectionRuleSet):
     Handle validation of the Parameters section in the process file.
     """
 
-    _CONFIG_KEY: ClassVar[str] = "parameters"
     _FILE_TYPE: ClassVar[FileNames] = FileNames.process
     _SECTION_NAME: ClassVar[SectionNames] = SectionNames.parameters
     _VALID_TOKENS: ClassVar[list[str]] = [

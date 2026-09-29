@@ -18,7 +18,6 @@ class CPMParametersValidationSectionRuleSet(SectionRuleSet):
     Handle validation of the CPM Parameters Validation section in the process file.
     """
 
-    _CONFIG_KEY: ClassVar[str] = "cpm_parameters_validation"
     _FILE_TYPE: ClassVar[FileNames] = FileNames.process
     _SECTION_NAME: ClassVar[SectionNames] = SectionNames.cpm_parameters_validation
     _VALID_TOKENS: ClassVar[list[str]] = [

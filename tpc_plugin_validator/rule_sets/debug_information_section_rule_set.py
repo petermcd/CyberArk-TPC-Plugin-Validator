@@ -15,7 +15,6 @@ class DebugInformationSectionRuleSet(SectionRuleSet):
     Handle validation of the Debug Information section in the process file.
     """
 
-    _CONFIG_KEY: ClassVar[str] = "debug_information"
     _FILE_TYPE: ClassVar[FileNames] = FileNames.process
     _SECTION_NAME: ClassVar[SectionNames] = SectionNames.debug_information
     _VALID_TOKENS: ClassVar[list[str]] = [
